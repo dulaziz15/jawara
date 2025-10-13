@@ -30,12 +30,36 @@ class _SidebarState extends State<Sidebar> {
             onExpansionChanged: (v) => setState(() => dashboardExpanded = v),
             children: [
               ListTile(
-                title: const Text("Overview"),
-                onTap: () => context.router.pushNamed('/dashboard/overview'),
+                title: const Text("Keuangan"),
+                onTap: () => context.router.pushNamed('/dashboard/keuangan'),
               ),
               ListTile(
-                title: const Text("Reports"),
-                onTap: () => context.router.pushNamed('/dashboard/reports'),
+                title: const Text("Kegiatan"),
+                onTap: () => context.router.pushNamed('/dashboard/kegiatan'),
+              ),
+              ListTile(
+                title: const Text("Kependudukan"),
+                onTap: () => context.router.pushNamed('/dashboard/kependudukan'),
+              ),
+            ],
+          ),
+          ExpansionTile(
+            title: const Text("Data Warga & Rumah"),
+            leading: const Icon(Icons.dashboard),
+            initiallyExpanded: dashboardExpanded,
+            onExpansionChanged: (v) => setState(() => dashboardExpanded = v),
+            children: [
+              ListTile(
+                title: const Text("Warga - Daftar"),
+                onTap: () => context.router.pushNamed('/warga/daftar'),
+              ),
+              ListTile(
+                title: const Text("Warga - Tambah"),
+                onTap: () => context.router.pushNamed('/warga/tambah'),
+              ),
+              ListTile(
+                title: const Text("Keluarga"),
+                onTap: () => context.router.pushNamed('/keluarga'),
               ),
             ],
           ),
