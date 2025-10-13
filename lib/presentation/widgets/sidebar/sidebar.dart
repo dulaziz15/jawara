@@ -57,6 +57,26 @@ class _SidebarState extends State<Sidebar> {
               ),
             ],
           ),
+          ExpansionTile(
+            title: const Text("Data Warga & Rumah"),
+            leading: const Icon(Icons.dashboard),
+            initiallyExpanded: dashboardExpanded,
+            onExpansionChanged: (v) => setState(() => dashboardExpanded = v),
+            children: [
+              ListTile(
+                title: const Text("Warga - Daftar"),
+                onTap: () => context.router.pushNamed('/warga/daftar'),
+              ),
+              ListTile(
+                title: const Text("Warga - Tambah"),
+                onTap: () => context.router.pushNamed('/warga/tambah'),
+              ),
+              ListTile(
+                title: const Text("Keluarga"),
+                onTap: () => context.router.pushNamed('/keluarga'),
+              ),
+            ],
+          ),
 
           // DATA WARGA & RUMAH
           ExpansionTile(
