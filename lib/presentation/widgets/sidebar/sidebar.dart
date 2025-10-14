@@ -187,19 +187,19 @@ class _SidebarState extends State<Sidebar> {
             children: [
               ListTile(
                 title: const Text("Kegiatan - Daftar"),
-                onTap: () => context.router.pushNamed('/kegiatan/daftar'),
+                onTap: () => context.router.pushNamed('/kegiatandanbroadcast/kegiatan_daftar'),
               ),
               ListTile(
                 title: const Text("Kegiatan - Tambah"),
-                onTap: () => context.router.pushNamed('/kegiatan/tambah'),
+                onTap: () => context.router.pushNamed('/kegiatandanbroadcast/kegiatan_tambah'),
               ),
               ListTile(
                 title: const Text("Broadcast - Daftar"),
-                onTap: () => context.router.pushNamed('/broadcast/daftar'),
+                onTap: () => context.router.pushNamed('/kegiatandanbroadcast/broadcast_daftar'),
               ),
               ListTile(
                 title: const Text("Broadcast - Masuk"),
-                onTap: () => context.router.pushNamed('/broadcast/masuk'),
+                onTap: () => context.router.pushNamed('/kegiatandanbroadcast/broadcast_masuk'),
               ),
             ],
           ),
@@ -311,3 +311,5 @@ class _SidebarState extends State<Sidebar> {
     );
   }
 }
+
+
