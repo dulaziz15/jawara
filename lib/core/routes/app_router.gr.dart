@@ -15,6 +15,12 @@ abstract class _$AppRouter extends RootStackRouter {
 
   @override
   final Map<String, PageFactory> pagesMap = {
+    AspirasiRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const AspirasiPage(),
+      );
+    },
     DashboardOverviewRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
@@ -39,22 +45,40 @@ abstract class _$AppRouter extends RootStackRouter {
         child: const LoginPage(),
       );
     },
+    PenerimaanRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const PenerimaanPage(),
+      );
+    },
+    PenerimaanWargaRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const PenerimaanWargaPage(),
+      );
+    },
+    PesanWargaRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const PesanWargaPage(),
+      );
+    },
     RegisterRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
         child: const RegisterPage(),
       );
     },
-    ReportRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const Report(),
-      );
-    },
     ReportFinanceRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
         child: const ReportFinancePage(),
+      );
+    },
+    ReportRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const ReportPage(),
       );
     },
     SettingsRoute.name: (routeData) {
@@ -64,6 +88,20 @@ abstract class _$AppRouter extends RootStackRouter {
       );
     },
   };
+}
+
+/// generated route for
+/// [AspirasiPage]
+class AspirasiRoute extends PageRouteInfo<void> {
+  const AspirasiRoute({List<PageRouteInfo>? children})
+      : super(
+          AspirasiRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'AspirasiRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
 }
 
 /// generated route for
@@ -90,20 +128,6 @@ class DashboardRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'DashboardRoute';
-
-  static const PageInfo<void> page = PageInfo<void>(name);
-}
-
-/// generated route for
-/// [Report]
-class ReportRoute extends PageRouteInfo<void> {
-  const ReportRoute({List<PageRouteInfo>? children})
-      : super(
-          ReportRoute.name,
-          initialChildren: children,
-        );
-
-  static const String name = 'ReportRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }
@@ -137,6 +161,48 @@ class LoginRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
+/// [PenerimaanPage]
+class PenerimaanRoute extends PageRouteInfo<void> {
+  const PenerimaanRoute({List<PageRouteInfo>? children})
+      : super(
+          PenerimaanRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'PenerimaanRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [PenerimaanWargaPage]
+class PenerimaanWargaRoute extends PageRouteInfo<void> {
+  const PenerimaanWargaRoute({List<PageRouteInfo>? children})
+      : super(
+          PenerimaanWargaRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'PenerimaanWargaRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [PesanWargaPage]
+class PesanWargaRoute extends PageRouteInfo<void> {
+  const PesanWargaRoute({List<PageRouteInfo>? children})
+      : super(
+          PesanWargaRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'PesanWargaRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
 /// [RegisterPage]
 class RegisterRoute extends PageRouteInfo<void> {
   const RegisterRoute({List<PageRouteInfo>? children})
@@ -160,6 +226,20 @@ class ReportFinanceRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'ReportFinanceRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [ReportPage]
+class ReportRoute extends PageRouteInfo<void> {
+  const ReportRoute({List<PageRouteInfo>? children})
+      : super(
+          ReportRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'ReportRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }

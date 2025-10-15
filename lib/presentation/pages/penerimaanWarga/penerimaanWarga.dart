@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:jawara/presentation/widgets/sidebar/sidebar.dart';
 
 @RoutePage()
-class ReportPage extends StatelessWidget {
-  const ReportPage({super.key});
+class PenerimaanWargaPage extends StatelessWidget {
+  const PenerimaanWargaPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: const Sidebar(),
-      appBar: AppBar(title: const Text("Report")),
+      appBar: AppBar(title: const Text("Penerimaan Warga")),
       body: const AutoRouter(), // Nested route
     );
   }
