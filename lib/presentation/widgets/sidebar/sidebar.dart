@@ -280,6 +280,32 @@ class _SidebarState extends State<Sidebar> {
             ],
           ),
 
+          ExpansionTile(
+            title: const Text("Pesan Warga"),
+            leading: const Icon(Icons.settings),
+            initiallyExpanded: settingsExpanded,
+            onExpansionChanged: (v) => setState(() => settingsExpanded = v),
+            children: [
+              ListTile(
+                title: const Text("Informasi Aspirasi"),
+                onTap: () => context.router.pushNamed('/pesanWarga/aspirasi'),
+              ),
+            ],
+          ),
+
+          ExpansionTile(
+            title: const Text("Penerimaan Warga"),
+            leading: const Icon(Icons.settings),
+            initiallyExpanded: settingsExpanded,
+            onExpansionChanged: (v) => setState(() => settingsExpanded = v),
+            children: [
+              ListTile(
+                title: const Text("Penerimaan Warga"),
+                onTap: () => context.router.pushNamed('/penerimaanWarga/penerimaan'),
+              ),
+            ],
+          ),
+
           const Divider(),
           ListTile(
             leading: const Icon(Icons.logout),
