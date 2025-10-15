@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:jawara/presentation/pages/auth/component/welcome.dart';
@@ -13,13 +14,13 @@ class LoginPage extends StatelessWidget {
       body: Center(
         child: SingleChildScrollView(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Welcome(),
               const SizedBox(height: 30),
-
               Container(
-                width: 450,
+                width: 350,
                 padding: const EdgeInsets.all(30),
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -113,6 +114,10 @@ class LoginPage extends StatelessWidget {
                                 color: Color(0xFF6C63FF),
                                 fontWeight: FontWeight.bold,
                               ),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () {
+                                  context.router.replaceNamed('/register');
+                                },
                             ),
                           ],
                         ),
