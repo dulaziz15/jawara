@@ -5,7 +5,7 @@ import 'package:jawara/presentation/pages/dashboard/widgets/pie_chart.dart';
 import 'package:jawara/presentation/pages/dashboard/widgets/stat_card.dart';
 
 class DashboardKeuanganPage extends StatelessWidget {
-  DashboardKeuanganPage({Key? key}) : super(key: key);
+  DashboardKeuanganPage({super.key});
 
   final FinanceData financeData = FinanceData.dummy();
 
