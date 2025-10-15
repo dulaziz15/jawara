@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:jawara/presentation/pages/penerimaanWarga/filter_accept.dart';
 // Import relatif untuk FilterPesanWargaDialog
@@ -24,6 +25,7 @@ class RegistrationData {
   });
 }
 
+@RoutePage()
 class PenerimaanPage extends StatelessWidget {
   const PenerimaanPage({super.key});
 

@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:jawara/presentation/pages/auth/login_page.dart';
 import 'package:jawara/presentation/pages/auth/register_page.dart';
 import 'package:jawara/presentation/pages/dashboard/dashboard.dart';
@@ -7,7 +8,11 @@ import 'package:jawara/presentation/pages/dashboard/dashboard_keuangan.dart';
 import 'package:jawara/presentation/pages/dashboard/dashboard_kegiatan.dart';
 import 'package:jawara/presentation/pages/kegiatandanbroadcast/kegiatan_dan_broadcast.dart';
 import 'package:jawara/presentation/pages/laporan/laporan.dart';
+import 'package:jawara/presentation/pages/penerimaanWarga/penerimaan.dart';
+import 'package:jawara/presentation/pages/penerimaanWarga/penerimaanWarga.dart';
 import 'package:jawara/presentation/pages/pengeluaran/pengeluaran.dart';
+import 'package:jawara/presentation/pages/pesanWarga/aspirasi.dart';
+import 'package:jawara/presentation/pages/pesanWarga/pesanWarga.dart';
 import 'package:jawara/presentation/pages/setting/setting_page.dart';
 import 'package:jawara/presentation/pages/report/report.dart';
 import 'package:jawara/presentation/pages/report/report_finance.dart';
@@ -97,6 +102,13 @@ class AppRouter extends _$AppRouter {
       AutoRoute(page: BroadcastDaftarRoute.page, path: 'broadcast_daftar'),
       AutoRoute(page: BroadcastMasukRoute.page, path: 'broadcast_masuk'),
     ]),
+
+    AutoRoute(page: PesanWargaRoute.page, path: '/pesanWarga', children: [
+  AutoRoute(page: AspirasiRoute.page, path: 'aspirasi'),
+ ]),
+ AutoRoute(page: PenerimaanWargaRoute.page, path: '/penerimaanWarga', children: [
+ AutoRoute(page: PenerimaanRoute.page, path: 'penerimaan'),
+ ]),
 
     AutoRoute(page: KeluargaRoute.page, path: '/keluarga'),
   ];

@@ -193,7 +193,7 @@ class _SidebarState extends State<Sidebar> {
             children: [
               ListTile(
                 title: const Text("Informasi & Aspirasi"),
-                onTap: () => context.router.pushNamed('/pesan/informasi'),
+                onTap: () => context.router.pushNamed('/pesanWarga/aspirasi'),
               ),
             ],
           ),
@@ -207,7 +207,7 @@ class _SidebarState extends State<Sidebar> {
             children: [
               ListTile(
                 title: const Text("Penerimaan Warga"),
-                onTap: () => context.router.pushNamed('/penerimaan/daftar'),
+                onTap: () => context.router.pushNamed('/penerimaanWarga/penerimaan'),
               ),
             ],
           ),
