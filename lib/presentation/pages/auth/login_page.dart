@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:jawara/presentation/pages/auth/component/welcome.dart';
-import 'package:jawara/presentation/pages/dashboard/dashboard_overview.dart';
 
 @RoutePage()
 class LoginPage extends StatelessWidget {
@@ -20,8 +19,8 @@ class LoginPage extends StatelessWidget {
               const SizedBox(height: 30),
 
               Container(
-                width: 400,
-                padding: const EdgeInsets.all(24),
+                width: 450,
+                padding: const EdgeInsets.all(30),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
@@ -55,7 +54,7 @@ class LoginPage extends StatelessWidget {
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.all( Radius.circular(8)
                         ),
-                          borderSide: BorderSide(color: Colors.grey, width: 0)
+                          borderSide: BorderSide(color: const Color.fromARGB(255, 216, 216, 216), width: 0)
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.all( Radius.circular(8)
@@ -74,7 +73,7 @@ class LoginPage extends StatelessWidget {
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.all( Radius.circular(8)
                         ),
-                          borderSide: BorderSide(color: Colors.grey, width: 0)
+                          borderSide: BorderSide(color: const Color.fromARGB(255, 216, 216, 216), width: 0)
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.all( Radius.circular(8)
@@ -87,7 +86,7 @@ class LoginPage extends StatelessWidget {
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(onPressed: () {
-                        context.router.replaceNamed('/dashboard/overview');
+                        context.router.replaceNamed('/dashboard/keuangan');
                       }, 
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF6C63FF),
