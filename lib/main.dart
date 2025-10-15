@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      title: 'Flutter Clean Nav App',
+      title: 'Jawara Pintar',
       routerConfig: _appRouter.config(),
       theme: ThemeData(useMaterial3: true),
     );

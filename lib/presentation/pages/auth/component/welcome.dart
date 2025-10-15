@@ -6,7 +6,7 @@ class Welcome extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 450, // biar lebar penuh
+      width: 350, // biar lebar penuh
       padding: const EdgeInsets.symmetric(vertical: 0), // jarak atas bawah
       child: const Column(
         mainAxisAlignment: MainAxisAlignment.end,
