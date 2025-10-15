@@ -2,14 +2,13 @@ import 'package:auto_route/auto_route.dart';
 import 'package:jawara/presentation/pages/auth/login_page.dart';
 import 'package:jawara/presentation/pages/auth/register_page.dart';
 import 'package:jawara/presentation/pages/dashboard/dashboard.dart';
-import 'package:jawara/presentation/pages/dashboard/dashboard_kegiatan.dart';
 import 'package:jawara/presentation/pages/dashboard/dashboard_kependudukan.dart';
+import 'package:jawara/presentation/pages/dashboard/dashboard_keuangan.dart';
+import 'package:jawara/presentation/pages/dashboard/dashboard_kegiatan.dart';
 import 'package:jawara/presentation/pages/kegiatandanbroadcast/kegiatan_dan_broadcast.dart';
 import 'package:jawara/presentation/pages/laporan/laporan.dart';
-import 'package:jawara/presentation/pages/penerimaanWarga/penerimaanWarga.dart';
 import 'package:jawara/presentation/pages/pengeluaran/pengeluaran.dart';
-import 'package:jawara/presentation/pages/pesanWarga/aspirasi.dart';
-import 'package:jawara/presentation/pages/pesanWarga/pesanWarga.dart';
+import 'package:jawara/presentation/pages/setting/setting_page.dart';
 import 'package:jawara/presentation/pages/report/report.dart';
 import 'package:jawara/presentation/pages/report/report_finance.dart';
 
@@ -41,7 +40,6 @@ import 'package:jawara/presentation/pages/kegiatandanbroadcast/kegiatan_daftar.d
 import 'package:jawara/presentation/pages/kegiatandanbroadcast/kegiatan_tambah.dart';
 import 'package:jawara/presentation/pages/kegiatandanbroadcast/broadcast_daftar.dart';
 import 'package:jawara/presentation/pages/kegiatandanbroadcast/broadcast_masuk.dart';
-import 'package:jawara/presentation/pages/setting/setting_page.dart';
 
 // import 'package:jawara/presentation/pages/pesan/pesan_informasi.dart';
 // import 'package:jawara/presentation/pages/penerimaan/penerimaan_daftar.dart';
@@ -59,15 +57,47 @@ part 'app_router.gr.dart';
 class AppRouter extends _$AppRouter {
   @override
   final routes = [
+    // === AUTH ===
     AutoRoute(page: LoginRoute.page, path: '/login', initial: true),
     AutoRoute(page: RegisterRoute.page, path: '/register'),
+
+    // === DASHBOARD ===
     AutoRoute(page: DashboardRoute.page, path: '/dashboard', children: [
-      AutoRoute(page: DashboardOverviewRoute.page, path: 'overview'),
-      AutoRoute(page: DashboardReportsRoute.page, path: 'reports'),
-      AutoRoute(page: SettingsRoute.page, path: 'settings'),
+      AutoRoute(page: DashboardKeuanganRoute.page, path: 'keuangan'),
+      AutoRoute(page: DashboardKegiatanRoute.page, path: 'kegiatan'),
+      AutoRoute(page: DashboardKependudukanRoute.page, path: 'kependudukan'),
     ]),
-    AutoRoute(page: ReportRoute.page, path: '/report', children: [
+        AutoRoute(page: ReportRoute.page, path: '/report', children: [
       AutoRoute(page: ReportFinanceRoute.page, path: 'finance'),
     ]),
+    
+    AutoRoute(page: WargaRoute.page, path: '/warga', children: [
+      AutoRoute(page: WargaDaftarRoute.page, path: 'daftar'),
+      AutoRoute(page: WargaTambahRoute.page, path: 'tambah'),
+    ]),
+    AutoRoute(page: KeluargaRoute.page, path: '/keluarga'),
+
+    // === PENGELUARAN ===
+    AutoRoute(page: PengeluaranRoute.page, path: '/pengeluaran', children: [
+      AutoRoute(page: PengeluaranDaftarRoute.page, path: 'daftar'),
+      AutoRoute(page: PengeluaranTambahRoute.page, path: 'tambah'),
+    ]),
+
+    // === LAPORAN KEUANGAN ===
+    AutoRoute(page: LaporanRoute.page, path: '/laporan', children: [
+      AutoRoute(page: LaporanPemasukanRoute.page, path: 'pemasukan'),
+      AutoRoute(page: LaporanPengeluaranRoute.page, path: 'pengeluaran'),
+      AutoRoute(page: LaporanCetakRoute.page, path: 'cetak'),
+    ]), 
+
+    // === KEGIATAN & BROADCAST ===
+    AutoRoute(page: KegiatanDanBroadcastRoute.page, path: '/kegiatandanbroadcast', children: [  
+      AutoRoute(page: KegiatanDaftarRoute.page, path: 'kegiatan_daftar'),
+      AutoRoute(page: KegiatanTambahRoute.page, path: 'kegiatan_tambah'),
+      AutoRoute(page: BroadcastDaftarRoute.page, path: 'broadcast_daftar'),
+      AutoRoute(page: BroadcastMasukRoute.page, path: 'broadcast_masuk'),
+    ]),
+
+    AutoRoute(page: KeluargaRoute.page, path: '/keluarga'),
   ];
 }
