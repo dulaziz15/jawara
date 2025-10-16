@@ -178,7 +178,7 @@ class _SidebarState extends State<Sidebar> {
                 onTap: () => context.router.pushNamed('/kegiatandanbroadcast/broadcast_daftar'),
               ),
               ListTile(
-                title: const Text("Broadcast - Masuk"),
+                title: const Text("Broadcast - Tambah"),
                 onTap: () => context.router.pushNamed('/kegiatandanbroadcast/broadcast_masuk'),
               ),
             ],
