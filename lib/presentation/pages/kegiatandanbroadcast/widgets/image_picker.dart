@@ -28,8 +28,8 @@ class _ImagePickerPreviewState extends State<ImagePickerPreview> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          'Foto Bukti Pengeluaran',
-          style: TextStyle(fontWeight: FontWeight.w500),
+          'Maksimal 10 file, ukuran 5MB per file',
+          style: TextStyle(fontWeight: FontWeight.w500, color: Colors.grey),
         ),
         const SizedBox(height: 8),
 
@@ -37,7 +37,7 @@ class _ImagePickerPreviewState extends State<ImagePickerPreview> {
         Center(
           child: _image == null
               ? const Text(
-                  'Belum ada foto dipilih',
+                  'Belum ada file dipilih',
                   style: TextStyle(color: Colors.black54),
                 )
               : ClipRRect(
@@ -58,7 +58,7 @@ class _ImagePickerPreviewState extends State<ImagePickerPreview> {
             onPressed: _pickImage,
             icon: const Icon(Icons.image, color: Color(0xFF6C63FF)),
             label: const Text(
-              "Pilih Foto Bukti Pengeluaran",
+              "Pilih file",
               style: TextStyle(color: Color(0xFF6C63FF)),
             ),
             style: OutlinedButton.styleFrom(

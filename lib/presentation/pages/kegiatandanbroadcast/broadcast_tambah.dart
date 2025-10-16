@@ -1,11 +1,10 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
-import 'package:jawara/presentation/pages/pengeluaran/widgets/image_picker.dart';
+import 'package:jawara/presentation/pages/kegiatandanbroadcast/widgets/image_picker.dart';
 
 @RoutePage()
-class PengeluaranTambahPage extends StatelessWidget {
-  const PengeluaranTambahPage({super.key});
+class BroadcastTambahPage extends StatelessWidget {
+  const BroadcastTambahPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +36,7 @@ class PengeluaranTambahPage extends StatelessWidget {
                   children: [
                     const Center(
                       child: Text(
-                        "Buat Pengeluaran Baru",
+                        "Buat Broadcast Baru",
                         style: TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
@@ -48,18 +47,18 @@ class PengeluaranTambahPage extends StatelessWidget {
                     const SizedBox(height: 10),
                     const Center(
                       child: Text(
-                        "Isi form di bawah ini untuk mencatat pengeluaran",
+                        "Isi form di bawah ini untuk mencatat broadcast",
                         style: TextStyle(color: Colors.grey, fontSize: 14),
                       ),
                     ),
                     const SizedBox(height: 20),
 
-                    // Nama Pengeluaran
-                    const Text("Nama Pengeluaran"),
+                    // Judul Broadcast
+                    const Text("Judul Broadcast"),
                     const SizedBox(height: 5),
                     TextField(
                       decoration: InputDecoration(
-                        hintText: "Masukkan nama pengeluaran",
+                        hintText: "Masukkan Judul Broadcast",
                         enabledBorder: const OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(8)),
                           borderSide: BorderSide(
@@ -82,14 +81,12 @@ class PengeluaranTambahPage extends StatelessWidget {
                     ),
                     const SizedBox(height: 15),
 
-                    // Tanggal Pengeluaran
-                    const Text("Tanggal Pengeluaran"),
+                    //isi broadcast
                     const SizedBox(height: 5),
+                    const Text("Isi Broadcast"),
                     TextField(
-                      readOnly: true,
                       decoration: InputDecoration(
-                        hintText: "--/--/----",
-                        suffixIcon: const Icon(Icons.calendar_today_outlined),
+                        hintText: "Tulis Isi broadcast disini . . . ",
                         enabledBorder: const OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(8)),
                           borderSide: BorderSide(
@@ -109,93 +106,17 @@ class PengeluaranTambahPage extends StatelessWidget {
                           vertical: 12,
                         ),
                       ),
-                      onTap: () async {
-                        await showDatePicker(
-                          context: context,
-                          initialDate: DateTime.now(),
-                          firstDate: DateTime(2000),
-                          lastDate: DateTime(2100),
-                        );
-                      },
                     ),
                     const SizedBox(height: 15),
 
-                    // Kategori Pengeluaran
-                    const Text("Kategori Pengeluaran"),
-                    const SizedBox(height: 5),
-                    DropdownButtonFormField<String>(
-                      isExpanded: true,
-                      decoration: const InputDecoration(
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(8)),
-                          borderSide: BorderSide(
-                            color: Color.fromARGB(255, 216, 216, 216),
-                            width: 0,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(8)),
-                          borderSide: BorderSide(
-                            color: Color(0xFF6C63FF),
-                            width: 1.5,
-                          ),
-                        ),
-                        contentPadding: EdgeInsets.symmetric(
-                          horizontal: 15,
-                          vertical: 12,
-                        ),
-                      ),
-                      hint: const Text("-- Pilih Kategori --"),
-                      items: const [
-                        DropdownMenuItem(
-                          value: "Operasional",
-                          child: Text("Operasional"),
-                        ),
-                        DropdownMenuItem(
-                          value: "Logistik",
-                          child: Text("Logistik"),
-                        ),
-                        DropdownMenuItem(
-                          value: "Lainnya",
-                          child: Text("Lainnya"),
-                        ),
-                      ],
-                      onChanged: (String? newValue) {},
-                    ),
-                    const SizedBox(height: 15),
-
-                    // Nominal
-                    const Text("Nominal"),
-                    const SizedBox(height: 5),
-                    TextField(
-                      keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
-                        hintText: "Masukkan nominal",
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(8)),
-                          borderSide: BorderSide(
-                            color: Color.fromARGB(255, 216, 216, 216),
-                            width: 0,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(8)),
-                          borderSide: BorderSide(
-                            color: Color(0xFF6C63FF),
-                            width: 1.5,
-                          ),
-                        ),
-                        contentPadding: EdgeInsets.symmetric(
-                          horizontal: 15,
-                          vertical: 12,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 15),
-
-                    // Bukti Pengeluaran
+                    // foto
+                    const Text("Foto"),
                     ImagePickerPreview(),
+                    const SizedBox(height: 20),
 
+                    // dokumen
+                    const Text("Dokumen"),
+                    ImagePickerPreview(),
                     const SizedBox(height: 20),
 
                     // Tombol Submit dan Reset
