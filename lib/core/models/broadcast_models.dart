@@ -1,0 +1,225 @@
+// model untuk pengeluaran
+class BroadcastModels {
+  int? id;
+  String judulBroadcast, isiPesan, dibuatOleh, lampiranGambar, lampiranDokumen;
+  DateTime tanggalPublikasi;
+
+  BroadcastModels({
+    this.id,
+    required this.judulBroadcast,
+    required this.isiPesan,
+    required this.tanggalPublikasi,
+    required this.dibuatOleh,
+    required this.lampiranGambar,
+    required this.lampiranDokumen,
+  });
+
+  // konversi dari map ke object
+  factory BroadcastModels.fromMap(Map<String, dynamic> map) {
+    return BroadcastModels(
+      id: map['id'],
+      judulBroadcast: map['nama_pengeluaran'],
+      tanggalPublikasi: DateTime.parse(map['tanggal_pengeluaran']),
+      isiPesan: map['kategori_pengeluaran'],
+      dibuatOleh: map['dibuatOleh'],
+      lampiranGambar: map['lampiranGambar'],
+      lampiranDokumen: map['lampiranGambar, lampiranDokumen'],
+    );
+  }
+
+  // konversi dari object ke map
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'nama_pengeluaran': judulBroadcast,
+      'kategori_pengeluaran': isiPesan,
+      'tanggal_pengeluaran': tanggalPublikasi.toIso8601String(),
+      'dibuatOleh': dibuatOleh,
+      'lampiranGambar': lampiranGambar,
+      'lampiranDokumen': lampiranDokumen,
+    };
+  }
+}
+
+List<BroadcastModels> dummyBroadcast = [
+  BroadcastModels(
+    id: 1,
+    judulBroadcast: 'Pengumuman Libur Nasional',
+    isiPesan: 'Hari Senin, 20 Oktober 2025, akan diliburkan karena perayaan Hari Nasional.',
+    tanggalPublikasi: DateTime(2025, 10, 16),
+    dibuatOleh: 'Admin',
+    lampiranGambar: 'libur_nasional.jpg',
+    lampiranDokumen: 'libur_nasional.pdf',
+  ),
+  BroadcastModels(
+    id: 2,
+    judulBroadcast: 'Jadwal Ujian Tengah Semester',
+    isiPesan: 'UTS akan dilaksanakan mulai tanggal 1 November 2025. Harap mempersiapkan diri.',
+    tanggalPublikasi: DateTime(2025, 10, 16),
+    dibuatOleh: 'Admin',
+    lampiranGambar: 'jadwal_uts.jpg',
+    lampiranDokumen: 'jadwal_uts.pdf',
+  ),
+  BroadcastModels(
+    id: 3,
+    judulBroadcast: 'Workshop Flutter',
+    isiPesan: 'Workshop Flutter akan diadakan pada tanggal 25 Oktober 2025 di Aula Kampus.',
+    tanggalPublikasi: DateTime(2025, 10, 16),
+    dibuatOleh: 'Admin',
+    lampiranGambar: 'workshop_flutter.jpg',
+    lampiranDokumen: 'workshop_flutter.pdf',
+  ),
+  BroadcastModels(
+    id: 4,
+    judulBroadcast: 'Pengumpulan Proposal PKM',
+    isiPesan: 'Batas akhir pengumpulan proposal PKM adalah tanggal 30 Oktober 2025.',
+    tanggalPublikasi: DateTime(2025, 10, 16),
+    dibuatOleh: 'Admin',
+    lampiranGambar: 'proposal_pkm.jpg',
+    lampiranDokumen: 'proposal_pkm.pdf',
+  ),
+  BroadcastModels(
+    id: 5,
+    judulBroadcast: 'Lomba Desain Poster',
+    isiPesan: 'Lomba desain poster akan diadakan pada tanggal 5 November 2025.',
+    tanggalPublikasi: DateTime(2025, 10, 16),
+    dibuatOleh: 'Admin',
+    lampiranGambar: 'lomba_poster.jpg',
+    lampiranDokumen: 'lomba_poster.pdf',
+  ),
+  BroadcastModels(
+    id: 6,
+    judulBroadcast: 'Seminar AI',
+    isiPesan: 'Seminar tentang Artificial Intelligence akan diadakan pada tanggal 10 November 2025.',
+    tanggalPublikasi: DateTime(2025, 10, 16),
+    dibuatOleh: 'Admin',
+    lampiranGambar: 'seminar_ai.jpg',
+    lampiranDokumen: 'seminar_ai.pdf',
+  ),
+  BroadcastModels(
+    id: 7,
+    judulBroadcast: 'Pelatihan UI/UX',
+    isiPesan: 'Pelatihan UI/UX akan diadakan pada tanggal 15 November 2025.',
+    tanggalPublikasi: DateTime(2025, 10, 16),
+    dibuatOleh: 'Admin',
+    lampiranGambar: 'pelatihan_uiux.jpg',
+    lampiranDokumen: 'pelatihan_uiux.pdf',
+  ),
+  BroadcastModels(
+    id: 8,
+    judulBroadcast: 'Webinar Cloud Computing',
+    isiPesan: 'Webinar tentang Cloud Computing akan diadakan pada tanggal 20 November 2025.',
+    tanggalPublikasi: DateTime(2025, 10, 16),
+    dibuatOleh: 'Admin',
+    lampiranGambar: 'webinar_cloud.jpg',
+    lampiranDokumen: 'webinar_cloud.pdf',
+  ),
+  BroadcastModels(
+    id: 9,
+    judulBroadcast: 'Hackathon 2025',
+    isiPesan: 'Hackathon akan diadakan pada tanggal 25 November 2025.',
+    tanggalPublikasi: DateTime(2025, 10, 16),
+    dibuatOleh: 'Admin',
+    lampiranGambar: 'hackathon_2025.jpg',
+    lampiranDokumen: 'hackathon_2025.pdf',
+  ),
+  BroadcastModels(
+    id: 10,
+    judulBroadcast: 'Pelatihan Data Science',
+    isiPesan: 'Pelatihan Data Science akan diadakan pada tanggal 30 November 2025.',
+    tanggalPublikasi: DateTime(2025, 10, 16),
+    dibuatOleh: 'Admin',
+    lampiranGambar: 'pelatihan_data.jpg',
+    lampiranDokumen: 'pelatihan_data.pdf',
+  ),
+  BroadcastModels(
+    id: 11,
+    judulBroadcast: 'Seminar Blockchain',
+    isiPesan: 'Seminar tentang Blockchain akan diadakan pada tanggal 5 Desember 2025.',
+    tanggalPublikasi: DateTime(2025, 10, 16),
+    dibuatOleh: 'Admin',
+    lampiranGambar: 'seminar_blockchain.jpg',
+    lampiranDokumen: 'seminar_blockchain.pdf',
+  ),
+  BroadcastModels(
+    id: 12,
+    judulBroadcast: 'Lomba Fotografi',
+    isiPesan: 'Lomba fotografi akan diadakan pada tanggal 10 Desember 2025.',
+    tanggalPublikasi: DateTime(2025, 10, 16),
+    dibuatOleh: 'Admin',
+    lampiranGambar: 'lomba_foto.jpg',
+    lampiranDokumen: 'lomba_foto.pdf',
+  ),
+  BroadcastModels(
+    id: 13,
+    judulBroadcast: 'Webinar DevOps',
+    isiPesan: 'Webinar tentang DevOps akan diadakan pada tanggal 15 Desember 2025.',
+    tanggalPublikasi: DateTime(2025, 10, 16),
+    dibuatOleh: 'Admin',
+    lampiranGambar: 'webinar_devops.jpg',
+    lampiranDokumen: 'webinar_devops.pdf',
+  ),
+  BroadcastModels(
+    id: 14,
+    judulBroadcast: 'Pelatihan Machine Learning',
+    isiPesan: 'Pelatihan Machine Learning akan diadakan pada tanggal 20 Desember 2025.',
+    tanggalPublikasi: DateTime(2025, 10, 16),
+    dibuatOleh: 'Admin',
+    lampiranGambar: 'pelatihan_ml.jpg',
+    lampiranDokumen: 'pelatihan_ml.pdf',
+  ),
+  BroadcastModels(
+    id: 15,
+    judulBroadcast: 'Seminar Big Data',
+    isiPesan: 'Seminar tentang Big Data akan diadakan pada tanggal 25 Desember 2025.',
+    tanggalPublikasi: DateTime(2025, 10, 16),
+    dibuatOleh: 'Admin',
+    lampiranGambar: 'seminar_bigdata.jpg',
+    lampiranDokumen: 'seminar_bigdata.pdf',
+  ),
+  BroadcastModels(
+    id: 16,
+    judulBroadcast: 'Workshop IoT',
+    isiPesan: 'Workshop tentang IoT akan diadakan pada tanggal 30 Desember 2025.',
+    tanggalPublikasi: DateTime(2025, 10, 16),
+    dibuatOleh: 'Admin',
+    lampiranGambar: 'workshop_iot.jpg',
+    lampiranDokumen: 'workshop_iot.pdf',
+  ),
+  BroadcastModels(
+    id: 17,
+    judulBroadcast: 'Lomba Animasi',
+    isiPesan: 'Lomba animasi akan diadakan pada tanggal 5 Januari 2026.',
+    tanggalPublikasi: DateTime(2025, 10, 16),
+    dibuatOleh: 'Admin',
+    lampiranGambar: 'lomba_animasi.jpg',
+    lampiranDokumen: 'lomba_animasi.pdf',
+  ),
+  BroadcastModels(
+    id: 18,
+    judulBroadcast: 'Webinar Kubernetes',
+    isiPesan: 'Webinar tentang Kubernetes akan diadakan pada tanggal 10 Januari 2026.',
+    tanggalPublikasi: DateTime(2025, 10, 16),
+    dibuatOleh: 'Admin',
+    lampiranGambar: 'webinar_kubernetes.jpg',
+    lampiranDokumen: 'webinar_kubernetes.pdf',
+  ),
+  BroadcastModels(
+    id: 19,
+    judulBroadcast: 'Pelatihan Cybersecurity',
+    isiPesan: 'Pelatihan tentang Cybersecurity akan diadakan pada tanggal 15 Januari 2026.',
+    tanggalPublikasi: DateTime(2025, 10, 16),
+    dibuatOleh: 'Admin',
+    lampiranGambar: 'pelatihan_cyber.jpg',
+    lampiranDokumen: 'pelatihan_cyber.pdf',
+  ),
+  BroadcastModels(
+    id: 20,
+    judulBroadcast: 'Hackathon Pemula',
+    isiPesan: 'Hackathon untuk pemula akan diadakan pada tanggal 20 Januari 2026.',
+    tanggalPublikasi: DateTime(2025, 10, 16),
+    dibuatOleh: 'Admin',
+    lampiranGambar: 'hackathon_pemula.jpg',
+    lampiranDokumen: 'hackathon_pemula.pdf',
+  ),
+];
