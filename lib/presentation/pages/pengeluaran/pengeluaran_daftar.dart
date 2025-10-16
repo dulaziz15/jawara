@@ -35,6 +35,25 @@ class PengeluaranDaftarPage extends StatelessWidget {
     );
   }
 
+  // --- Helper format bulan ---
+  String _getBulan(int bulan) {
+    const namaBulan = [
+      'Januari',
+      'Februari',
+      'Maret',
+      'April',
+      'Mei',
+      'Juni',
+      'Juli',
+      'Agustus',
+      'September',
+      'Oktober',
+      'November',
+      'Desember',
+    ];
+    return namaBulan[bulan - 1];
+  }
+
   // --- Widget Pagination ---
   Widget _buildPagination() {
     return Row(
@@ -82,101 +101,160 @@ class PengeluaranDaftarPage extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            Align(
-              alignment: Alignment.topRight,
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 20.0),
-                child: ElevatedButton(
-                  onPressed: () {
-                    // nanti bisa diisi filter dialog pengeluaran
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.deepPurple,
-                    padding: const EdgeInsets.all(12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                    minimumSize: const Size(60, 50),
-                  ),
-                  child: const Icon(
-                    Icons.filter_list,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ),
-
             // --- Card Container ---
             Card(
-              elevation: 4,
+              color: Colors.white,
+              elevation: 2,
+              shadowColor: Colors.black12,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0),
+                borderRadius: BorderRadius.circular(16.0),
               ),
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: DataTable(
-                        columnSpacing: 30,
-                        dataRowHeight: 50,
-                        headingRowHeight: 40,
-                        border: const TableBorder(
-                          bottom: BorderSide(color: Colors.grey, width: 0.5),
-                          horizontalInside:
-                              BorderSide(color: Colors.grey, width: 0.5),
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Align(
+                      alignment: Alignment.center,
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 20.0),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            // nanti bisa diisi filter dialog pengeluaran
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.deepPurple,
+                            padding: const EdgeInsets.all(12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            minimumSize: const Size(60, 50),
+                          ),
+                          child: const Icon(
+                            Icons.filter_list,
+                            color: Colors.white,
+                          ),
                         ),
-                        columns: const [
-                          DataColumn(
-                              label: Text('NO',
-                                  style: TextStyle(fontWeight: FontWeight.bold))),
-                          DataColumn(
-                              label: Text('NAMA PENGELUARAN',
-                                  style: TextStyle(fontWeight: FontWeight.bold))),
-                          DataColumn(
-                              label: Text('KATEGORI',
-                                  style: TextStyle(fontWeight: FontWeight.bold))),
-                          DataColumn(
-                              label: Text('JUMLAH (Rp)',
-                                  style: TextStyle(fontWeight: FontWeight.bold))),
-                          DataColumn(
-                              label: Text('VERIFIKATOR',
-                                  style: TextStyle(fontWeight: FontWeight.bold))),
-                          DataColumn(
-                              label: Text('TANGGAL',
-                                  style: TextStyle(fontWeight: FontWeight.bold))),
-                          DataColumn(
-                              label: Text('STATUS',
-                                  style: TextStyle(fontWeight: FontWeight.bold))),
-                        ],
-                        rows: dummyPengeluaran
-                            .map(
-                              (item) => DataRow(
-                                cells: [
-                                  DataCell(Text(item.id.toString())),
-                                  DataCell(Text(item.namaPengeluaran)),
-                                  DataCell(Text(item.kategoriPengeluaran)),
-                                  DataCell(Text(
-                                      item.jumlahPengeluaran.toStringAsFixed(0))),
-                                  DataCell(Text(item.verifikator)),
-                                  DataCell(Text(
-                                      '${item.tanggalPengeluaran.day}/${item.tanggalPengeluaran.month}/${item.tanggalPengeluaran.year}')),
-                                  DataCell(
-                                      _buildVerifikasiBadge(item.tanggalTerverifikasi)),
-                                ],
-                              ),
-                            )
-                            .toList(),
                       ),
                     ),
-                  ),
 
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16.0),
-                    child: _buildPagination(),
-                  ),
-                ],
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: DataTable(
+                          columnSpacing: 40,
+                          headingRowColor: WidgetStateProperty.all(
+                            const Color(0xFFF9FAFB),
+                          ),
+                          dataRowColor: WidgetStateProperty.all(Colors.white),
+                          border: TableBorder.symmetric(
+                            inside: const BorderSide(
+                              color: Color(0xFFE5E7EB),
+                              width: 1,
+                            ),
+                          ),
+                          columns: const [
+                            DataColumn(
+                              label: Text(
+                                'NO',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  color: Color(0xFF6B7280),
+                                ),
+                              ),
+                            ),
+                            DataColumn(
+                              label: Text(
+                                'NAMA PENGELUARAN',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  color: Color(0xFF6B7280),
+                                ),
+                              ),
+                            ),
+                            DataColumn(
+                              label: Text(
+                                'KATEGORI',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  color: Color(0xFF6B7280),
+                                ),
+                              ),
+                            ),
+                            DataColumn(
+                              label: Text(
+                                'JUMLAH (Rp)',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  color: Color(0xFF6B7280),
+                                ),
+                              ),
+                            ),
+                            DataColumn(
+                              label: Text(
+                                'VERIFIKATOR',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  color: Color(0xFF6B7280),
+                                ),
+                              ),
+                            ),
+                            DataColumn(
+                              label: Text(
+                                'TANGGAL',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  color: Color(0xFF6B7280),
+                                ),
+                              ),
+                            ),
+                            DataColumn(
+                              label: Text(
+                                'STATUS',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  color: Color(0xFF6B7280),
+                                ),
+                              ),
+                            ),
+                          ],
+                          rows: dummyPengeluaran
+                              .map(
+                                (item) => DataRow(
+                                  cells: [
+                                    DataCell(Text(item.id.toString())),
+                                    DataCell(Text(item.namaPengeluaran)),
+                                    DataCell(Text(item.kategoriPengeluaran)),
+                                    DataCell(
+                                      Text(
+                                        'Rp ${item.jumlahPengeluaran.toStringAsFixed(0)}',
+                                      ),
+                                    ),
+                                    DataCell(Text(item.verifikator)),
+                                    DataCell(
+                                      Text(
+                                        '${item.tanggalPengeluaran.day.toString().padLeft(2, '0')} '
+                                        '${_getBulan(item.tanggalPengeluaran.month)} '
+                                        '${item.tanggalPengeluaran.year}',
+                                      ),
+                                    ),
+                                    DataCell(
+                                      _buildVerifikasiBadge(
+                                        item.tanggalTerverifikasi,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                              .toList(),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    _buildPagination(),
+                  ],
+                ),
               ),
             ),
           ],
