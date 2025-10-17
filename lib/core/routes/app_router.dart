@@ -6,8 +6,11 @@ import 'package:jawara/presentation/pages/dashboard/dashboard.dart';
 import 'package:jawara/presentation/pages/dashboard/dashboard_kependudukan.dart';
 import 'package:jawara/presentation/pages/dashboard/dashboard_keuangan.dart';
 import 'package:jawara/presentation/pages/dashboard/dashboard_kegiatan.dart';
+import 'package:jawara/presentation/pages/dashboard/main_dashboard.dart';
+import 'package:jawara/presentation/pages/kegiatandanbroadcast/broadcast_tambah.dart';
 import 'package:jawara/presentation/pages/kegiatandanbroadcast/kegiatan_dan_broadcast.dart';
 import 'package:jawara/presentation/pages/laporan/laporan.dart';
+import 'package:jawara/presentation/pages/pemasukan/pemasukan.dart';
 import 'package:jawara/presentation/pages/penerimaanWarga/penerimaan.dart';
 import 'package:jawara/presentation/pages/penerimaanWarga/penerimaanWarga.dart';
 import 'package:jawara/presentation/pages/pengeluaran/pengeluaran.dart';
@@ -44,7 +47,7 @@ import 'package:jawara/presentation/pages/laporan/laporan_cetak.dart';
 import 'package:jawara/presentation/pages/kegiatandanbroadcast/kegiatan_daftar.dart';
 import 'package:jawara/presentation/pages/kegiatandanbroadcast/kegiatan_tambah.dart';
 import 'package:jawara/presentation/pages/kegiatandanbroadcast/broadcast_daftar.dart';
-import 'package:jawara/presentation/pages/kegiatandanbroadcast/broadcast_tambah.dart';
+import 'package:jawara/presentation/pages/warga/daftar_rumah.dart';
 
 // import 'package:jawara/presentation/pages/pesan/pesan_informasi.dart';
 // import 'package:jawara/presentation/pages/penerimaan/penerimaan_daftar.dart';
@@ -53,6 +56,8 @@ import 'package:jawara/presentation/pages/kegiatandanbroadcast/broadcast_tambah.
 
 import 'package:jawara/presentation/pages/warga/daftar_warga.dart';
 import 'package:jawara/presentation/pages/warga/keluarga.dart';
+import 'package:jawara/presentation/pages/warga/rumah.dart';
+import 'package:jawara/presentation/pages/warga/tambah_rumah.dart';
 import 'package:jawara/presentation/pages/warga/tambah_warga.dart';
 import 'package:jawara/presentation/pages/warga/warga.dart';
 
@@ -67,48 +72,84 @@ class AppRouter extends _$AppRouter {
     AutoRoute(page: RegisterRoute.page, path: '/register'),
 
     // === DASHBOARD ===
-    AutoRoute(page: DashboardRoute.page, path: '/dashboard', children: [
-      AutoRoute(page: DashboardKeuanganRoute.page, path: 'keuangan'),
-      AutoRoute(page: DashboardKegiatanRoute.page, path: 'kegiatan'),
-      AutoRoute(page: DashboardKependudukanRoute.page, path: 'kependudukan'),
-    ]),
-        AutoRoute(page: ReportRoute.page, path: '/report', children: [
-      AutoRoute(page: ReportFinanceRoute.page, path: 'finance'),
-    ]),
-    
-    AutoRoute(page: WargaRoute.page, path: '/warga', children: [
-      AutoRoute(page: WargaDaftarRoute.page, path: 'daftar'),
-      AutoRoute(page: WargaTambahRoute.page, path: 'tambah'),
-    ]),
+    AutoRoute(
+      page: DashboardRoute.page,
+      path: '/dashboard',
+      children: [
+        AutoRoute(page: MainDashboardRoute.page, path: 'main'),
+        AutoRoute(page: DashboardKeuanganRoute.page, path: 'keuangan'),
+        AutoRoute(page: DashboardKegiatanRoute.page, path: 'kegiatan'),
+        AutoRoute(page: DashboardKependudukanRoute.page, path: 'kependudukan'),
+      ],
+    ),
+    AutoRoute(
+      page: ReportRoute.page,
+      path: '/report',
+      children: [AutoRoute(page: ReportFinanceRoute.page, path: 'finance')],
+    ),
+
+    AutoRoute(
+      page: WargaRoute.page,
+      path: '/warga',
+      children: [
+        AutoRoute(page: WargaDaftarRoute.page, path: 'daftar'),
+        AutoRoute(page: WargaTambahRoute.page, path: 'tambah'),
+      ],
+    ),
     AutoRoute(page: KeluargaRoute.page, path: '/keluarga'),
 
+    AutoRoute(
+      page: RumahRoute.page,
+      path: '/rumah',
+      children: [
+        AutoRoute(page: RumahDaftarRoute.page, path: 'daftar'),
+        AutoRoute(page: RumahTambahRoute.page, path: 'tambah'),
+      ],
+    ),
+
     // === PENGELUARAN ===
-    AutoRoute(page: PengeluaranRoute.page, path: '/pengeluaran', children: [
-      AutoRoute(page: PengeluaranDaftarRoute.page, path: 'daftar'),
-      AutoRoute(page: PengeluaranTambahRoute.page, path: 'tambah'),
-    ]),
+    AutoRoute(
+      page: PengeluaranRoute.page,
+      path: '/pengeluaran',
+      children: [
+        AutoRoute(page: PengeluaranDaftarRoute.page, path: 'daftar'),
+        AutoRoute(page: PengeluaranTambahRoute.page, path: 'tambah'),
+      ],
+    ),
 
     // === LAPORAN KEUANGAN ===
-    AutoRoute(page: LaporanRoute.page, path: '/laporan', children: [
-      AutoRoute(page: LaporanPemasukanRoute.page, path: 'pemasukan'),
-      AutoRoute(page: LaporanPengeluaranRoute.page, path: 'pengeluaran'),
-      AutoRoute(page: LaporanCetakRoute.page, path: 'cetak'),
-    ]), 
+    AutoRoute(
+      page: LaporanRoute.page,
+      path: '/laporan',
+      children: [
+        AutoRoute(page: LaporanPemasukanRoute.page, path: 'pemasukan'),
+        AutoRoute(page: LaporanPengeluaranRoute.page, path: 'pengeluaran'),
+        AutoRoute(page: LaporanCetakRoute.page, path: 'cetak'),
+      ],
+    ),
 
     // === KEGIATAN & BROADCAST ===
-    AutoRoute(page: KegiatanDanBroadcastRoute.page, path: '/kegiatandanbroadcast', children: [  
-      AutoRoute(page: KegiatanDaftarRoute.page, path: 'kegiatan_daftar'),
-      AutoRoute(page: KegiatanTambahRoute.page, path: 'kegiatan_tambah'),
-      AutoRoute(page: BroadcastDaftarRoute.page, path: 'broadcast_daftar'),
-      AutoRoute(page: BroadcastTambahRoute.page, path: 'broadcast_masuk'),
-    ]),
+    AutoRoute(
+      page: KegiatanDanBroadcastRoute.page,
+      path: '/kegiatandanbroadcast',
+      children: [
+        AutoRoute(page: KegiatanDaftarRoute.page, path: 'kegiatan_daftar'),
+        AutoRoute(page: KegiatanTambahRoute.page, path: 'kegiatan_tambah'),
+        AutoRoute(page: BroadcastDaftarRoute.page, path: 'broadcast_daftar'),
+        AutoRoute(page: BroadcastTambahRoute.page, path: 'broadcast_masuk'),
+      ],
+    ),
 
-    AutoRoute(page: PesanWargaRoute.page, path: '/pesanWarga', children: [
-  AutoRoute(page: AspirasiRoute.page, path: 'aspirasi'),
- ]),
- AutoRoute(page: PenerimaanWargaRoute.page, path: '/penerimaanWarga', children: [
- AutoRoute(page: PenerimaanRoute.page, path: 'penerimaan'),
- ]),
+    AutoRoute(
+      page: PesanWargaRoute.page,
+      path: '/pesanWarga',
+      children: [AutoRoute(page: AspirasiRoute.page, path: 'aspirasi')],
+    ),
+    AutoRoute(
+      page: PenerimaanWargaRoute.page,
+      path: '/penerimaanWarga',
+      children: [AutoRoute(page: PenerimaanRoute.page, path: 'penerimaan')],
+    ),
 
     AutoRoute(page: KeluargaRoute.page, path: '/keluarga'),
   ];
