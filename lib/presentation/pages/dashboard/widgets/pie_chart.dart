@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/models/finance_model.dart';
-import 'package:jawara/core/utils/formatter_util.dart';
+import 'package:jawara/core/models/catergory_data.dart';
 
 class PieChart extends StatelessWidget {
   final String title;
@@ -18,10 +17,11 @@ class PieChart extends StatelessWidget {
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Judul
             Text(
               title,
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
@@ -29,61 +29,67 @@ class PieChart extends StatelessWidget {
                   ),
             ),
             const SizedBox(height: 16),
-            SizedBox(
-              height: 200,
-              child: Row(
-                children: [
-                  // Legend
-                  Expanded(
-                    flex: 2,
-                    child: Column(
-                      children: data.map((category) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 4.0),
-                          child: Row(
-                            children: [
-                              Container(
-                                width: 12,
-                                height: 12,
-                                decoration: BoxDecoration(
-                                  color: category.color,
-                                  shape: BoxShape.circle,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Text(
-                                  category.category,
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                '${category.percentage.toStringAsFixed(0)}%',
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      }).toList(),
+
+            // Grid Keterangan (2 kolom)
+            GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                mainAxisSpacing: 8,
+                crossAxisSpacing: 12,
+                childAspectRatio: 4,
+              ),
+              itemCount: data.length,
+              itemBuilder: (context, index) {
+                final category = data[index];
+                return Row(
+                  children: [
+                    Container(
+                      width: 12,
+                      height: 12,
+                      decoration: BoxDecoration(
+                        color: category.color,
+                        shape: BoxShape.circle,
+                      ),
                     ),
-                  ),
-                  // Chart visualization
-                  Expanded(
-                    flex: 3,
-                    child: CustomPaint(
-                      size: const Size(120, 120),
-                      painter: _PieChartPainter(data: data),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        category.category,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
+                    const SizedBox(width: 4),
+                    Text(
+                      '${category.percentage.toStringAsFixed(0)}%',
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
+
+            const SizedBox(height: 28), 
+
+            // Chart di bawah keterangan (posisi lebih tengah dan longgar)
+            Center(
+              child: SizedBox(
+                height: 200, 
+                width: 200,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0), // ruang di sekitar chart
+                  child: CustomPaint(
+                    painter: _PieChartPainter(data: data),
                   ),
-                ],
+                ),
               ),
             ),
           ],
@@ -107,8 +113,9 @@ class _PieChartPainter extends CustomPainter {
     double startAngle = -90 * (3.141592653589793 / 180);
 
     for (var category in data) {
-      final sweepAngle = (category.percentage / total) * 360 * (3.141592653589793 / 180);
-      
+      final sweepAngle =
+          (category.percentage / total) * 360 * (3.141592653589793 / 180);
+
       final paint = Paint()
         ..color = category.color
         ..style = PaintingStyle.fill;
@@ -124,11 +131,10 @@ class _PieChartPainter extends CustomPainter {
       startAngle += sweepAngle;
     }
 
-    // Draw center circle for donut effect
+    // Donut hole
     final centerPaint = Paint()
       ..color = Colors.white
       ..style = PaintingStyle.fill;
-    
     canvas.drawCircle(center, radius * 0.6, centerPaint);
   }
 
