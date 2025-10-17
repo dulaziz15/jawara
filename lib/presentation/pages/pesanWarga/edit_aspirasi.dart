@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-// Sesuaikan import ini
-import 'aspirasi.dart'; 
+import 'aspirasi.dart';
 
 class EditAspirasiPage extends StatefulWidget {
   final AspirationData item;
@@ -13,127 +12,116 @@ class EditAspirasiPage extends StatefulWidget {
 
 class _EditAspirasiPageState extends State<EditAspirasiPage> {
   late TextEditingController _judulController;
-  late TextEditingController _pengirimController;
-  late TextEditingController _tanggalController;
-  late TextEditingController _deskripsiController; 
+  late TextEditingController _deskripsiController;
   String _status = '';
 
-  // Menggunakan opsi status dari screenshot (Diterima, Pending, Diproses, Selesai)
-  final List<String> _statusOptions = ['Diterima', 'Pending', 'Diproses', 'Selesai']; 
+  final List<String> _statusOptions = ['Diterima', 'Pending', 'Diproses', 'Selesai'];
 
   @override
   void initState() {
     super.initState();
-    // Inisialisasi Controller
     _judulController = TextEditingController(text: widget.item.judul);
-    _pengirimController = TextEditingController(text: widget.item.pengirim);
-    _tanggalController = TextEditingController(text: widget.item.tanggal);
-    _deskripsiController = TextEditingController(text: widget.item.deskripsi); 
-    
-    // Inisialisasi Status. Jika status item tidak ada di _statusOptions, pakai Pending.
-    _status = _statusOptions.contains(widget.item.status) ? widget.item.status : 'Pending'; 
+    _deskripsiController = TextEditingController(text: widget.item.deskripsi);
+    _status = _statusOptions.contains(widget.item.status) ? widget.item.status : 'Pending';
   }
 
   @override
   void dispose() {
     _judulController.dispose();
-    _pengirimController.dispose();
-    _tanggalController.dispose();
     _deskripsiController.dispose();
     super.dispose();
   }
 
-  // FUNGSI INI HANYA MELAKUKAN NAVIGASI KEMBALI
   void _saveChanges() {
-    Navigator.pop(context); 
+    Navigator.pop(context); // Hanya navigasi kembali
   }
 
-  // Gaya Input yang sangat sederhana
-  InputDecoration _simpleInputDecoration(String label) {
+  InputDecoration _inputDecoration(String label) {
     return InputDecoration(
       labelText: label,
-      border: const OutlineInputBorder(), // Border standar
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey.shade200,
       appBar: AppBar(
-        title: const Text('Edit Informasi Aspirasi Warga'), // Sesuai screenshot
         backgroundColor: Colors.deepPurple,
-        iconTheme: const IconThemeData(color: Colors.white), 
+        elevation: 4,
+        iconTheme: const IconThemeData(color: Colors.white), // panah back putih
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: const Text(
+          'Edit Aspirasi Warga',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),
+        ),
       ),
-      
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Judul Pesan
-            const Text('Judul Pesan', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-            const SizedBox(height: 8),
-            TextField(
-              controller: _judulController,
-              decoration: const InputDecoration(border: OutlineInputBorder(), isDense: true),
-            ),
-            
-            const SizedBox(height: 20),
-            
-            // Deskripsi Pesan
-            const Text('Deskripsi Pesan', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-            const SizedBox(height: 8),
-            TextField(
-              controller: _deskripsiController,
-              maxLines: 4,
-              minLines: 2,
-              decoration: const InputDecoration(border: OutlineInputBorder(), isDense: true),
-            ),
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.shade300,
+                blurRadius: 8,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Judul Pesan
+              TextField(
+                controller: _judulController,
+                decoration: _inputDecoration('Judul Pesan'),
+              ),
+              const SizedBox(height: 16),
 
-            const SizedBox(height: 20),
-            
-            // Status
-            const Text('Status', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-            const SizedBox(height: 8),
-            DropdownButtonFormField<String>(
-              value: _status,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 5), // Sesuaikan padding
-                isDense: true,
+              // Deskripsi Pesan
+              TextField(
+                controller: _deskripsiController,
+                maxLines: 4,
+                minLines: 2,
+                decoration: _inputDecoration('Deskripsi Pesan'),
               ),
-              items: _statusOptions
-                  .map(
-                    (s) => DropdownMenuItem(
-                      value: s,
-                      child: Text(s),
-                    ),
-                  )
-                  .toList(),
-              onChanged: (val) => setState(() => _status = val ?? _status),
-            ),
-            
-            const SizedBox(height: 30),
-            
-            // Tombol Update
-            ElevatedButton(
-              onPressed: _saveChanges, // Hanya navigasi kembali
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.deepPurple,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 12),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
+              const SizedBox(height: 16),
+
+              // Status Dropdown
+              DropdownButtonFormField<String>(
+                value: _status,
+                decoration: _inputDecoration('Status'),
+                items: _statusOptions
+                    .map((s) => DropdownMenuItem(value: s, child: Text(s)))
+                    .toList(),
+                onChanged: (val) => setState(() => _status = val ?? _status),
+              ),
+              const SizedBox(height: 24),
+
+              // Tombol Update
+              ElevatedButton(
+                onPressed: _saveChanges,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.deepPurple,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  elevation: 4,
                 ),
-                elevation: 4,
+                child: const Text(
+                  'Update',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                ),
               ),
-              child: const Text(
-                'Update',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

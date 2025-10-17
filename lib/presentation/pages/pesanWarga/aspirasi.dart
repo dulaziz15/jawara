@@ -5,7 +5,6 @@ import 'edit_aspirasi.dart';
 import 'delete_aspirasi.dart';
 import 'detail_aspirasi.dart';
 
-// --- DATA MODEL ---
 class AspirationData {
   final int no;
   final String pengirim;
@@ -35,43 +34,47 @@ class AspirasiPage extends StatefulWidget {
 class _AspirasiPageState extends State<AspirasiPage>
     with TickerProviderStateMixin {
   final List<AspirationData> _data = [
-    AspirationData(
+    const AspirationData(
       no: 1,
       pengirim: 'Habibie Ed Dien',
-      judul: 'tes aspirasi pertama',
-      deskripsi : 'aku adalah anak gembala, selalu riang serta gembira karena rajin membaca',
+      judul: 'Tes aspirasi pertama',
+      deskripsi:
+          'Aku adalah anak gembala, selalu riang serta gembira karena rajin membaca',
       tanggal: '10-10-2025',
       status: 'Pending',
     ),
-    AspirationData(
+    const AspirationData(
       no: 2,
       pengirim: 'Budi Santoso',
       judul: 'Lampu Jalan di Blok A Mati',
-      deskripsi : 'kalau ada sembilan nyawa mau sama mu saja semuanya ini dada isinya kamu semua',
+      deskripsi:
+          'Kalau ada sembilan nyawa mau sama mu saja semuanya ini dada isinya kamu semua',
       tanggal: '11-10-2025',
       status: 'Diproses',
     ),
-    AspirationData(
+    const AspirationData(
       no: 3,
       pengirim: 'Siti Aisyah',
       judul: 'Masalah Kebersihan Selokan',
-      deskripsi : 'if the sun refuse to the shine baby would i still be in love with u',
+      deskripsi:
+          'If the sun refuse to shine, would I still be in love with you?',
       tanggal: '12-10-2025',
       status: 'Selesai',
     ),
-    AspirationData(
+    const AspirationData(
       no: 4,
       pengirim: 'Joko Widodo',
       judul: 'Perlu Perbaikan Jembatan Kecil',
-      deskripsi : 'antara aku kamu dan samudra kita berbagi tawa dan bahagia tak kenal siang dan malam',
+      deskripsi:
+          'Antara aku, kamu, dan samudra kita berbagi tawa dan bahagia tak kenal siang dan malam',
       tanggal: '13-10-2025',
       status: 'Pending',
     ),
-    AspirationData(
+    const AspirationData(
       no: 5,
       pengirim: 'Megawati Soekarno',
-      judul: 'polinema jos jos jos josjosjosjosjosjosjosjosjososs',
-      deskripsi : 'eufbebfwiefbiabcoebfuwe',
+      judul: 'Polinema Jos Jos Jos',
+      deskripsi: 'Eufbebfwiefbiabcoebfuwe',
       tanggal: '14-10-2025',
       status: 'Diproses',
     ),
@@ -101,57 +104,7 @@ class _AspirasiPageState extends State<AspirasiPage>
     );
   }
 
-  // --- Widget Detail Row ---
-  Widget detailRow(String label, Widget value, {bool expand = false}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 80,
-            child: Text(
-              '$label:',
-              style: const TextStyle(fontWeight: FontWeight.w600),
-            ),
-          ),
-          expand ? Expanded(child: value) : value,
-        ],
-      ),
-    );
-  }
-
-  // --- Widget Pagination ---
-  Widget _pagination() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.chevron_left)),
-          const SizedBox(width: 8),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            decoration: BoxDecoration(
-              color: Colors.deepPurple,
-              borderRadius: BorderRadius.circular(6),
-            ),
-            child: const Text(
-              '1',
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          const SizedBox(width: 8),
-          IconButton(onPressed: () {}, icon: const Icon(Icons.chevron_right)),
-        ],
-      ),
-    );
-  }
-
-  // --- Widget Baris Data ---
+  // --- Widget Data Row ---
   Widget _dataRow(AspirationData item, int index) {
     final isExpanded = index == _expandedIndex;
 
@@ -173,74 +126,94 @@ class _AspirasiPageState extends State<AspirasiPage>
                     style: const TextStyle(fontWeight: FontWeight.w500),
                   ),
                 ),
-                PopupMenuButton<String>(
-                  icon: const Icon(Icons.more_vert, color: Colors.deepPurple),
-                  onSelected: (value) {
-                    switch (value) {
-                      case 'detail':
-                        showDetailModal(
-                          context,
-                          item,
-                        ); // panggil modal dari file lain
-                        break;
-                      case 'edit':
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => EditAspirasiPage(item: item),
-                          ),
-                        );
-                        break;
-                      case 'delete':
-                        showDeleteConfirmation(context, item, () {
-                          setState(() => _data.remove(item));
-                        });
-                        break;
-                    }
-                  },
-                  itemBuilder: (_) => [
-                    const PopupMenuItem(value: 'detail', child: Text('Detail')),
-                    const PopupMenuItem(value: 'edit', child: Text('Edit')),
-                    const PopupMenuItem(value: 'delete', child: Text('Hapus')),
-                  ],
+                Icon(
+                  isExpanded
+                      ? Icons.keyboard_arrow_up
+                      : Icons.keyboard_arrow_down,
+                  color: Colors.deepPurple,
                 ),
               ],
             ),
           ),
         ),
-        // Detail Animated
+
+        // Detail Row
         AnimatedSize(
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
           child: isExpanded
-              ? Container(
-                  color: Colors.white,
-                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      detailRow(
-                        'Judul',
-                        Text(
-                          item.judul,
-                          style: const TextStyle(color: Colors.black54),
+              ? Stack(
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      color: Colors.white,
+                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Judul
+                          Text(
+                            item.judul,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black87,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          // Tanggal
+                          Text(
+                            'Tanggal: ${item.tanggal}',
+                            style: const TextStyle(color: Colors.black54),
+                          ),
+                          const SizedBox(height: 4),
+                          // Status
+                          Row(
+                            children: [
+                              const Text(
+                                'Status: ',
+                                style: TextStyle(fontWeight: FontWeight.w600),
+                              ),
+                              statusBadge(item.status),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    // Popup Menu (titik tiga) di kanan atas
+                    Positioned(
+                      top: 0,
+                      right: 0,
+                      child: PopupMenuButton<String>(
+                        icon: const Icon(
+                          Icons.more_vert,
+                          color: Colors.deepPurple,
                         ),
+                        onSelected: (value) {
+                          switch (value) {
+                            case 'detail':
+                              showDetailModal(context, item);
+                              break;
+                            case 'edit':
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => EditAspirasiPage(item: item),
+                                ),
+                              );
+                              break;
+                            case 'delete':
+                              showDeleteConfirmation(context, item);
+                              break;
+                          }
+                        },
+                        itemBuilder: (_) => const [
+                          PopupMenuItem(value: 'detail', child: Text('Detail')),
+                          PopupMenuItem(value: 'edit', child: Text('Edit')),
+                          PopupMenuItem(value: 'delete', child: Text('Hapus')),
+                        ],
                       ),
-                      detailRow(
-                        'Tanggal',
-                        Text(
-                          item.tanggal,
-                          style: const TextStyle(color: Colors.black54),
-                        ),
-                        expand: true,
-                      ),
-                      detailRow(
-                        'Status',
-                        statusBadge(item.status),
-                        expand: false,
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 )
               : const SizedBox.shrink(),
         ),
@@ -248,6 +221,46 @@ class _AspirasiPageState extends State<AspirasiPage>
         if (index < _data.length - 1)
           Divider(height: 1, color: Colors.grey.shade300),
       ],
+    );
+  }
+
+  // --- Widget Pagination ---
+  Widget _pagination() {
+    final int itemsPerPage = 5;
+    final int totalPages = (_data.length / itemsPerPage).ceil();
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          IconButton(onPressed: () {}, icon: const Icon(Icons.chevron_left)),
+          const SizedBox(width: 8),
+          for (int i = 1; i <= totalPages; i++)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.deepPurple,
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Text(
+                  '$i',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          const SizedBox(width: 8),
+          IconButton(onPressed: () {}, icon: const Icon(Icons.chevron_right)),
+        ],
+      ),
     );
   }
 
@@ -273,7 +286,12 @@ class _AspirasiPageState extends State<AspirasiPage>
                   ),
                 ),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => const FilterPesanWargaDialog(),
+                    );
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.deepPurple,
                     padding: const EdgeInsets.all(12),
@@ -288,76 +306,74 @@ class _AspirasiPageState extends State<AspirasiPage>
             const SizedBox(height: 16),
 
             // Tabel Container
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.shade300,
-                      blurRadius: 8,
-                      offset: const Offset(0, 4),
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.shade300,
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Column(
+                children: [
+                  // Header Tabel
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.deepPurple.shade50,
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(8),
+                      ),
                     ),
-                  ],
-                ),
-                child: Column(
-                  children: [
-                    // Header Tabel
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.deepPurple.shade50,
-                        borderRadius: const BorderRadius.vertical(
-                          top: Radius.circular(8),
-                        ),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                      child: const Row(
-                        children: [
-                          SizedBox(
-                            width: 40,
-                            child: Text(
-                              'NO',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.deepPurple,
-                              ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                    child: const Row(
+                      children: [
+                        SizedBox(
+                          width: 40,
+                          child: Text(
+                            'NO',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.deepPurple,
                             ),
                           ),
-                          Expanded(
-                            child: Text(
-                              'PENGIRIM',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.deepPurple,
-                              ),
+                        ),
+                        Expanded(
+                          child: Text(
+                            'PENGIRIM',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.deepPurple,
                             ),
                           ),
-                          SizedBox(width: 40),
-                        ],
-                      ),
-                    ),
-                    // Data Rows
-                    Expanded(
-                      child: SingleChildScrollView(
-                        controller: _scrollController,
-                        child: Column(
-                          children: List.generate(
-                            _data.length,
-                            (index) => _dataRow(_data[index], index),
-                          ),
                         ),
+                        SizedBox(width: 40),
+                      ],
+                    ),
+                  ),
+
+                  // Data Rows scrollable
+                  SingleChildScrollView(
+                    controller: _scrollController,
+                    child: Column(
+                      children: List.generate(
+                        _data.length,
+                        (index) => _dataRow(_data[index], index),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+
+                  // Pagination langsung di bawah tabel
+                  _pagination(),
+                ],
               ),
             ),
-            // Pagination
-            _pagination(),
           ],
         ),
       ),
