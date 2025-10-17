@@ -234,40 +234,80 @@ class RegisterPage extends StatelessWidget {
                     ),
                     const SizedBox(height: 15),
                     const Text("Jenis Kelamin"),
-                    DropdownButton<String>(
+                    const SizedBox(height: 5),
+                    DropdownButtonFormField<String>(
                       isExpanded: true,
-                      value: null,
-                      hint: const Text("Pilih Jenis Kelamin"),
-                      items: <String>['Laki-laki', 'Perempuan'].map((
-                        String value,
-                      ) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                      onChanged: (String? newValue) {
-                        // Handle change
-                      },
+                      decoration: const InputDecoration(
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(8)),
+                          borderSide: BorderSide(
+                            color: Color.fromARGB(255, 216, 216, 216),
+                            width: 0,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(8)),
+                          borderSide: BorderSide(
+                            color: Color(0xFF6C63FF),
+                            width: 1.5,
+                          ),
+                        ),
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: 15,
+                          vertical: 12,
+                        ),
+                      ),
+                      hint: const Text("-- Pilih Jenis Kelamin --"),
+                      items: const [
+                        DropdownMenuItem(
+                          value: "Laki-laki",
+                          child: Text("Laki-Laki"),
+                        ),
+                        DropdownMenuItem(
+                          value: "Perempuan",
+                          child: Text("Perempuan"),
+                        ),
+                      ],
+                      onChanged: (String? newValue) {},
                     ),
                     const SizedBox(height: 15),
                     const Text("Pilih Rumah Yang Sudah Ada"),
                     const SizedBox(height: 5),
-                    DropdownButton<String>(
+                    const SizedBox(height: 5),
+                    DropdownButtonFormField<String>(
                       isExpanded: true,
-                      value: null,
-                      hint: const Text("Pilih Rumah"),
-                      items: <String>['Rumah A', 'Rumah B', 'Rumah C'].map((
-                        String value,
-                      ) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                      onChanged: (String? newValue) {
-                        // Handle change
-                      },
+                      decoration: const InputDecoration(
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(8)),
+                          borderSide: BorderSide(
+                            color: Color.fromARGB(255, 216, 216, 216),
+                            width: 0,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(8)),
+                          borderSide: BorderSide(
+                            color: Color(0xFF6C63FF),
+                            width: 1.5,
+                          ),
+                        ),
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: 15,
+                          vertical: 12,
+                        ),
+                      ),
+                      hint: const Text("-- Pilih Rumah --"),
+                      items: const [
+                        DropdownMenuItem(
+                          value: "Rumah A",
+                          child: Text("Rumah 2"),
+                        ),
+                        DropdownMenuItem(
+                          value: "Rumah B",
+                          child: Text("Rumah B"),
+                        ),
+                      ],
+                      onChanged: (String? newValue) {},
                     ),
                     const SizedBox(height: 2),
                     const Text(
@@ -303,21 +343,45 @@ class RegisterPage extends StatelessWidget {
                     const SizedBox(height: 15),
                     const Text("Status Kepemilikikan rumah"),
                     const SizedBox(height: 5),
-                    DropdownButton<String>(
+                    const SizedBox(height: 5),
+                    DropdownButtonFormField<String>(
                       isExpanded: true,
-                      value: null,
-                      hint: const Text("Pilih Status Kepemilikan"),
-                      items: <String>['Milik Sendiri', 'Sewa', 'Kontrak'].map((
-                        String value,
-                      ) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                      onChanged: (String? newValue) {
-                        // Handle change
-                      },
+                      decoration: const InputDecoration(
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(8)),
+                          borderSide: BorderSide(
+                            color: Color.fromARGB(255, 216, 216, 216),
+                            width: 0,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(8)),
+                          borderSide: BorderSide(
+                            color: Color(0xFF6C63FF),
+                            width: 1.5,
+                          ),
+                        ),
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: 15,
+                          vertical: 12,
+                        ),
+                      ),
+                      hint: const Text("-- Pilih Status Kepemilikan --"),
+                      items: const [
+                        DropdownMenuItem(
+                          value: "Milik Sendiri",
+                          child: Text("Milik Sendiri"),
+                        ),
+                        DropdownMenuItem(
+                          value: "Sewa",
+                          child: Text("Sewa"),
+                        ),
+                        DropdownMenuItem(
+                          value: "Kontrak",
+                          child: Text("Kontrak"),
+                        ),
+                      ],
+                      onChanged: (String? newValue) {},
                     ),
                     const SizedBox(height: 15),
                     ImagePickerPreview(),
