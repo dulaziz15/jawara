@@ -44,7 +44,7 @@ import 'package:jawara/presentation/pages/laporan/laporan_cetak.dart';
 import 'package:jawara/presentation/pages/kegiatandanbroadcast/kegiatan_daftar.dart';
 import 'package:jawara/presentation/pages/kegiatandanbroadcast/kegiatan_tambah.dart';
 import 'package:jawara/presentation/pages/kegiatandanbroadcast/broadcast_daftar.dart';
-import 'package:jawara/presentation/pages/kegiatandanbroadcast/broadcast_masuk.dart';
+import 'package:jawara/presentation/pages/kegiatandanbroadcast/broadcast_tambah.dart';
 
 // import 'package:jawara/presentation/pages/pesan/pesan_informasi.dart';
 // import 'package:jawara/presentation/pages/penerimaan/penerimaan_daftar.dart';
@@ -100,7 +100,7 @@ class AppRouter extends _$AppRouter {
       AutoRoute(page: KegiatanDaftarRoute.page, path: 'kegiatan_daftar'),
       AutoRoute(page: KegiatanTambahRoute.page, path: 'kegiatan_tambah'),
       AutoRoute(page: BroadcastDaftarRoute.page, path: 'broadcast_daftar'),
-      AutoRoute(page: BroadcastMasukRoute.page, path: 'broadcast_masuk'),
+      AutoRoute(page: BroadcastTambahRoute.page, path: 'broadcast_masuk'),
     ]),
 
     AutoRoute(page: PesanWargaRoute.page, path: '/pesanWarga', children: [
