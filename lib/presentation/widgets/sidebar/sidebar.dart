@@ -31,7 +31,7 @@ class _SidebarState extends State<Sidebar> {
         children: [
           const DrawerHeader(
             child: Center(
-              child: Text("Jawara Pintar.",
+              child: Text("Jawara Pintar",
                   style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
             ),
           ),
@@ -43,6 +43,10 @@ class _SidebarState extends State<Sidebar> {
             initiallyExpanded: dashboardExpanded,
             onExpansionChanged: (v) => setState(() => dashboardExpanded = v),
             children: [
+              ListTile(
+                title: const Text("Main Dashboard"),
+                onTap: () => context.router.pushNamed('/dashboard/main'),
+              ),
               ListTile(
                 title: const Text("Keuangan"),
                 onTap: () => context.router.pushNamed('/dashboard/keuangan'),

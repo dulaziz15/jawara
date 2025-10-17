@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jawara/core/models/catergory_data.dart';
 
 class FinanceData {
   final double totalIncome;
@@ -104,18 +105,4 @@ class MonthlyData {
   final double amount;
 
   MonthlyData({required this.month, required this.amount});
-}
-
-class CategoryData {
-  final String category;
-  final double amount;
-  final double percentage;
-  final Color color;
-
-  CategoryData({
-    required this.category,
-    required this.amount,
-    required this.percentage,
-    required this.color,
-  });
 }
