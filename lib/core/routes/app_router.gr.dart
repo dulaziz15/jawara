@@ -48,9 +48,11 @@ abstract class _$AppRouter extends RootStackRouter {
       );
     },
     DashboardKeuanganRoute.name: (routeData) {
+      final args = routeData.argsAs<DashboardKeuanganRouteArgs>(
+          orElse: () => const DashboardKeuanganRouteArgs());
       return AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: DashboardKeuanganPage(),
+        child: DashboardKeuanganPage(key: args.key),
       );
     },
     DashboardRoute.name: (routeData) {
@@ -167,6 +169,18 @@ abstract class _$AppRouter extends RootStackRouter {
         child: const ReportPage(),
       );
     },
+    RumahDaftarRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const RumahDaftarPage(),
+      );
+    },
+    RumahTambahRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const RumahTambahPage(),
+      );
+    },
     SettingsRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
@@ -281,16 +295,31 @@ class DashboardKependudukanRoute extends PageRouteInfo<void> {
 
 /// generated route for
 /// [DashboardKeuanganPage]
-class DashboardKeuanganRoute extends PageRouteInfo<void> {
-  const DashboardKeuanganRoute({List<PageRouteInfo>? children})
-      : super(
+class DashboardKeuanganRoute extends PageRouteInfo<DashboardKeuanganRouteArgs> {
+  DashboardKeuanganRoute({
+    Key? key,
+    List<PageRouteInfo>? children,
+  }) : super(
           DashboardKeuanganRoute.name,
+          args: DashboardKeuanganRouteArgs(key: key),
           initialChildren: children,
         );
 
   static const String name = 'DashboardKeuanganRoute';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static const PageInfo<DashboardKeuanganRouteArgs> page =
+      PageInfo<DashboardKeuanganRouteArgs>(name);
+}
+
+class DashboardKeuanganRouteArgs {
+  const DashboardKeuanganRouteArgs({this.key});
+
+  final Key? key;
+
+  @override
+  String toString() {
+    return 'DashboardKeuanganRouteArgs{key: $key}';
+  }
 }
 
 /// generated route for
@@ -555,6 +584,34 @@ class ReportRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'ReportRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [RumahDaftarPage]
+class RumahDaftarRoute extends PageRouteInfo<void> {
+  const RumahDaftarRoute({List<PageRouteInfo>? children})
+      : super(
+          RumahDaftarRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'RumahDaftarRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [RumahTambahPage]
+class RumahTambahRoute extends PageRouteInfo<void> {
+  const RumahTambahRoute({List<PageRouteInfo>? children})
+      : super(
+          RumahTambahRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'RumahTambahRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }
