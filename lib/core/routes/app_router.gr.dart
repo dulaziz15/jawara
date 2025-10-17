@@ -27,10 +27,10 @@ abstract class _$AppRouter extends RootStackRouter {
         child: const BroadcastDaftarPage(),
       );
     },
-    BroadcastMasukRoute.name: (routeData) {
+    BroadcastTambahRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const BroadcastMasukPage(),
+        child: const BroadcastTambahPage(),
       );
     },
     DashboardKegiatanRoute.name: (routeData) {
@@ -223,15 +223,15 @@ class BroadcastDaftarRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [BroadcastMasukPage]
-class BroadcastMasukRoute extends PageRouteInfo<void> {
-  const BroadcastMasukRoute({List<PageRouteInfo>? children})
+/// [BroadcastTambahPage]
+class BroadcastTambahRoute extends PageRouteInfo<void> {
+  const BroadcastTambahRoute({List<PageRouteInfo>? children})
       : super(
-          BroadcastMasukRoute.name,
+          BroadcastTambahRoute.name,
           initialChildren: children,
         );
 
-  static const String name = 'BroadcastMasukRoute';
+  static const String name = 'BroadcastTambahRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }
