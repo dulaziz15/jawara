@@ -20,32 +20,39 @@ class StatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 3,
+      color: Colors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // === Ikon + Arah ===
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Icon(icon, color: valueColor, size: 24),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
                     color: valueColor.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(
-                    valueColor == Colors.green ? Icons.arrow_upward : Icons.arrow_downward,
+                    valueColor == Colors.green
+                        ? Icons.arrow_upward
+                        : Icons.arrow_downward,
                     color: valueColor,
                     size: 16,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
+
+            // === Judul ===
             Text(
               title,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -53,12 +60,17 @@ class StatCard extends StatelessWidget {
                     fontWeight: FontWeight.w500,
                   ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 6),
+
+            // === Nilai ===
             Text(
-              isCurrency ? FormatterUtil.formatCurrency(value) : value.toStringAsFixed(0),
+              isCurrency
+                  ? FormatterUtil.formatCurrency(value)
+                  : value.toStringAsFixed(0),
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     color: valueColor,
                     fontWeight: FontWeight.bold,
+                    fontSize: 28,
                   ),
             ),
           ],
