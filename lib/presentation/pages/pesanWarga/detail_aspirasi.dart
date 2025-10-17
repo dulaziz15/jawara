@@ -1,69 +1,90 @@
 import 'package:flutter/material.dart';
-import 'aspirasi.dart';
+import 'model_aspirasi.dart';
 
-Widget detailRow(String label, Widget value, {bool expand = true}) {
+void showDetailModal(BuildContext context, AspirationData item) {
+  showDialog(
+    context: context,
+    builder: (BuildContext dialogContext) {
+      return AlertDialog(
+        title: const Text('Detail Aspirasi'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _detailRow('Judul', item.judul),
+            _detailRow('Deskripsi', item.deskripsi),
+            _detailRowWithStatus('Status', item.status),
+            _detailRow('Dikirim oleh', item.pengirim),
+            _detailRow('Tanggal', item.tanggal),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: const Text('Tutup'),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+Widget _detailRow(String label, String value) {
   return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 4),
+    padding: const EdgeInsets.only(bottom: 8),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+            width: 100,
+            child: Text('$label:', style: const TextStyle(fontWeight: FontWeight.w600))),
+        Expanded(child: Text(value)),
+      ],
+    ),
+  );
+}
+
+Widget _detailRowWithStatus(String label, String status) {
+  return Padding(
+    padding: const EdgeInsets.only(bottom: 8),
     child: Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(
           width: 100,
+          child: Text('$label:', style: const TextStyle(fontWeight: FontWeight.w600)),
+        ),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          decoration: BoxDecoration(
+            color: _getStatusColor(status),
+            borderRadius: BorderRadius.circular(20),
+          ),
           child: Text(
-            '$label:',
-            style: const TextStyle(fontWeight: FontWeight.w600),
+            status,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
-        expand ? Expanded(child: value) : value,
       ],
     ),
   );
 }
 
-Widget statusBadge(String status) {
-  // ... (kode statusBadge Anda tetap sama)
-  final color = switch (status.toLowerCase()) {
-    'pending' => Colors.yellow.shade200,
-    'diproses' => Colors.blue.shade200,
-    'selesai' => Colors.green.shade200,
-    _ => Colors.grey.shade300,
-  };
-  return Container(
-    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-    decoration: BoxDecoration(
-      color: color,
-      borderRadius: BorderRadius.circular(4),
-    ),
-    child: Text(
-      status,
-      style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
-    ),
-  );
-}
-
-void showDetailModal(BuildContext context, AspirationData item) {
-  showDialog(
-    context: context,
-    builder: (dialogContext) => AlertDialog(
-      title: const Text('Detail Aspirasi'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          detailRow('Judul', Text(item.judul), expand: true),
-          detailRow('Deskripsi', Text(item.deskripsi), expand: true),
-          detailRow('Status', statusBadge(item.status), expand: false),
-          detailRow('Dibuat oleh', Text(item.pengirim), expand: true),
-          detailRow('Tanggal', Text(item.tanggal), expand: true),
-        ],
-      ),
-      actions: [
-        TextButton(
-          onPressed: () =>
-              Navigator.of(dialogContext).pop(), // Hanya menutup popup
-          child: const Text('Tutup'),
-        ),
-      ],
-    ),
-  );
+Color _getStatusColor(String status) {
+  switch (status.toLowerCase()) {
+    case 'pending':
+      return Colors.orange;
+    case 'diproses':
+      return Colors.blue;
+    case 'selesai':
+      return Colors.green;
+    case 'ditolak':
+      return Colors.red;
+    default:
+      return Colors.grey;
+  }
 }

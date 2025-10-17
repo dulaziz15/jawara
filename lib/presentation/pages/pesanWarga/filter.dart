@@ -1,15 +1,38 @@
 import 'package:flutter/material.dart';
 
-class FilterPesanWargaDialog extends StatelessWidget {
-  const FilterPesanWargaDialog({super.key});
+typedef ApplyFilterCallback = void Function(String newStatus);
 
+class FilterPesanWargaDialog extends StatefulWidget {
+  final String initialStatus;
+  final ApplyFilterCallback onApplyFilter;
+
+  const FilterPesanWargaDialog({
+    super.key,
+    required this.initialStatus,
+    required this.onApplyFilter,
+  });
+
+  @override
+  State<FilterPesanWargaDialog> createState() => _FilterPesanWargaDialogState();
+}
+
+class _FilterPesanWargaDialogState extends State<FilterPesanWargaDialog> {
+  String? _selectedStatus;
   final List<String> statusOptions = const [
-    '-- Pilih Status --',
+    'Semua',
     'Pending',
     'Diproses',
     'Selesai',
     'Ditolak',
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedStatus = widget.initialStatus == '-- Pilih Status --' 
+        ? 'Semua' 
+        : widget.initialStatus;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,11 +50,11 @@ class FilterPesanWargaDialog extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text(
-                  'Filter Pesan Warga',
+                  'Filter Data',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: Colors.deepPurple,
+                    color: Color(0xFF4F6DF5),
                   ),
                 ),
                 IconButton(
@@ -41,94 +64,97 @@ class FilterPesanWargaDialog extends StatelessWidget {
               ],
             ),
             const Divider(thickness: 1.2),
-            const SizedBox(height: 12),
-
-            // Judul
-            const Text('Judul', style: TextStyle(fontWeight: FontWeight.w600)),
-            const SizedBox(height: 6),
-            TextFormField(
-              decoration: InputDecoration(
-                hintText: 'Cari judul...',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide(color: Colors.grey.shade300, width: 1),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide(color: Colors.grey.shade300, width: 1),
-                ),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                filled: true,
-                fillColor: Colors.grey.shade100,
-              ),
-            ),
             const SizedBox(height: 16),
 
-            // Status
-            const Text('Status', style: TextStyle(fontWeight: FontWeight.w600)),
-            const SizedBox(height: 6),
-            DropdownButtonFormField<String>(
-              decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide(color: Colors.grey.shade300, width: 1),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide(color: Colors.grey.shade300, width: 1),
-                ),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                filled: true,
-                fillColor: Colors.grey.shade100,
+            // Pilih Status
+            const Text(
+              'Pilih Status',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
               ),
-              value: statusOptions.first,
-              items: statusOptions.map((value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
+            ),
+            const SizedBox(height: 12),
+
+            // Daftar Status
+            Column(
+              children: statusOptions.map((status) {
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Row(
+                    children: [
+                      Radio<String>(
+                        value: status,
+                        groupValue: _selectedStatus,
+                        onChanged: (String? value) {
+                          setState(() {
+                            _selectedStatus = value;
+                          });
+                        },
+                        activeColor: const Color(0xFF4F6DF5),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          status,
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                      ),
+                    ],
+                  ),
                 );
               }).toList(),
-              onChanged: (String? newValue) {},
             ),
-            const SizedBox(height: 24),
 
-            // Tombol Reset & Terapkan kecil di kiri dan kanan
+            const SizedBox(height: 20),
+            const Divider(thickness: 1),
+            const SizedBox(height: 20),
+
+            // Tombol Reset & Terapkan
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // Reset Filter (kecil & abu-abu muda)
-                OutlinedButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  style: OutlinedButton.styleFrom(
-                    backgroundColor: Colors.grey.shade100,
-                    side: BorderSide(color: Colors.grey.shade300),
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  child: Text(
-                    'Reset',
+                // Reset Filter
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                      _selectedStatus = 'Semua';
+                    });
+                    widget.onApplyFilter('Semua');
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text(
+                    'RESET',
                     style: TextStyle(
-                      color: Colors.grey.shade500,
+                      color: Colors.grey,
                       fontWeight: FontWeight.bold,
+                      fontSize: 14,
                     ),
                   ),
                 ),
 
-                // Terapkan (kecil & deepPurple)
+                // Terapkan
                 ElevatedButton(
-                  onPressed: () => Navigator.of(context).pop(),
+                  onPressed: () {
+                    if (_selectedStatus != null) {
+                      widget.onApplyFilter(_selectedStatus!);
+                      Navigator.of(context).pop();
+                    }
+                  },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.deepPurple,
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    backgroundColor: const Color(0xFF4F6DF5),
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(8),
                     ),
                   ),
                   child: const Text(
-                    'Terapkan',
-                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                    'TERAPKAN',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
                   ),
                 ),
               ],

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'aspirasi.dart';
+import 'model_aspirasi.dart';
 
 class EditAspirasiPage extends StatefulWidget {
   final AspirationData item;
@@ -33,7 +33,7 @@ class _EditAspirasiPageState extends State<EditAspirasiPage> {
   }
 
   void _saveChanges() {
-    Navigator.pop(context); // Hanya navigasi kembali
+    Navigator.pop(context);
   }
 
   InputDecoration _inputDecoration(String label) {
@@ -49,9 +49,9 @@ class _EditAspirasiPageState extends State<EditAspirasiPage> {
     return Scaffold(
       backgroundColor: Colors.grey.shade200,
       appBar: AppBar(
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: const Color(0xFF4F6DF5),
         elevation: 4,
-        iconTheme: const IconThemeData(color: Colors.white), // panah back putih
+        iconTheme: const IconThemeData(color: Colors.white),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
@@ -110,7 +110,7 @@ class _EditAspirasiPageState extends State<EditAspirasiPage> {
               ElevatedButton(
                 onPressed: _saveChanges,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.deepPurple,
+                  backgroundColor: const Color(0xFF4F6DF5),
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                   elevation: 4,
