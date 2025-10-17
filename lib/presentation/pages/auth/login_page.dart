@@ -87,7 +87,7 @@ class LoginPage extends StatelessWidget {
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(onPressed: () {
-                        context.router.replaceNamed('/dashboard/keuangan');
+                        context.router.replaceNamed('/dashboard/main');
                       }, 
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF6C63FF),
