@@ -1,9 +1,11 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:jawara/core/models/finance_model.dart';
 import 'package:jawara/presentation/pages/dashboard/widgets/bar_chart.dart';
 import 'package:jawara/presentation/pages/dashboard/widgets/pie_chart.dart';
 import 'package:jawara/presentation/pages/dashboard/widgets/stat_card.dart';
 
+@RoutePage()
 class DashboardKeuanganPage extends StatelessWidget {
   DashboardKeuanganPage({super.key});
 

@@ -45,6 +45,7 @@ import 'package:jawara/presentation/pages/kegiatandanbroadcast/kegiatan_daftar.d
 import 'package:jawara/presentation/pages/kegiatandanbroadcast/kegiatan_tambah.dart';
 import 'package:jawara/presentation/pages/kegiatandanbroadcast/broadcast_daftar.dart';
 import 'package:jawara/presentation/pages/kegiatandanbroadcast/broadcast_masuk.dart';
+import 'package:jawara/presentation/pages/warga/daftar_rumah.dart';
 
 // import 'package:jawara/presentation/pages/pesan/pesan_informasi.dart';
 // import 'package:jawara/presentation/pages/penerimaan/penerimaan_daftar.dart';
@@ -53,6 +54,7 @@ import 'package:jawara/presentation/pages/kegiatandanbroadcast/broadcast_masuk.d
 
 import 'package:jawara/presentation/pages/warga/daftar_warga.dart';
 import 'package:jawara/presentation/pages/warga/keluarga.dart';
+import 'package:jawara/presentation/pages/warga/tambah_rumah.dart';
 import 'package:jawara/presentation/pages/warga/tambah_warga.dart';
 import 'package:jawara/presentation/pages/warga/warga.dart';
 
@@ -81,6 +83,11 @@ class AppRouter extends _$AppRouter {
       AutoRoute(page: WargaTambahRoute.page, path: 'tambah'),
     ]),
     AutoRoute(page: KeluargaRoute.page, path: '/keluarga'),
+
+    AutoRoute(page: WargaRoute.page, path: '/rumah', children: [
+      AutoRoute(page: RumahDaftarRoute.page, path: 'daftar'),
+      AutoRoute(page: RumahTambahRoute.page, path: 'tambah'),
+    ]),
 
     // === PENGELUARAN ===
     AutoRoute(page: PengeluaranRoute.page, path: '/pengeluaran', children: [
