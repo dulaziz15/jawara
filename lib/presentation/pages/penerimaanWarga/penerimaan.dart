@@ -1,18 +1,15 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:jawara/presentation/pages/penerimaanWarga/filter_accept.dart';
-// Import relatif untuk FilterPesanWargaDialog
-import 'filter_accept.dart'; // Asumsikan FilterPesanWargaDialog ada di filter.dart
 
-// --- DEFINISI DATA MODEL (Diselaraskan dengan Gambar) ---
+// --- DATA MODEL ---
 class RegistrationData {
   final int no;
   final String nama;
   final String nik;
   final String email;
   final String jenisKelamin; // 'L' atau 'P'
-  final String fotoIdentitasAsset; // Path asset/URL gambar
-  final String statusRegistrasi; // 'Pending' atau 'Diterima'
+  final String fotoIdentitasAsset;
+  final String statusRegistrasi;
 
   const RegistrationData({
     required this.no,
@@ -26,162 +23,227 @@ class RegistrationData {
 }
 
 @RoutePage()
-class PenerimaanPage extends StatelessWidget {
+class PenerimaanPage extends StatefulWidget {
   const PenerimaanPage({super.key});
 
-  // --- Sample Data List (Diselaraskan dengan Gambar) ---
+  @override
+  State<PenerimaanPage> createState() => _PenerimaanPageState();
+}
+
+class _PenerimaanPageState extends State<PenerimaanPage> {
+  final ScrollController _scrollController = ScrollController();
+  int? _expandedIndex;
+
   final List<RegistrationData> _data = const [
-    // Data 1 (Pending)
     RegistrationData(
       no: 1,
-      nama: 'Rendha Putra Rahmadya',
+      nama: 'Indah Dwi Ratna',
       nik: '3505115120400002',
-      email: 'rendhazuper@gmail.com',
-      jenisKelamin: 'L',
-      fotoIdentitasAsset: 'assets/id_photo_1.jpg', // Ganti dengan path asset/URL sebenarnya
+      email: 'indah20@gmail.com',
+      jenisKelamin: 'P',
+      fotoIdentitasAsset: 'assets/1.png',
       statusRegistrasi: 'Pending',
     ),
-    // Data 2 (Pending)
     RegistrationData(
       no: 2,
-      nama: 'Anti Micin',
+      nama: 'Sinta Sulistya',
       nik: '1234567890987654',
-      email: 'antimicin3@gmail.com',
-      jenisKelamin: 'L',
-      fotoIdentitasAsset: 'assets/id_photo_2.jpg', // Ganti dengan path asset/URL sebenarnya
+      email: 'Sisulis13@gmail.com',
+      jenisKelamin: 'P',
+      fotoIdentitasAsset: 'assets/2.png',
       statusRegistrasi: 'Pending',
     ),
-    // Data 3 (Diterima)
     RegistrationData(
       no: 3,
-      nama: 'Ijat',
+      nama: 'Intan Sari',
       nik: '2025202520252025',
-      email: 'ijat@gmail.com',
-      jenisKelamin: 'L',
-      fotoIdentitasAsset: 'assets/id_photo_3.jpg', // Ganti dengan path asset/URL sebenarnya
+      email: 'sariIntan@gmail.com',
+      jenisKelamin: 'P',
+      fotoIdentitasAsset: 'assets/3.png',
       statusRegistrasi: 'Diterima',
     ),
-    // Data 4 (Diterima)
     RegistrationData(
       no: 4,
-      nama: 'Raudhil Firdaus Naufal',
+      nama: 'Abdul Aziz',
       nik: '3201122501050002',
-      email: 'raudhilfirdausn@gmail.com',
+      email: 'dulaziz@gmail.com',
       jenisKelamin: 'L',
-      fotoIdentitasAsset: 'assets/id_photo_4.jpg', // Ganti dengan path asset/URL sebenarnya
+      fotoIdentitasAsset: 'assets/4.png',
       statusRegistrasi: 'Diterima',
     ),
   ];
-  
-  // --- Widget untuk menampilkan badge status berwarna ---
-  Widget _buildStatusBadge(String status) {
-    Color backgroundColor;
-    Color textColor = Colors.black;
 
+  Widget _buildStatusBadge(String status) {
+    Color bgColor;
     switch (status.toLowerCase()) {
       case 'pending':
-        backgroundColor = Colors.yellow.shade200;
+        bgColor = Colors.yellow.shade200;
         break;
-      case 'diterima': // Perubahan status
-        backgroundColor = Colors.green.shade200;
+      case 'diterima':
+        bgColor = Colors.green.shade200;
         break;
       default:
-        backgroundColor = Colors.grey.shade300;
-        break;
+        bgColor = Colors.grey.shade300;
     }
-
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: BorderRadius.circular(4.0),
+        color: bgColor,
+        borderRadius: BorderRadius.circular(6),
       ),
       child: Text(
         status,
-        style: TextStyle(
-          color: textColor,
-          fontSize: 12,
-          fontWeight: FontWeight.w500,
-        ),
+        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
       ),
     );
   }
 
-  // --- Widget untuk tombol Aksi (Titik Tiga) yang memunculkan PopupMenu ---
-  Widget _buildActionMenu(BuildContext context, RegistrationData data) {
-    return PopupMenuButton<String>(
-      // Icon titik tiga
-      icon: const Icon(Icons.more_horiz),
-      // Posisi popup di bawah tombol
-      offset: const Offset(0, 40), 
-      // Bentuk kotak menu
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8.0),
+  Widget _buildDetailRow(
+    String label,
+    Widget valueWidget, {
+    CrossAxisAlignment alignment = CrossAxisAlignment.center,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Row(
+        crossAxisAlignment: alignment,
+        children: [
+          SizedBox(
+            width: 120,
+            child: Text(
+              '$label:',
+              style: const TextStyle(
+                fontWeight: FontWeight.w600,
+                color: Colors.black87,
+                fontSize: 14,
+              ),
+            ),
+          ),
+          Expanded(child: valueWidget),
+        ],
       ),
-      // Item dalam menu
-      itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-        const PopupMenuItem<String>(
-          value: 'detail',
-          child: Text('Detail'),
-        ),
-        const PopupMenuItem<String>(
-          value: 'edit',
-          child: Text('Edit'),
-        ),
-      ],
-      // Aksi ketika item dipilih
-      onSelected: (String value) {
-        if (value == 'detail') {
-          // TODO: Implementasi navigasi ke halaman Detail
-          print('Detail data ${data.no}');
-        } else if (value == 'edit') {
-          // TODO: Implementasi navigasi ke halaman Edit
-          print('Edit data ${data.no}');
-        }
-      },
     );
   }
 
-
-  // --- Widget untuk tombol pagination (Tidak diubah) ---
   Widget _buildPagination() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          IconButton(onPressed: () {}, icon: const Icon(Icons.chevron_left)),
+          const SizedBox(width: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            decoration: BoxDecoration(
+              color: Colors.deepPurple,
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: const Text(
+              '1',
+              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            ),
+          ),
+          const SizedBox(width: 8),
+          IconButton(onPressed: () {}, icon: const Icon(Icons.chevron_right)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRow(RegistrationData item, int index) {
+    final isExpanded = _expandedIndex == index;
+
+    return Column(
       children: [
-        // Previous Button
-        IconButton(
-          onPressed: () {},
-          icon: const Icon(Icons.chevron_left),
-          style: IconButton.styleFrom(
-            backgroundColor: Colors.white,
-            side: const BorderSide(color: Colors.grey, width: 0.5),
+        InkWell(
+          onTap: () {
+            setState(() => _expandedIndex = isExpanded ? null : index);
+          },
+          child: Container(
+            color: Colors.white,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            child: Row(
+              children: [
+                SizedBox(width: 40, child: Text(item.no.toString())),
+                Expanded(
+                  child: Text(
+                    item.nama,
+                    style: const TextStyle(fontWeight: FontWeight.w500),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(right: 8.0),
+                  child: _buildStatusBadge(item.statusRegistrasi),
+                ),
+                Icon(
+                  isExpanded ? Icons.arrow_drop_up : Icons.arrow_drop_down,
+                  color: Colors.deepPurple,
+                ),
+              ],
+            ),
           ),
         ),
-        const SizedBox(width: 8),
 
-        // Current Page Button (Page 1)
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          decoration: BoxDecoration(
-            color: Colors.deepPurple,
-            borderRadius: BorderRadius.circular(4.0),
-          ),
-          child: const Text(
-            '1',
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-          ),
+        AnimatedSize(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+          child: isExpanded
+              ? Container(
+                  color: Colors.white,
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildDetailRow('NIK',
+                          Text(item.nik, style: const TextStyle(color: Colors.black54))),
+                      _buildDetailRow('Email',
+                          Text(item.email, style: const TextStyle(color: Colors.black54))),
+                      _buildDetailRow(
+                        'Jenis Kelamin',
+                        Text(
+                          item.jenisKelamin == 'L' ? 'Laki-laki' : 'Perempuan',
+                          style: const TextStyle(color: Colors.black54),
+                        ),
+                      ),
+                      _buildDetailRow(
+                        'Foto Identitas',
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: Container(
+                            width: 100,
+                            height: 100,
+                            color: Colors.grey.shade200,
+                            child: Image.asset(
+                              item.fotoIdentitasAsset,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        alignment: CrossAxisAlignment.start,
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          ElevatedButton(
+                            onPressed: () =>
+                                debugPrint('Tinjau Pendaftaran ${item.no}'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.deepPurple,
+                            ),
+                            child: const Text('Tinjau',
+                                style: TextStyle(color: Colors.white)),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                )
+              : const SizedBox.shrink(),
         ),
-        const SizedBox(width: 8),
-
-        // Next Button
-        IconButton(
-          onPressed: () {},
-          icon: const Icon(Icons.chevron_right),
-          style: IconButton.styleFrom(
-            backgroundColor: Colors.white,
-            side: const BorderSide(color: Colors.grey, width: 0.5),
-          ),
-        ),
+        if (index < _data.length - 1)
+          Divider(height: 1, color: Colors.grey.shade300),
       ],
     );
   }
@@ -190,111 +252,114 @@ class PenerimaanPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // --- Tombol Filter di Kanan Atas (Diubah menyerupai gambar) ---
-            Align(
-              alignment: Alignment.topRight,
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 20.0),
-                child: ElevatedButton(
-                  onPressed: () {
-                    // Panggil FilterPesanWargaDialog
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return const FilterPenerimaanWargaDialog();
-                      },
-                    );
-                  },
+            // Header
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Daftar Warga',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.deepPurple,
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () {},
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.deepPurple,
                     padding: const EdgeInsets.all(12),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
+                      borderRadius: BorderRadius.circular(8),
                     ),
-                    minimumSize: const Size(60, 50), // Ukuran tombol kecil
                   ),
-                  child: const Icon(
-                    Icons.filter_list,
+                  child: const Icon(Icons.filter_list, color: Colors.white),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+
+            // Kontainer Tabel
+            Expanded(
+              child: SingleChildScrollView(
+                controller: _scrollController,
+                child: Container(
+                  decoration: BoxDecoration(
                     color: Colors.white,
+                    borderRadius: BorderRadius.circular(8),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.shade300,
+                        blurRadius: 8,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      // Header tabel
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.deepPurple.shade50,
+                          borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(8),
+                          ),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
+                        child: const Row(
+                          children: [
+                            SizedBox(
+                              width: 40,
+                              child: Text(
+                                'NO',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.deepPurple),
+                              ),
+                            ),
+                            Expanded(
+                              child: Text(
+                                'NAMA',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.deepPurple),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 80,
+                              child: Text(
+                                'STATUS',
+                                textAlign: TextAlign.right,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.deepPurple),
+                              ),
+                            ),
+                            SizedBox(width: 24),
+                          ],
+                        ),
+                      ),
+
+                      // Daftar data
+                      ...List.generate(
+                        _data.length,
+                        (index) => _buildRow(_data[index], index),
+                      ),
+
+                      // Divider dan pagination langsung di bawah tabel
+                      Divider(height: 1, color: Colors.grey.shade300),
+                      _buildPagination(),
+                    ],
                   ),
                 ),
-              ),
-            ),
-            // --- Card/Container untuk Tabel dan Pagination ---
-            Card(
-              elevation: 4,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              child: Column(
-                children: [
-                  // --- Tabel Data ---
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: DataTable(
-                        columnSpacing: 25, // Diperkecil agar lebih padat
-                        dataRowHeight: 80, // Ditinggikan untuk menampung gambar
-                        headingRowHeight: 40,
-                        border: const TableBorder(
-                          // Garis horizontal antar baris
-                          horizontalInside: BorderSide(color: Colors.grey, width: 0.5), 
-                          // Garis di bawah header
-                          bottom: BorderSide(color: Colors.grey, width: 0.5), 
-                        ),
-                        // Header Tabel (Diselaraskan dengan Gambar)
-                        columns: const [
-                          DataColumn(label: Text('NO', style: TextStyle(fontWeight: FontWeight.bold))),
-                          DataColumn(label: Text('NAMA', style: TextStyle(fontWeight: FontWeight.bold))),
-                          DataColumn(label: Text('NIK', style: TextStyle(fontWeight: FontWeight.bold))),
-                          DataColumn(label: Text('EMAIL', style: TextStyle(fontWeight: FontWeight.bold))),
-                          DataColumn(label: Text('JENIS KELAMIN', style: TextStyle(fontWeight: FontWeight.bold))),
-                          DataColumn(label: Text('FOTO IDENTITAS', style: TextStyle(fontWeight: FontWeight.bold))),
-                          DataColumn(label: Text('STATUS REGISTRASI', style: TextStyle(fontWeight: FontWeight.bold))),
-                          DataColumn(label: Text('AKSI', style: TextStyle(fontWeight: FontWeight.bold))),
-                        ],
-                        // Baris Data
-                        rows: _data
-                            .map(
-                              (item) => DataRow(
-                                cells: [
-                                  DataCell(Text(item.no.toString())),
-                                  DataCell(Text(item.nama)),
-                                  DataCell(Text(item.nik)),
-                                  DataCell(Text(item.email)),
-                                  DataCell(Text(item.jenisKelamin)),
-                                  DataCell(
-                                    // Widget untuk menampilkan Foto Identitas
-                                    // Catatan: Ganti Image.asset dengan NetworkImage jika menggunakan URL
-                                    Image.asset(
-                                      'assets/placeholder.png', // Ganti dengan item.fotoIdentitasAsset jika Anda telah menambahkannya ke pubspec.yaml
-                                      width: 60,
-                                      height: 60,
-                                      fit: BoxFit.cover,
-                                      errorBuilder: (context, error, stackTrace) => const Icon(Icons.image_not_supported, size: 40),
-                                    ),
-                                  ),
-                                  DataCell(_buildStatusBadge(item.statusRegistrasi)),
-                                  DataCell(_buildActionMenu(context, item)), // Kolom Aksi
-                                ],
-                              ),
-                            )
-                            .toList(),
-                      ),
-                    ),
-                  ),
-
-                  // --- Pagination ---
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16.0),
-                    child: _buildPagination(),
-                  ),
-                ],
               ),
             ),
           ],
