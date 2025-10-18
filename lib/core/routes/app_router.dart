@@ -7,13 +7,21 @@ import 'package:jawara/presentation/pages/dashboard/dashboard_kependudukan.dart'
 import 'package:jawara/presentation/pages/dashboard/dashboard_keuangan.dart';
 import 'package:jawara/presentation/pages/dashboard/dashboard_kegiatan.dart';
 import 'package:jawara/presentation/pages/dashboard/main_dashboard.dart';
+import 'package:jawara/presentation/pages/kegiatandanbroadcast/broadcast_detail.dart';
+import 'package:jawara/presentation/pages/kegiatandanbroadcast/broadcast_edit.dart';
 import 'package:jawara/presentation/pages/kegiatandanbroadcast/broadcast_tambah.dart';
 import 'package:jawara/presentation/pages/kegiatandanbroadcast/kegiatan_dan_broadcast.dart';
+import 'package:jawara/presentation/pages/kegiatandanbroadcast/kegiatan_detail.dart';
+import 'package:jawara/presentation/pages/kegiatandanbroadcast/kegiatan_edit.dart';
+import 'package:jawara/presentation/pages/kegiatandanbroadcast/kegiatan_tambah.dart';
 import 'package:jawara/presentation/pages/laporan/laporan.dart';
+import 'package:jawara/presentation/pages/laporan/laporan_pengeluaran_detail.dart';
 import 'package:jawara/presentation/pages/pemasukan/pemasukan.dart';
 import 'package:jawara/presentation/pages/penerimaanWarga/penerimaan.dart';
 import 'package:jawara/presentation/pages/penerimaanWarga/penerimaanWarga.dart';
+import 'package:jawara/presentation/pages/pengeluaran/laporan_pemasukan_detail.dart';
 import 'package:jawara/presentation/pages/pengeluaran/pengeluaran.dart';
+import 'package:jawara/presentation/pages/pengeluaran/pengeluaran_detail.dart';
 import 'package:jawara/presentation/pages/pesanWarga/aspirasi.dart';
 import 'package:jawara/presentation/pages/pesanWarga/pesanWarga.dart';
 import 'package:jawara/presentation/pages/setting/setting_page.dart';
@@ -45,7 +53,6 @@ import 'package:jawara/presentation/pages/laporan/laporan_pengeluaran.dart';
 import 'package:jawara/presentation/pages/laporan/laporan_cetak.dart';
 
 import 'package:jawara/presentation/pages/kegiatandanbroadcast/kegiatan_daftar.dart';
-import 'package:jawara/presentation/pages/kegiatandanbroadcast/kegiatan_tambah.dart';
 import 'package:jawara/presentation/pages/kegiatandanbroadcast/broadcast_daftar.dart';
 import 'package:jawara/presentation/pages/warga/daftar_rumah.dart';
 
@@ -54,7 +61,7 @@ import 'package:jawara/presentation/pages/warga/daftar_rumah.dart';
 // import 'package:jawara/presentation/pages/mutasi/mutasi_daftar.dart';
 // import 'package:jawara/presentation/pages/mutasi/mutasi_tambah.dart';
 
-import 'package:jawara/presentation/pages/warga/daftar_warga.dart';
+// import 'package:jawara/presentation/pages/warga/daftar_warga.dart';
 import 'package:jawara/presentation/pages/warga/keluarga.dart';
 import 'package:jawara/presentation/pages/warga/rumah.dart';
 import 'package:jawara/presentation/pages/warga/tambah_rumah.dart';
@@ -92,7 +99,7 @@ class AppRouter extends _$AppRouter {
       page: WargaRoute.page,
       path: '/warga',
       children: [
-        AutoRoute(page: WargaDaftarRoute.page, path: 'daftar'),
+        // AutoRoute(page: WargaDaftarRoute.page, path: 'daftar'),
         AutoRoute(page: WargaTambahRoute.page, path: 'tambah'),
       ],
     ),
@@ -125,6 +132,7 @@ class AppRouter extends _$AppRouter {
         AutoRoute(page: LaporanPemasukanRoute.page, path: 'pemasukan'),
         AutoRoute(page: LaporanPengeluaranRoute.page, path: 'pengeluaran'),
         AutoRoute(page: LaporanCetakRoute.page, path: 'cetak'),
+        AutoRoute(page: LaporanPengeluaranDetailRoute.page, path: 'laporan_pengeluaran_detail/:id'),
       ],
     ),
 
@@ -133,10 +141,14 @@ class AppRouter extends _$AppRouter {
       page: KegiatanDanBroadcastRoute.page,
       path: '/kegiatandanbroadcast',
       children: [
-        AutoRoute(page: KegiatanDaftarRoute.page, path: 'kegiatan_daftar'),
         AutoRoute(page: KegiatanTambahRoute.page, path: 'kegiatan_tambah'),
-        AutoRoute(page: BroadcastDaftarRoute.page, path: 'broadcast_daftar'),
+        AutoRoute(page: KegiatanDaftarRoute.page, path: 'kegiatan_daftar'),
+        AutoRoute(page: KegiatanDetailRoute.page, path: 'kegiatan_detail/:id'),
+        AutoRoute(page: KegiatanEditRoute.page, path: 'kegiatan_edit/:id'),
         AutoRoute(page: BroadcastTambahRoute.page, path: 'broadcast_masuk'),
+        AutoRoute(page: BroadcastDaftarRoute.page, path: 'broadcast_daftar'),
+        AutoRoute(page: BroadcastDetailRoute.page, path: 'broadcast_detail/:id'),
+        AutoRoute(page: BroadcastEditRoute.page, path: 'broadcast_edit/:id'),
       ],
     ),
 
