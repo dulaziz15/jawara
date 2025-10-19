@@ -225,11 +225,11 @@ class _SidebarState extends State<Sidebar> {
             children: [
               ListTile(
                 title: const Text("Daftar"),
-                onTap: () => context.router.pushNamed('/mutasi/daftar'),
+                onTap: () => context.router.pushNamed('/mutasiKeluarga/daftarMutasi'),
               ),
               ListTile(
                 title: const Text("Tambah"),
-                onTap: () => context.router.pushNamed('/mutasi/tambah'),
+                onTap: () => context.router.pushNamed('/mutasiKeluarga/tambahMutasi'),
               ),
             ],
           ),
