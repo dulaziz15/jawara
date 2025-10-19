@@ -16,14 +16,19 @@ import 'package:jawara/presentation/pages/kegiatandanbroadcast/kegiatan_edit.dar
 import 'package:jawara/presentation/pages/kegiatandanbroadcast/kegiatan_tambah.dart';
 import 'package:jawara/presentation/pages/laporan/laporan.dart';
 import 'package:jawara/presentation/pages/laporan/laporan_pengeluaran_detail.dart';
+import 'package:jawara/presentation/pages/mutasiKeluarga/daftarMutasi.dart';
+import 'package:jawara/presentation/pages/mutasiKeluarga/mutasiKeluarga.dart';
+import 'package:jawara/presentation/pages/mutasiKeluarga/tambahMutasi.dart';
 import 'package:jawara/presentation/pages/pemasukan/pemasukan.dart';
 import 'package:jawara/presentation/pages/penerimaanWarga/penerimaan.dart';
 import 'package:jawara/presentation/pages/penerimaanWarga/penerimaanWarga.dart';
 import 'package:jawara/presentation/pages/pengeluaran/laporan_pemasukan_detail.dart';
 import 'package:jawara/presentation/pages/pengeluaran/pengeluaran.dart';
 import 'package:jawara/presentation/pages/pengeluaran/pengeluaran_detail.dart';
+
 import 'package:jawara/presentation/pages/pesanWarga/aspirasi.dart';
 import 'package:jawara/presentation/pages/pesanWarga/pesanWarga.dart';
+
 import 'package:jawara/presentation/pages/setting/setting_page.dart';
 import 'package:jawara/presentation/pages/report/report.dart';
 import 'package:jawara/presentation/pages/report/report_finance.dart';
@@ -161,6 +166,14 @@ class AppRouter extends _$AppRouter {
       page: PenerimaanWargaRoute.page,
       path: '/penerimaanWarga',
       children: [AutoRoute(page: PenerimaanRoute.page, path: 'penerimaan')],
+    ),
+    AutoRoute(
+      page: MutasiKeluargaRoute.page,
+      path: '/mutasiKeluarga',
+      children: [
+        AutoRoute(page: DaftarMutasiRoute.page, path: 'daftarMutasi'), 
+        AutoRoute(page: TambahMutasiRoute.page, path: 'tambahMutasi')  
+      ]
     ),
 
     AutoRoute(page: KeluargaRoute.page, path: '/keluarga'),
