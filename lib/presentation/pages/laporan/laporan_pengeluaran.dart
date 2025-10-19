@@ -203,7 +203,7 @@ class LaporanPengeluaranPage extends StatelessWidget {
                             // AKSI
                             DataColumn(
                               label: Text(
-                                'AKSI',
+                                'DETAIL',
                                 style: TextStyle(
                                   fontWeight: FontWeight.w600,
                                   color: Color(0xFF6B7280),
@@ -238,7 +238,9 @@ class LaporanPengeluaranPage extends StatelessWidget {
                                           color: Colors.deepPurple,
                                         ),
                                         onPressed: () {
-                                          // aksi lihat detail broadcast
+                                          context.router.pushNamed(
+                                            '/laporan/laporan_pengeluaran_detail/${item.id}',
+                                          );
                                         },
                                       ),
                                     ),
