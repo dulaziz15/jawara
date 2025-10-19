@@ -79,28 +79,35 @@ class _FilterPesanWargaDialogState extends State<FilterPesanWargaDialog> {
             // Daftar Status
             Column(
               children: statusOptions.map((status) {
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: Row(
-                    children: [
-                      Radio<String>(
-                        value: status,
-                        groupValue: _selectedStatus,
-                        onChanged: (String? value) {
-                          setState(() {
-                            _selectedStatus = value;
-                          });
-                        },
-                        activeColor: const Color(0xFF4F6DF5),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          status,
-                          style: const TextStyle(fontSize: 14),
+                return InkWell(
+                  onTap: () {
+                    setState(() {
+                      _selectedStatus = status;
+                    });
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: Row(
+                      children: [
+                        Radio<String>(
+                          value: status,
+                          groupValue: _selectedStatus,
+                          onChanged: (String? value) {
+                            setState(() {
+                              _selectedStatus = value;
+                            });
+                          },
+                          activeColor: const Color(0xFF4F6DF5),
                         ),
-                      ),
-                    ],
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            status,
+                            style: const TextStyle(fontSize: 14),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 );
               }).toList(),

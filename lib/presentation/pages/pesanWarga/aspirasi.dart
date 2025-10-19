@@ -21,12 +21,6 @@ class _AspirasiPageState extends State<AspirasiPage> {
         pengirim: 'Tono', 
         tanggal: '10-10-2025'),
     AspirationData(
-        judul: 'Jalan rusak', 
-        deskripsi: 'Jalan rusak akibat ada truk tronton lewat dini hari', 
-        status: 'Selesai', 
-        pengirim: 'Darmini', 
-        tanggal: '11-10-2025'),
-    AspirationData(
         judul: 'Tempat sampah kurang', 
         deskripsi: 'aku hanya ingin pergi ke wisata kota yang ada di malang', 
         status: 'Diproses', 
@@ -38,11 +32,17 @@ class _AspirasiPageState extends State<AspirasiPage> {
         status: 'Diproses', 
         pengirim: 'Ehsan', 
         tanggal: '13-10-2025'),
+    AspirationData(
+        judul: 'Jalan rusak', 
+        deskripsi: 'Jalan rusak akibat ada truk tronton lewat dini hari', 
+        status: 'Selesai', 
+        pengirim: 'Darmini', 
+        tanggal: '1-09-2025'),
   ];
 
   List<AspirationData> _filteredAspirasi = [];
   final TextEditingController _searchController = TextEditingController();
-  String _selectedFilter = '-- Pilih Status --';
+  String _selectedFilter = 'Semua';
 
   @override
   void initState() {
@@ -50,39 +50,50 @@ class _AspirasiPageState extends State<AspirasiPage> {
     _filteredAspirasi = _allAspirasi;
   }
 
-void _applyFilter(String status) {
-  setState(() {
-    _selectedFilter = status;
-    if (status == 'Semua') {
-      _filteredAspirasi = _allAspirasi;
-    } else {
-      _filteredAspirasi =
-          _allAspirasi.where((a) => a.status == status).toList();
-    }
-    if (_searchController.text.isNotEmpty) {
-      _filteredAspirasi = _filteredAspirasi
-          .where((a) =>
-              a.judul.toLowerCase().contains(_searchController.text.toLowerCase()) ||
-              a.pengirim.toLowerCase().contains(_searchController.text.toLowerCase()))
-          .toList();
-    }
-  });
-}
+  void _applyFilter(String status) {
+    setState(() {
+      _selectedFilter = status;
+      
+      // Apply filter status terlebih dahulu
+      List<AspirationData> statusFilteredData;
+      if (status == 'Semua') {
+        statusFilteredData = _allAspirasi;
+      } else {
+        statusFilteredData = _allAspirasi.where((a) => a.status == status).toList();
+      }
+      
+      // Kemudian apply search filter jika ada
+      if (_searchController.text.isNotEmpty) {
+        _filteredAspirasi = statusFilteredData
+            .where((a) =>
+                a.judul.toLowerCase().contains(_searchController.text.toLowerCase()) ||
+                a.pengirim.toLowerCase().contains(_searchController.text.toLowerCase()))
+            .toList();
+      } else {
+        _filteredAspirasi = statusFilteredData;
+      }
+    });
+  }
 
   void _onSearchChanged(String value) {
     setState(() {
+      // Apply search filter terlebih dahulu
+      List<AspirationData> searchFilteredData;
       if (value.isEmpty) {
-        _filteredAspirasi = _allAspirasi;
+        searchFilteredData = _allAspirasi;
       } else {
-        _filteredAspirasi = _allAspirasi
+        searchFilteredData = _allAspirasi
             .where((a) =>
                 a.judul.toLowerCase().contains(value.toLowerCase()) ||
                 a.pengirim.toLowerCase().contains(value.toLowerCase()))
             .toList();
       }
-      if (_selectedFilter != '-- Pilih Status --') {
-        _filteredAspirasi =
-            _filteredAspirasi.where((a) => a.status == _selectedFilter).toList();
+      
+      // Kemudian apply status filter jika bukan 'Semua'
+      if (_selectedFilter != 'Semua') {
+        _filteredAspirasi = searchFilteredData.where((a) => a.status == _selectedFilter).toList();
+      } else {
+        _filteredAspirasi = searchFilteredData;
       }
     });
   }
