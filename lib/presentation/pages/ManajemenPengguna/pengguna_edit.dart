@@ -1,6 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:jawara/presentation/pages/ManajemenPengguna/daftar_pengguna.dart';
+import 'package:jawara/core/models/pengguna_models.dart';
 
 @RoutePage()
 class PenggunaEditPage extends StatefulWidget {
