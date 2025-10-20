@@ -1,41 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:jawara/presentation/pages/LogAktivitas/filter_aktivitas.dart';
-
-class ActivityLog {
-  final int no;
-  final String description;
-  final String actor;
-  final String date;
-
-  const ActivityLog({
-    required this.no,
-    required this.description,
-    required this.actor,
-    required this.date,
-  });
-}
-
-final List<ActivityLog> _data = const [
-  ActivityLog(
-    no: 1,
-    description: 'Menambahkan rumah baru dengan alamat: fasda',
-    actor: 'Admin Jawara',
-    date: '10 Oktober 2025',
-  ),
-  ActivityLog(
-    no: 2,
-    description: 'Menyetujui pesan warga: tes',
-    actor: 'Admin Jawara',
-    date: '11 Oktober 2025',
-  ),
-  ActivityLog(
-    no: 3,
-    description: 'Menghapus event: Lomba 17agustus pada ate 16 Agustus 2025',
-    actor: 'Admin Jawara',
-    date: '14 Oktober 2025',
-  ),
-];
+import 'package:jawara/core/models/activity_models.dart';
 
 @RoutePage()
 class ListAktivitasPage extends StatefulWidget {
@@ -47,54 +13,54 @@ class ListAktivitasPage extends StatefulWidget {
 
 class _ListAktivitasState extends State<ListAktivitasPage> {
   // Tidak ada filtering, langsung pakai data asli
-  List<ActivityLog> logs = _data;
+  List<ActivityModel> logs = daftarAktivitas;
 
   void _openFilterDialog() {
     showDialog(context: context, builder: (context) => const FilterAktivitas());
   }
 
-  // --- Widget untuk tombol pagination ---
-  Widget _buildPagination() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        // Tombol Previous
-        IconButton(
-          onPressed: () {},
-          icon: const Icon(Icons.chevron_left),
-          style: IconButton.styleFrom(
-            backgroundColor: Colors.white,
-            side: const BorderSide(color: Colors.grey, width: 0.5),
-          ),
-        ),
-        const SizedBox(width: 8),
+  // // --- Widget untuk tombol pagination ---
+  // Widget _buildPagination() {
+  //   return Row(
+  //     mainAxisAlignment: MainAxisAlignment.center,
+  //     children: [
+  //       // Tombol Previous
+  //       IconButton(
+  //         onPressed: () {},
+  //         icon: const Icon(Icons.chevron_left),
+  //         style: IconButton.styleFrom(
+  //           backgroundColor: Colors.white,
+  //           side: const BorderSide(color: Colors.grey, width: 0.5),
+  //         ),
+  //       ),
+  //       const SizedBox(width: 8),
 
-        // Tombol Halaman Aktif
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          decoration: BoxDecoration(
-            color: Colors.deepPurple,
-            borderRadius: BorderRadius.circular(4.0),
-          ),
-          child: const Text(
-            '1',
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-          ),
-        ),
-        const SizedBox(width: 8),
+  //       // Tombol Halaman Aktif
+  //       Container(
+  //         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+  //         decoration: BoxDecoration(
+  //           color: Colors.deepPurple,
+  //           borderRadius: BorderRadius.circular(4.0),
+  //         ),
+  //         child: const Text(
+  //           '1',
+  //           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+  //         ),
+  //       ),
+  //       const SizedBox(width: 8),
 
-        // Tombol Next
-        IconButton(
-          onPressed: () {},
-          icon: const Icon(Icons.chevron_right),
-          style: IconButton.styleFrom(
-            backgroundColor: Colors.white,
-            side: const BorderSide(color: Colors.grey, width: 0.5),
-          ),
-        ),
-      ],
-    );
-  }
+  //       // Tombol Next
+  //       IconButton(
+  //         onPressed: () {},
+  //         icon: const Icon(Icons.chevron_right),
+  //         style: IconButton.styleFrom(
+  //           backgroundColor: Colors.white,
+  //           side: const BorderSide(color: Colors.grey, width: 0.5),
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -109,7 +75,7 @@ class _ListAktivitasState extends State<ListAktivitasPage> {
             color: Colors.white,
           ),
         ),
-        backgroundColor: const Color(0xFF4F6DF5),
+        backgroundColor:  Colors.deepPurple,
         centerTitle: true,
         elevation: 0,
       ),
@@ -139,7 +105,7 @@ class _ListAktivitasState extends State<ListAktivitasPage> {
                   child: TextField(
                     onChanged: (value) {
                       setState(() {
-                        logs = _data.where((log) {
+                        logs = daftarAktivitas.where((log) {
                           final matchDesc = log.description.toLowerCase().contains(value.toLowerCase());
                           final matchActor = log.actor.toLowerCase().contains(value.toLowerCase());
                           return matchDesc || matchActor;
@@ -189,13 +155,13 @@ class _ListAktivitasState extends State<ListAktivitasPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _openFilterDialog,
-        backgroundColor: const Color(0xFF4F6DF5),
+        backgroundColor: Colors.deepPurple,
         child: const Icon(Icons.filter_list, color: Colors.white),
       ),
     );
   }
 
-  Widget _buildDataCard(ActivityLog log) {
+  Widget _buildDataCard(ActivityModel log) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
@@ -248,15 +214,7 @@ class _ListAktivitasState extends State<ListAktivitasPage> {
                     ],
                   ),
                 ),
-                PopupMenuButton<String>(
-                  onSelected: (value) {
-                    // Handle actions if needed
-                  },
-                  itemBuilder: (context) => const [
-                    PopupMenuItem(value: 'detail', child: Text('Detail')),
-                  ],
-                  icon: const Icon(Icons.more_vert, color: Colors.grey),
-                ),
+                
               ],
             ),
           ],
