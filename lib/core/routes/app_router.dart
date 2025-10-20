@@ -1,5 +1,12 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:jawara/presentation/pages/Channel/Channel.dart';
+import 'package:jawara/presentation/pages/Channel/Channel_daftar.dart';
+import 'package:jawara/presentation/pages/Channel/Channel_tambah.dart';
+import 'package:jawara/presentation/pages/Channel/channel_detail.dart';
+import 'package:jawara/presentation/pages/Channel/channel_edit.dart';
+import 'package:jawara/presentation/pages/LogAktivitas/listAktivitas.dart';
+import 'package:jawara/presentation/pages/ManajemenPengguna/pengguna_detail.dart';
 import 'package:jawara/presentation/pages/auth/login_page.dart';
 import 'package:jawara/presentation/pages/auth/register_page.dart';
 import 'package:jawara/presentation/pages/dashboard/dashboard.dart';
@@ -34,7 +41,7 @@ import 'package:jawara/presentation/pages/report/report.dart';
 import 'package:jawara/presentation/pages/report/report_finance.dart';
 
 // Tambahan import (buat rute sesuai sidebar)
-// import 'package:jawara/presentation/pages/dashboard/dashboard_keuangan.dart';
+import 'package:jawara/presentation/pages/dashboard/dashboard_keuangan.dart';
 // import 'package:jawara/presentation/pages/dashboard/dashboard_kegiatan.dart';
 // import 'package:jawara/presentation/pages/dashboard/dashboard_kependudukan.dart';
 
@@ -72,6 +79,11 @@ import 'package:jawara/presentation/pages/warga/rumah.dart';
 import 'package:jawara/presentation/pages/warga/tambah_rumah.dart';
 import 'package:jawara/presentation/pages/warga/tambah_warga.dart';
 import 'package:jawara/presentation/pages/warga/warga.dart';
+import 'package:jawara/presentation/pages/LogAktivitas/log_aktivitas.dart';
+import 'package:jawara/presentation/pages/ManajemenPengguna/manajemen.dart';
+import 'package:jawara/presentation/pages/ManajemenPengguna/daftar_pengguna.dart';
+import 'package:jawara/presentation/pages/ManajemenPengguna/tambah_pengguna.dart';
+import 'package:jawara/presentation/pages/ManajemenPengguna/pengguna_edit.dart';
 
 part 'app_router.gr.dart';
 
@@ -128,6 +140,14 @@ class AppRouter extends _$AppRouter {
         AutoRoute(page: PengeluaranTambahRoute.page, path: 'tambah'),
       ],
     ),
+    AutoRoute(
+      page: PengeluaranRoute.page,
+      path: '/pengeluaran',
+      children: [
+        AutoRoute(page: PengeluaranDaftarRoute.page, path: 'daftar'),
+        AutoRoute(page: PengeluaranTambahRoute.page, path: 'tambah'),
+      ],
+    ),
 
     // === LAPORAN KEUANGAN ===
     AutoRoute(
@@ -176,6 +196,34 @@ class AppRouter extends _$AppRouter {
       ]
     ),
 
-    AutoRoute(page: KeluargaRoute.page, path: '/keluarga'),
+    AutoRoute(
+      page: LogAktivitasRoute.page,
+      path: '/log',
+      children: [
+        AutoRoute(page: LisAktivitasRoute.page, path: 'aktivitas'),
+      ],
+    ),
+
+    AutoRoute(
+      page: ManajemenPenggunaRoute.page,
+      path: '/user',
+      children: [
+        AutoRoute(page: DaftarPenggunaRoute.page, path: 'daftar'),
+        AutoRoute(page: EditPenggunaRoute.page, path: 'edit/:id'),
+        AutoRoute(page: DetailPenggunaRoute.page, path: 'detail/:id'),
+        AutoRoute(page: TambahPenggunaRoute.page, path: 'tambah'),
+      ],
+    ),
+
+    AutoRoute(
+      page: ChannelRoute.page,
+      path: '/channel',
+      children: [
+        AutoRoute(page: ChannelTambahRoute.page, path: 'tambah'),
+        AutoRoute(page: DetailChannelRoute.page, path: 'detail/:id'),
+        AutoRoute(page: ChannelEditRoute.page, path: 'edit/:id'),
+        AutoRoute(page: ChannelDaftarRoute.page, path: 'daftar'),
+      ],
+    ),
   ];
 }
