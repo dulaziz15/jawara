@@ -3,34 +3,50 @@ import 'package:auto_route/auto_route.dart';
 import 'package:jawara/core/models/pengeluaran_model.dart';
 
 @RoutePage()
-class LaporanPengeluaranPage extends StatelessWidget {
+class LaporanPengeluaranPage extends StatefulWidget {
   const LaporanPengeluaranPage({super.key});
 
-  // --- Widget untuk menampilkan badge status verifikasi ---
-  Widget _buildVerifikasiBadge(DateTime tanggalTerverifikasi) {
-    final now = DateTime.now();
-    final diff = now.difference(tanggalTerverifikasi).inDays;
+  @override
+  State<LaporanPengeluaranPage> createState() => _LaporanPengeluaranPageState();
+}
 
-    String status;
-    Color backgroundColor;
+class _LaporanPengeluaranPageState extends State<LaporanPengeluaranPage> {
+  final TextEditingController _searchController = TextEditingController();
+  List<PengeluaranModel> _filteredData = dummyPengeluaran;
 
-    if (diff < 2) {
-      status = 'Baru Diverifikasi';
-      backgroundColor = Colors.green.shade200;
-    } else {
-      status = 'Terverifikasi';
-      backgroundColor = Colors.blue.shade200;
-    }
+  @override
+  void initState() {
+    super.initState();
+    _filteredData = dummyPengeluaran;
+  }
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: BorderRadius.circular(6),
-      ),
-      child: Text(
-        status,
-        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+  void _onSearchChanged(String value) {
+    setState(() {
+      if (value.isEmpty) {
+        _filteredData = dummyPengeluaran;
+      } else {
+        _filteredData = dummyPengeluaran
+            .where((item) =>
+                item.namaPengeluaran.toLowerCase().contains(value.toLowerCase()) ||
+                item.kategoriPengeluaran.toLowerCase().contains(value.toLowerCase()))
+            .toList();
+      }
+    });
+  }
+
+  void _showFilterDialog() {
+    // Placeholder for filter dialog
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Filter Pengeluaran'),
+        content: const Text('Filter functionality to be implemented'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Tutup'),
+          ),
+        ],
       ),
     );
   }
@@ -54,211 +70,177 @@ class LaporanPengeluaranPage extends StatelessWidget {
     return namaBulan[bulan - 1];
   }
 
-  // --- Widget Pagination ---
-  Widget _buildPagination() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        IconButton(
-          onPressed: () {},
-          icon: const Icon(Icons.chevron_left),
-          style: IconButton.styleFrom(
-            backgroundColor: Colors.white,
-            side: const BorderSide(color: Colors.grey, width: 0.5),
+  Widget _buildDataCard(PengeluaranModel item) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade300),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
           ),
-        ),
-        const SizedBox(width: 8),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          decoration: BoxDecoration(
-            color: Colors.deepPurple,
-            borderRadius: BorderRadius.circular(4.0),
-          ),
-          child: const Text(
-            '1',
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-          ),
-        ),
-        const SizedBox(width: 8),
-        IconButton(
-          onPressed: () {},
-          icon: const Icon(Icons.chevron_right),
-          style: IconButton.styleFrom(
-            backgroundColor: Colors.white,
-            side: const BorderSide(color: Colors.grey, width: 0.5),
-          ),
-        ),
-      ],
-    );
-  }
-
-  // --- Widget utama ---
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey.shade100,
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // --- Card Container ---
-            Card(
-              color: Colors.white,
-              elevation: 2,
-              shadowColor: Colors.black12,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16.0),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Align(
-                      alignment: Alignment.center,
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 20.0),
-                        child: ElevatedButton(
-                          onPressed: () {
-                            // nanti bisa diisi filter dialog pengeluaran
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.deepPurple,
-                            padding: const EdgeInsets.all(12),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                            minimumSize: const Size(60, 50),
-                          ),
-                          child: const Icon(
-                            Icons.filter_list,
-                            color: Colors.white,
-                          ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        item.namaPengeluaran,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
                         ),
                       ),
-                    ),
-
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: DataTable(
-                          columnSpacing: 40,
-                          headingRowColor: WidgetStateProperty.all(
-                            const Color(0xFFF9FAFB),
-                          ),
-                          dataRowColor: WidgetStateProperty.all(Colors.white),
-                          border: TableBorder.symmetric(
-                            inside: const BorderSide(
-                              color: Color(0xFFE5E7EB),
-                              width: 1,
-                            ),
-                          ),
-                          columns: const [
-                            DataColumn(
-                              label: Text(
-                                'NO',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xFF6B7280),
-                                ),
-                              ),
-                            ),
-                            DataColumn(
-                              label: Text(
-                                'NAMA',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xFF6B7280),
-                                ),
-                              ),
-                            ),
-                            DataColumn(
-                              label: Text(
-                                'JENIS PENGELUARAN',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xFF6B7280),
-                                ),
-                              ),
-                            ),
-                            DataColumn(
-                              label: Text(
-                                'TANGGAL',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xFF6B7280),
-                                ),
-                              ),
-                            ),
-                            DataColumn(
-                              label: Text(
-                                'JUMLAH (Rp)',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xFF6B7280),
-                                ),
-                              ),
-                            ),
-                            // AKSI
-                            DataColumn(
-                              label: Text(
-                                'DETAIL',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xFF6B7280),
-                                ),
-                              ),
-                            ),
-                          ],
-                          rows: dummyPengeluaran
-                              .map(
-                                (item) => DataRow(
-                                  cells: [
-                                    DataCell(Text(item.id.toString())),
-                                    DataCell(Text(item.namaPengeluaran)),
-                                    DataCell(Text(item.kategoriPengeluaran)),
-                                    DataCell(
-                                      Text(
-                                        '${item.tanggalPengeluaran.day.toString().padLeft(2, '0')} '
-                                        '${_getBulan(item.tanggalPengeluaran.month)} '
-                                        '${item.tanggalPengeluaran.year}',
-                                      ),
-                                    ),
-                                    DataCell(
-                                      Text(
-                                        'Rp ${item.jumlahPengeluaran.toStringAsFixed(0)}',
-                                      ),
-                                    ),
-                                    //AKSI
-                                    DataCell(
-                                      IconButton(
-                                        icon: const Icon(
-                                          Icons.visibility,
-                                          color: Colors.deepPurple,
-                                        ),
-                                        onPressed: () {
-                                          context.router.pushNamed(
-                                            '/laporan/laporan_pengeluaran_detail/${item.id}',
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              )
-                              .toList(),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Kategori: ${item.kategoriPengeluaran}',
+                        style: const TextStyle(
+                          color: Colors.grey,
+                          fontSize: 14,
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 16),
-                    _buildPagination(),
-                  ],
+                      const SizedBox(height: 4),
+                      Text(
+                        'Rp ${item.jumlahPengeluaran.toStringAsFixed(0)}',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: Colors.green,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
+                IconButton(
+                  icon: const Icon(
+                    Icons.visibility,
+                    color: Color(0xFF4F6DF5),
+                  ),
+                  onPressed: () {
+                    context.router.pushNamed(
+                      '/laporan/laporan_pengeluaran_detail/${item.id}',
+                    );
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text(
+              '${item.tanggalPengeluaran.day.toString().padLeft(2, '0')} '
+              '${_getBulan(item.tanggalPengeluaran.month)} '
+              '${item.tanggalPengeluaran.year}',
+              style: const TextStyle(
+                color: Colors.grey,
+                fontSize: 12,
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: const Text(
+          'Laporan Pengeluaran',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: const Color(0xFF4F6DF5),
+        centerTitle: true,
+        elevation: 0,
+      ),
+      body: Column(
+        children: [
+          // Search Bar
+          Container(
+            margin: const EdgeInsets.all(16),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.grey.shade300),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.1),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.search, color: Colors.grey),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: TextField(
+                    controller: _searchController,
+                    onChanged: _onSearchChanged,
+                    decoration: const InputDecoration(
+                      hintText: 'Cari berdasarkan nama atau kategori...',
+                      border: InputBorder.none,
+                      hintStyle: TextStyle(color: Colors.grey),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // Jumlah data ditemukan
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Text(
+              '${_filteredData.length} data ditemukan',
+              style: const TextStyle(color: Colors.grey, fontSize: 14),
+            ),
+          ),
+
+          // List Data
+          Expanded(
+            child: _filteredData.isEmpty
+                ? Center(
+                    child: Text(
+                      'Data tidak ditemukan',
+                      style: TextStyle(color: Colors.grey.shade500),
+                    ),
+                  )
+                : ListView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    itemCount: _filteredData.length,
+                    itemBuilder: (context, index) {
+                      final item = _filteredData[index];
+                      return _buildDataCard(item);
+                    },
+                  ),
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _showFilterDialog,
+        backgroundColor: const Color(0xFF4F6DF5),
+        child: const Icon(Icons.filter_list, color: Colors.white),
       ),
     );
   }

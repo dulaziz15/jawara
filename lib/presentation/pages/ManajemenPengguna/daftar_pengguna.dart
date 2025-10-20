@@ -312,108 +312,167 @@ class _DaftarPenggunaPageState extends State<DaftarPenggunaPage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: Colors.grey.shade100,
-        body: SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              // Tombol filter di kanan atas
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  ElevatedButton(
-                    onPressed: _openFilterDialog,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.deepPurple,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      padding: const EdgeInsets.all(16),
-                      minimumSize: const Size(56, 56),
-                    ),
-                    child: const Icon(Icons.filter_list,
-                        color: Colors.white, size: 24),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 16),
-
-
-              // DataTable
-              Card(
-                elevation: 4,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0),
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: const Text(
+          'Data Pengguna',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: const Color(0xFF4F6DF5),
+        centerTitle: true,
+        elevation: 0,
+      ),
+      body: Column(
+        children: [
+          // Search Bar
+          Container(
+            margin: const EdgeInsets.all(16),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.grey.shade300),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.1),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
                 ),
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: DataTable(
-                          columnSpacing: 30,
-                          dataRowHeight: 55,
-                          headingRowHeight: 45,
-                          border: const TableBorder(
-                            horizontalInside:
-                                BorderSide(color: Colors.grey, width: 0.5),
-                          ),
-                          columns: const [
-                            DataColumn(
-                              label: Text('NO',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold)),
-                            ),
-                            DataColumn(
-                              label: Text('NAMA',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold)),
-                            ),
-                            DataColumn(
-                              label: Text('EMAIL',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold)),
-                            ),
-                            DataColumn(
-                              label: Text('STATUS REGISTRASI',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold)),
-                            ),
-                            DataColumn(
-                              label: Text('AKSI',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold)),
-                            ),
-                          ],
-                          rows: paginatedUsers
-                              .map(
-                                (user) => DataRow(
-                                  cells: [
-                                    DataCell(Text(user.id.toString())),
-                                    DataCell(Text(user.nama)),
-                                    DataCell(Text(user.email)),
-                                    DataCell(_buildStatusBadge(user.status)),
-                                    DataCell(_buildActionButton(user)),
-                                  ],
-                                ),
-                              )
-                              .toList(),
+              ],
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.search, color: Colors.grey),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: TextField(
+                    onChanged: (value) {
+                      setState(() {
+                        displayedUsers = daftarPengguna.where((user) {
+                          final matchNama = user.nama.toLowerCase().contains(value.toLowerCase());
+                          final matchEmail = user.email.toLowerCase().contains(value.toLowerCase());
+                          return matchNama || matchEmail;
+                        }).toList();
+                        currentPage = 1;
+                      });
+                    },
+                    decoration: const InputDecoration(
+                      hintText: 'Cari berdasarkan nama atau email...',
+                      border: InputBorder.none,
+                      hintStyle: TextStyle(color: Colors.grey),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // Jumlah data ditemukan
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Text(
+              '${displayedUsers.length} data ditemukan',
+              style: const TextStyle(color: Colors.grey, fontSize: 14),
+            ),
+          ),
+
+          // List Data
+          Expanded(
+            child: displayedUsers.isEmpty
+                ? Center(
+                    child: Text(
+                      'Data tidak ditemukan',
+                      style: TextStyle(color: Colors.grey.shade500),
+                    ),
+                  )
+                : ListView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    itemCount: paginatedUsers.length,
+                    itemBuilder: (context, index) {
+                      final user = paginatedUsers[index];
+                      return _buildDataCard(user);
+                    },
+                  ),
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _openFilterDialog,
+        backgroundColor: const Color(0xFF4F6DF5),
+        child: const Icon(Icons.filter_list, color: Colors.white),
+      ),
+    );
+  }
+
+  Widget _buildDataCard(UserModel user) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade300),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        user.nama,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
                         ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 16.0),
-                      child: _buildPagination(),
-                    ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Email: ${user.email}',
+                        style: const TextStyle(
+                          color: Colors.grey,
+                          fontSize: 14,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Role: ${user.role}',
+                        style: const TextStyle(
+                          color: Colors.grey,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Column(
+                  children: [
+                    _buildStatusBadge(user.status),
+                    const SizedBox(height: 8),
+                    _buildActionButton(user),
                   ],
                 ),
-              ),
-            ],
-          ),
+              ],
+            ),
+          ],
         ),
       ),
     );

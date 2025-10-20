@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:jawara/core/routes/app_router.dart';
-import 'package:jawara/presentation/pages/Channel/channel_detail.dart'; // import halaman detail
 
 class Channel {
   final int id;
@@ -216,54 +215,105 @@ class _ChannelDaftarPageState extends State<ChannelDaftarPage> {
       backgroundColor: Colors.grey.shade100,
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
-        child: Card(
-          elevation: 3,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10.0),
-          ),
-          child: Column(
-            children: [
-              // === Data Table ===
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: DataTable(
-                    columnSpacing: 24,
-                    dataRowHeight: 56,
-                    headingRowHeight: 45,
-                    border: const TableBorder(
-                      horizontalInside: BorderSide(color: Colors.grey, width: 0.5),
-                    ),
-                    columns: const [
-                      DataColumn(label: Text('NO', style: TextStyle(fontWeight: FontWeight.bold))),
-                      DataColumn(label: Text('NAMA', style: TextStyle(fontWeight: FontWeight.bold))),
-                      DataColumn(label: Text('TIPE', style: TextStyle(fontWeight: FontWeight.bold))),
-                      DataColumn(label: Text('A/N', style: TextStyle(fontWeight: FontWeight.bold))),
-                      DataColumn(label: Text('AKSI', style: TextStyle(fontWeight: FontWeight.bold))),
-                    ],
-                    rows: paginatedChannels.map(
-                      (ch) => DataRow(
-                        cells: [
-                          DataCell(Text(ch.no.toString())),
-                          DataCell(Text(ch.nama)),
-                          DataCell(Text(ch.tipe)),
-                          DataCell(Text(ch.an)),
-                          DataCell(_buildActionButton(ch)),
-                        ],
+        child: Column(
+          children: [
+            // --- Card Container ---
+            Card(
+              color: Colors.white,
+              elevation: 2,
+              shadowColor: Colors.black12,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16.0),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: DataTable(
+                          columnSpacing: 40,
+                          headingRowColor: WidgetStateProperty.all(
+                            const Color(0xFFF9FAFB),
+                          ),
+                          dataRowColor: WidgetStateProperty.all(Colors.white),
+                          border: TableBorder.symmetric(
+                            inside: const BorderSide(
+                              color: Color(0xFFE5E7EB),
+                              width: 1,
+                            ),
+                          ),
+                          columns: const [
+                            DataColumn(
+                              label: Text(
+                                'NO',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  color: Color(0xFF6B7280),
+                                ),
+                              ),
+                            ),
+                            DataColumn(
+                              label: Text(
+                                'NAMA',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  color: Color(0xFF6B7280),
+                                ),
+                              ),
+                            ),
+                            DataColumn(
+                              label: Text(
+                                'TIPE',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  color: Color(0xFF6B7280),
+                                ),
+                              ),
+                            ),
+                            DataColumn(
+                              label: Text(
+                                'A/N',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  color: Color(0xFF6B7280),
+                                ),
+                              ),
+                            ),
+                            DataColumn(
+                              label: Text(
+                                'AKSI',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  color: Color(0xFF6B7280),
+                                ),
+                              ),
+                            ),
+                          ],
+                          rows: paginatedChannels.map(
+                            (ch) => DataRow(
+                              cells: [
+                                DataCell(Text(ch.no.toString())),
+                                DataCell(Text(ch.nama)),
+                                DataCell(Text(ch.tipe)),
+                                DataCell(Text(ch.an)),
+                                DataCell(_buildActionButton(ch)),
+                              ],
+                            ),
+                          ).toList(),
+                        ),
                       ),
-                    ).toList(),
-                  ),
+                    ),
+                    const SizedBox(height: 16),
+                    _buildPagination(),
+                  ],
                 ),
               ),
-
-              // === Pagination ===
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 12.0),
-                child: _buildPagination(),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
