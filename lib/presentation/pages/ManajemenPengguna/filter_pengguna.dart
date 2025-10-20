@@ -11,36 +11,28 @@ class FilterPengguna extends StatefulWidget {
 
 class _FilterPenggunaState extends State<FilterPengguna> {
   final TextEditingController _namaController = TextEditingController();
-  String? _selectedStatus;
+  String _selectedStatus = 'Semua';
 
   final List<String> statusList = [
-    '-- Pilih Status --',
+    'Semua',
     'Diterima',
     'Diproses',
     'Ditolak',
   ];
 
-  @override
-  void initState() {
-    super.initState();
-    _selectedStatus = statusList.first; // default
-  }
-
   void _resetSemuaSetting() {
     setState(() {
       _namaController.clear();
-      _selectedStatus = statusList.first;
+      _selectedStatus = 'Semua';
     });
-
-    // Kembalikan data utama ke kondisi awal (semua data tampil)
     widget.onFilter('', null);
-    Navigator.pop(context); // Tutup dialog setelah reset
+    Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       insetPadding: const EdgeInsets.symmetric(horizontal: 40, vertical: 24),
       child: Padding(
         padding: const EdgeInsets.all(24.0),
@@ -48,12 +40,17 @@ class _FilterPenggunaState extends State<FilterPengguna> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // =================== HEADER ===================
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text(
-                  'Filter Manajemen Pengguna',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  'Filter Data',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.deepPurple,
+                  ),
                 ),
                 IconButton(
                   icon: const Icon(Icons.close, color: Colors.black54),
@@ -61,93 +58,72 @@ class _FilterPenggunaState extends State<FilterPengguna> {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 8),
 
-            // === Nama ===
-            const Text('Nama', style: TextStyle(fontWeight: FontWeight.w600)),
-            const SizedBox(height: 6),
-            TextField(
-              controller: _namaController,
-              decoration: InputDecoration(
-                hintText: 'Cari nama...',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Colors.deepPurple),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            const Divider(),
+
+            const SizedBox(height: 8),
+
+            // =================== STATUS ===================
+            const Text(
+              'Pilih Status',
+              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+            ),
+            const SizedBox(height: 12),
+
+            ...statusList.map(
+              (status) => RadioListTile<String>(
+                title: Text(status, style: const TextStyle(fontSize: 15)),
+                value: status,
+                groupValue: _selectedStatus,
+                activeColor: Colors.deepPurple,
+                contentPadding: EdgeInsets.zero,
+                onChanged: (value) {
+                  setState(() => _selectedStatus = value!);
+                },
               ),
             ),
-            const SizedBox(height: 16),
 
-            // === Status ===
-            const Text('Status', style: TextStyle(fontWeight: FontWeight.w600)),
-            const SizedBox(height: 6),
-            DropdownButtonFormField<String>(
-              value: _selectedStatus,
-              items: statusList.map((status) {
-                return DropdownMenuItem<String>(
-                  value: status,
-                  child: Text(status),
-                );
-              }).toList(),
-              onChanged: (value) {
-                setState(() => _selectedStatus = value);
-              },
-              decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-              ),
-            ),
-            const SizedBox(height: 24),
+            const Divider(height: 32),
 
-            // === Tombol Aksi ===
+            // =================== TOMBOL AKSI ===================
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // Tombol Reset Semua
-                ElevatedButton(
+                // Tombol RESET
+                TextButton(
                   onPressed: _resetSemuaSetting,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.grey.shade200,
-                    foregroundColor: Colors.black87,
-                    elevation: 0,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                  child: const Text(
+                    'Reset',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey,
                     ),
                   ),
-                  child: const Text('Reset Semua'),
                 ),
 
-                // Tombol Terapkan Filter
+                // Tombol TERAPKAN
                 ElevatedButton(
                   onPressed: () {
                     widget.onFilter(
                       _namaController.text,
-                      _selectedStatus == '-- Pilih Status --'
-                          ? null
-                          : _selectedStatus,
+                      _selectedStatus == 'Semua' ? null : _selectedStatus,
                     );
                     Navigator.pop(context);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.deepPurple,
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 24, vertical: 14),
+                        horizontal: 28, vertical: 12),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  child: const Text('Terapkan',
-                      style: TextStyle(color: Colors.white)),
+                  child: const Text(
+                    'Terapkan',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, color: Colors.white),
+                  ),
                 ),
               ],
             ),

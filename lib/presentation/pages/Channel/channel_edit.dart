@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
+import 'package:jawara/core/models/channel_models.dart';
 
 @RoutePage()
 class ChannelEditPage extends StatefulWidget {
@@ -13,46 +14,13 @@ class ChannelEditPage extends StatefulWidget {
 class _ChannelEditPageState extends State<ChannelEditPage> {
   final _formKey = GlobalKey<FormState>();
 
-  // Data dummy (bisa diganti nanti dengan data dari API)
-  final List<Map<String, dynamic>> _dataChannel = [
-    {
-      "id": 1,
-      "nama": "Transfer via BCA",
-      "tipe": "Bank",
-      "rekening": "1234567890",
-      "pemilik": "RT Jawara Karangploso",
-      "thumbnail": "-",
-      "qr": "-",
-      "catatan": "Gunakan transfer BCA untuk iuran warga."
-    },
-    {
-      "id": 2,
-      "nama": "Copay Ketua RT",
-      "tipe": "Exadilet",
-      "rekening": "08123456789",
-      "pemilik": "Budi Santoso",
-      "thumbnail": "-",
-      "qr": "-",
-      "catatan": "Bayar langsung ke Ketua RT."
-    },
-    {
-      "id": 3,
-      "nama": "QRIS Resmi RT 08",
-      "tipe": "Qris",
-      "rekening": "1234567890",
-      "pemilik": "RW 08 Karangploso",
-      "thumbnail": "-",
-      "qr": "-",
-      "catatan": "Scan QR di bawah untuk membayar. Kirim bukti setelah pembayaran."
-    },
-  ];
-
   // Controller
   late TextEditingController namaController;
   late TextEditingController tipeController;
-  late TextEditingController rekeningController;
   late TextEditingController pemilikController;
   late TextEditingController catatanController;
+
+  late Channel currentChannel;
 
   @override
   void initState() {
@@ -61,16 +29,19 @@ class _ChannelEditPageState extends State<ChannelEditPage> {
   }
 
   void _loadChannelData(int id) {
-    final channel = _dataChannel.firstWhere(
-      (c) => c["id"] == id,
+    // Ambil data dari model dummyChannels
+    currentChannel = dummyChannels.firstWhere(
+      (c) => c.id == id,
       orElse: () => throw Exception("Channel dengan ID $id tidak ditemukan"),
     );
 
-    namaController = TextEditingController(text: channel["nama"]);
-    tipeController = TextEditingController(text: channel["tipe"]);
-    rekeningController = TextEditingController(text: channel["rekening"]);
-    pemilikController = TextEditingController(text: channel["pemilik"]);
-    catatanController = TextEditingController(text: channel["catatan"]);
+    // Isi controller dengan data model
+    namaController = TextEditingController(text: currentChannel.nama);
+    tipeController = TextEditingController(text: currentChannel.tipe);
+    pemilikController = TextEditingController(text: currentChannel.an);
+    catatanController = TextEditingController(
+      text: 'Gunakan ${currentChannel.nama} untuk transaksi warga.',
+    );
   }
 
   void _simpanPerubahan() {
@@ -89,7 +60,6 @@ class _ChannelEditPageState extends State<ChannelEditPage> {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
       appBar: AppBar(
-        // title: const Text('Kembali', style: TextStyle(color: Colors.black)),
         iconTheme: const IconThemeData(color: Colors.black),
         backgroundColor: Colors.white,
         elevation: 1,
@@ -106,7 +76,7 @@ class _ChannelEditPageState extends State<ChannelEditPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // === Judul di dalam Card ===
+                  // Judul
                   const Text(
                     'Edit Transfer Channel',
                     style: TextStyle(
@@ -116,7 +86,7 @@ class _ChannelEditPageState extends State<ChannelEditPage> {
                     ),
                   ),
                   const SizedBox(height: 20),
-
+                  
                   // Nama Channel
                   const Text('Nama Channel', style: TextStyle(fontWeight: FontWeight.bold)),
                   const SizedBox(height: 6),
@@ -137,18 +107,6 @@ class _ChannelEditPageState extends State<ChannelEditPage> {
                     controller: tipeController,
                     decoration: const InputDecoration(
                       hintText: 'Masukkan tipe channel',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Nomor Rekening
-                  const Text('Nomor Rekening / Akun', style: TextStyle(fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 6),
-                  TextFormField(
-                    controller: rekeningController,
-                    decoration: const InputDecoration(
-                      hintText: 'Contoh: 1234567890',
                       border: OutlineInputBorder(),
                     ),
                   ),
@@ -179,11 +137,10 @@ class _ChannelEditPageState extends State<ChannelEditPage> {
                   ),
                   const SizedBox(height: 24),
 
-                  // Tombol Simpan dan Reset
+                  // Tombol Simpan & Reset
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      
                       OutlinedButton(
                         onPressed: () => _formKey.currentState?.reset(),
                         style: OutlinedButton.styleFrom(
@@ -191,9 +148,7 @@ class _ChannelEditPageState extends State<ChannelEditPage> {
                         ),
                         child: const Text('Reset'),
                       ),
-
                       const SizedBox(width: 10),
-
                       ElevatedButton(
                         onPressed: _simpanPerubahan,
                         style: ElevatedButton.styleFrom(

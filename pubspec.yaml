@@ -66,6 +66,9 @@ flutter:
 
   assets:
     - assets/
+    - assets/channel/thumbnail/
+    - assets/channel/qr/
+
 
 
   # The following line ensures that the Material Icons font is

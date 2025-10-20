@@ -1,78 +1,67 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart' as path;
 
-/// ============================
-/// MODEL
-/// ============================
-class TransferChannelModel {
-  String? namaChannel;
-  String? tipe;
-  String? nomorRekening;
-  String? namaPemilik;
-  String? qrPath;
-  String? thumbnailPath;
-  String? catatan;
+class ChannelForm {
+  String nama = '';
+  String tipe = '';
+  String nomorRekening = '';
+  String an = '';
+  String qr = '';
+  String thumbnail = '';
+  String catatan = '';
 
-  TransferChannelModel({
-    this.namaChannel,
-    this.tipe,
-    this.nomorRekening,
-    this.namaPemilik,
-    this.qrPath,
-    this.thumbnailPath,
-    this.catatan,
-  });
-
-  Map<String, dynamic> toJson() => {
-        "nama_channel": namaChannel,
-        "tipe": tipe,
-        "nomor_rekening": nomorRekening,
-        "nama_pemilik": namaPemilik,
-        "qr": qrPath,
-        "thumbnail": thumbnailPath,
-        "catatan": catatan,
-      };
+  Map<String, dynamic> toJson() {
+    return {
+      'nama': nama,
+      'tipe': tipe,
+      'nomorRekening': nomorRekening,
+      'an': an,
+      'qr': qr,
+      'thumbnail': thumbnail,
+      'catatan': catatan,
+    };
+  }
 }
 
-/// ============================
-/// CONTROLLER
-/// ============================
+
 class TransferChannelController with ChangeNotifier {
   final formKey = GlobalKey<FormState>();
-  final TransferChannelModel channel = TransferChannelModel();
+  final ChannelForm channel = ChannelForm();
 
-  void setNamaChannel(String? value) {
-    channel.namaChannel = value;
+  void setNama(String? value) {
+    channel.nama = value ?? '';
     notifyListeners();
   }
 
   void setTipe(String? value) {
-    channel.tipe = value;
+    channel.tipe = value ?? '';
     notifyListeners();
   }
 
   void setNomorRekening(String? value) {
-    channel.nomorRekening = value;
+    channel.nomorRekening = value ?? '';
     notifyListeners();
   }
 
-  void setNamaPemilik(String? value) {
-    channel.namaPemilik = value;
+  void setAn(String? value) {
+    channel.an = value ?? '';
     notifyListeners();
   }
 
   void setCatatan(String? value) {
-    channel.catatan = value;
+    channel.catatan = value ?? '';
     notifyListeners();
   }
 
   void setQR(String path) {
-    channel.qrPath = path;
+    channel.qr = path;
     notifyListeners();
   }
 
   void setThumbnail(String path) {
-    channel.thumbnailPath = path;
+    channel.thumbnail = path;
     notifyListeners();
   }
 
@@ -95,12 +84,12 @@ class TransferChannelController with ChangeNotifier {
   void resetForm() {
     formKey.currentState?.reset();
     channel
-      ..namaChannel = ''
+      ..nama = ''
       ..tipe = ''
       ..nomorRekening = ''
-      ..namaPemilik = ''
-      ..qrPath = ''
-      ..thumbnailPath = ''
+      ..an = ''
+      ..qr = ''
+      ..thumbnail = ''
       ..catatan = '';
     notifyListeners();
   }
@@ -160,7 +149,7 @@ class TransferChannelPage extends StatelessWidget {
                           TextFormField(
                             decoration: _inputDecoration(
                                 'Nama Channel', 'Contoh: BCA, Dana, QRIS RT'),
-                            onSaved: controller.setNamaChannel,
+                            onSaved: controller.setNama,
                             validator: (v) => (v == null || v.isEmpty)
                                 ? 'Nama channel wajib diisi'
                                 : null,
@@ -170,7 +159,7 @@ class TransferChannelPage extends StatelessWidget {
                           // Dropdown tipe
                           DropdownButtonFormField<String>(
                             decoration: _inputDecoration('Tipe', '-- Pilih Tipe --'),
-                            value: controller.channel.tipe?.isNotEmpty == true
+                            value: controller.channel.tipe.isNotEmpty
                                 ? controller.channel.tipe
                                 : null,
                             items: const [
@@ -203,7 +192,7 @@ class TransferChannelPage extends StatelessWidget {
                           TextFormField(
                             decoration: _inputDecoration(
                                 'Nama Pemilik', 'Contoh: John Doe'),
-                            onSaved: controller.setNamaPemilik,
+                            onSaved: controller.setAn,
                             validator: (v) => (v == null || v.isEmpty)
                                 ? 'Nama pemilik wajib diisi'
                                 : null,
@@ -219,12 +208,18 @@ class TransferChannelPage extends StatelessWidget {
                             ),
                             alignment: Alignment.center,
                             child: TextButton.icon(
-                              onPressed: () {
-                                controller.setQR('path/qr.png');
+                              onPressed: () async {
+                                final ImagePicker picker = ImagePicker();
+                                final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+                                if (image != null) {
+                                  controller.setQR(image.path);
+                                }
                               },
                               icon: const Icon(Icons.qr_code),
-                              label: const Text(
-                                  'Upload foto QR (jika ada) png/jpeg/jpg'),
+                              label: Text(
+                                  controller.channel.qr.isNotEmpty
+                                      ? 'Foto QR: ${path.basename(controller.channel.qr)}'
+                                      : 'Upload foto QR (jika ada) png/jpeg/jpg'),
                             ),
                           ),
                           const SizedBox(height: 16),
@@ -238,12 +233,18 @@ class TransferChannelPage extends StatelessWidget {
                             ),
                             alignment: Alignment.center,
                             child: TextButton.icon(
-                              onPressed: () {
-                                controller.setThumbnail('path/thumb.png');
+                              onPressed: () async {
+                                final ImagePicker picker = ImagePicker();
+                                final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+                                if (image != null) {
+                                  controller.setThumbnail(image.path);
+                                }
                               },
                               icon: const Icon(Icons.image_outlined),
-                              label: const Text(
-                                  'Upload thumbnail (jika ada) png/jpeg/jpg'),
+                              label: Text(
+                                  controller.channel.thumbnail.isNotEmpty
+                                      ? 'Thumbnail: ${path.basename(controller.channel.thumbnail)}'
+                                      : 'Upload thumbnail (jika ada) png/jpeg/jpg'),
                             ),
                           ),
                           const SizedBox(height: 24),
