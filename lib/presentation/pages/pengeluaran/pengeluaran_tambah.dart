@@ -1,11 +1,30 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
+import 'package:intl/intl.dart';
 import 'package:jawara/presentation/pages/pengeluaran/widgets/image_picker.dart';
 
 @RoutePage()
-class PengeluaranTambahPage extends StatelessWidget {
+class PengeluaranTambahPage extends StatefulWidget {
   const PengeluaranTambahPage({super.key});
+
+  @override
+  State<PengeluaranTambahPage> createState() => _PengeluaranTambahPageState();
+}
+
+class _PengeluaranTambahPageState extends State<PengeluaranTambahPage> {
+  final TextEditingController namaController = TextEditingController();
+  final TextEditingController tanggalController = TextEditingController();
+  final TextEditingController nominalController = TextEditingController();
+  String? selectedKategori;
+
+  @override
+  void dispose() {
+    namaController.dispose();
+    tanggalController.dispose();
+    nominalController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,26 +74,25 @@ class PengeluaranTambahPage extends StatelessWidget {
                     const SizedBox(height: 20),
 
                     // Nama Pengeluaran
-                    const Text("Nama Pengeluaran"),
-                    const SizedBox(height: 5),
-                    TextField(
-                      decoration: InputDecoration(
-                        hintText: "Masukkan nama pengeluaran",
-                        enabledBorder: const OutlineInputBorder(
+                    TextFormField(
+                      controller: namaController,
+                      decoration: const InputDecoration(
+                        labelText: "Nama Pengeluaran",
+                        enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(8)),
                           borderSide: BorderSide(
                             color: Color.fromARGB(255, 216, 216, 216),
                             width: 0,
                           ),
                         ),
-                        focusedBorder: const OutlineInputBorder(
+                        focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(8)),
                           borderSide: BorderSide(
                             color: Color(0xFF6C63FF),
                             width: 1.5,
                           ),
                         ),
-                        contentPadding: const EdgeInsets.symmetric(
+                        contentPadding: EdgeInsets.symmetric(
                           horizontal: 15,
                           vertical: 12,
                         ),
@@ -83,49 +101,53 @@ class PengeluaranTambahPage extends StatelessWidget {
                     const SizedBox(height: 15),
 
                     // Tanggal Pengeluaran
-                    const Text("Tanggal Pengeluaran"),
-                    const SizedBox(height: 5),
-                    TextField(
+                    TextFormField(
+                      controller: tanggalController,
                       readOnly: true,
-                      decoration: InputDecoration(
-                        hintText: "--/--/----",
-                        suffixIcon: const Icon(Icons.calendar_today_outlined),
-                        enabledBorder: const OutlineInputBorder(
+                      decoration: const InputDecoration(
+                        labelText: "Tanggal Pengeluaran",
+                        suffixIcon: Icon(Icons.calendar_today_outlined),
+                        enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(8)),
                           borderSide: BorderSide(
                             color: Color.fromARGB(255, 216, 216, 216),
                             width: 0,
                           ),
                         ),
-                        focusedBorder: const OutlineInputBorder(
+                        focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(8)),
                           borderSide: BorderSide(
                             color: Color(0xFF6C63FF),
                             width: 1.5,
                           ),
                         ),
-                        contentPadding: const EdgeInsets.symmetric(
+                        contentPadding: EdgeInsets.symmetric(
                           horizontal: 15,
                           vertical: 12,
                         ),
                       ),
                       onTap: () async {
-                        await showDatePicker(
+                        DateTime? pickedDate = await showDatePicker(
                           context: context,
                           initialDate: DateTime.now(),
                           firstDate: DateTime(2000),
                           lastDate: DateTime(2100),
                         );
+                        if (pickedDate != null) {
+                          setState(() {
+                            tanggalController.text = DateFormat('dd/MM/yyyy').format(pickedDate);
+                          });
+                        }
                       },
                     ),
                     const SizedBox(height: 15),
 
                     // Kategori Pengeluaran
-                    const Text("Kategori Pengeluaran"),
-                    const SizedBox(height: 5),
                     DropdownButtonFormField<String>(
+                      value: selectedKategori,
                       isExpanded: true,
                       decoration: const InputDecoration(
+                        labelText: "Kategori Pengeluaran",
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(8)),
                           borderSide: BorderSide(
@@ -160,17 +182,20 @@ class PengeluaranTambahPage extends StatelessWidget {
                           child: Text("Lainnya"),
                         ),
                       ],
-                      onChanged: (String? newValue) {},
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          selectedKategori = newValue;
+                        });
+                      },
                     ),
                     const SizedBox(height: 15),
 
                     // Nominal
-                    const Text("Nominal"),
-                    const SizedBox(height: 5),
-                    TextField(
+                    TextFormField(
+                      controller: nominalController,
                       keyboardType: TextInputType.number,
                       decoration: const InputDecoration(
-                        hintText: "Masukkan nominal",
+                        labelText: "Nominal",
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(8)),
                           borderSide: BorderSide(
