@@ -1,77 +1,77 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'filter_accept.dart';
+import 'filter_mutasi.dart';
 
 // --- DATA MODEL ---
-class RegistrationData {
+class MutasiData {
   final int no;
-  final String nama;
-  final String nik;
-  final String email;
-  final String jenisKelamin; // 'L' atau 'P'
-  final String fotoIdentitasAsset;
-  final String statusRegistrasi;
+  final String keluarga;
+  final String alamatLama;
+  final String alamatBaru;
+  final String tanggalMutasi;
+  final String jenisMutasi;
+  final String alasan;
 
-  const RegistrationData({
+  const MutasiData({
     required this.no,
-    required this.nama,
-    required this.nik,
-    required this.email,
-    required this.jenisKelamin,
-    required this.fotoIdentitasAsset,
-    required this.statusRegistrasi,
+    required this.keluarga,
+    required this.alamatLama,
+    required this.alamatBaru,
+    required this.tanggalMutasi,
+    required this.jenisMutasi,
+    required this.alasan,
   });
 }
 
 @RoutePage()
-class PenerimaanPage extends StatefulWidget {
-  const PenerimaanPage({super.key});
+class DaftarMutasiPage extends StatefulWidget {
+  const DaftarMutasiPage({super.key});
 
   @override
-  State<PenerimaanPage> createState() => _PenerimaanPageState();
+  State<DaftarMutasiPage> createState() => _MutasiKeluargaPageState();
 }
 
-class _PenerimaanPageState extends State<PenerimaanPage> {
-  final List<RegistrationData> _allData = const [
-    RegistrationData(
+class _MutasiKeluargaPageState extends State<DaftarMutasiPage> {
+  final List<MutasiData> _allData = const [
+    MutasiData(
       no: 1,
-      nama: 'Mara Nunez',
-      nik: '1234567890123456',
-      email: 'mara.nunez@gmail.com',
-      jenisKelamin: 'P',
-      fotoIdentitasAsset: 'assets/1.png',
-      statusRegistrasi: 'Pending',
+      keluarga: 'Keluarga Rendha Putra Rahmadya',
+      alamatLama: 'Jl. Merdeka No. 123, Jakarta Pusat',
+      alamatBaru: 'Jl. Sudirman No. 456, Jakarta Selatan',
+      tanggalMutasi: '15-10-2025',
+      jenisMutasi: 'Pindah Domisili',
+      alasan: 'Pekerjaan',
     ),
-    RegistrationData(
+    MutasiData(
       no: 2,
-      nama: 'Sinta Sulistya',
-      nik: '1234567890987654',
-      email: 'Sisulis13@gmail.com',
-      jenisKelamin: 'P',
-      fotoIdentitasAsset: 'assets/2.png',
-      statusRegistrasi: 'Pending',
+      keluarga: 'Keluarga Anti Micin',
+      alamatLama: 'Jl. Pahlawan No. 78, Bandung',
+      alamatBaru: 'Jl. Gatot Subroto No. 90, Surabaya',
+      tanggalMutasi: '20-10-2025',
+      jenisMutasi: 'Pindah Kota',
+      alasan: 'Pendidikan',
     ),
-    RegistrationData(
+    MutasiData(
       no: 3,
-      nama: 'Intan Sari',
-      nik: '2025202520252025',
-      email: 'sariIntan@gmail.com',
-      jenisKelamin: 'P',
-      fotoIdentitasAsset: 'assets/3.png',
-      statusRegistrasi: 'Diterima',
+      keluarga: 'Keluarga varizky naldiba rimra',
+      alamatLama: 'Jl. Melati No. 11, Yogyakarta',
+      alamatBaru: 'Jl. Kenanga No. 22, Semarang',
+      tanggalMutasi: '25-10-2025',
+      jenisMutasi: 'Pindah Domisili',
+      alasan: 'Keluarga',
     ),
-    RegistrationData(
+    MutasiData(
       no: 4,
-      nama: 'Abdul Aziz',
-      nik: '3201122501050002',
-      email: 'dulaziz@gmail.com',
-      jenisKelamin: 'L',
-      fotoIdentitasAsset: 'assets/4.png',
-      statusRegistrasi: 'Diterima',
+      keluarga: 'Keluarga Ijat',
+      alamatLama: 'Jl. Mawar No. 33, Medan',
+      alamatBaru: 'Jl. Anggrek No. 44, Palembang',
+      tanggalMutasi: '30-10-2025',
+      jenisMutasi: 'Pindah Kota',
+      alasan: 'Bisnis',
     ),
   ];
 
-  List<RegistrationData> _filteredData = [];
+  List<MutasiData> _filteredData = [];
   final TextEditingController _searchController = TextEditingController();
   String _selectedFilter = 'Semua';
 
@@ -81,27 +81,27 @@ class _PenerimaanPageState extends State<PenerimaanPage> {
     _filteredData = _allData;
   }
 
-  void _applyFilter(String status) {
+  void _applyFilter(String jenisMutasi) {
     setState(() {
-      _selectedFilter = status;
+      _selectedFilter = jenisMutasi;
       
-      // Apply filter status terlebih dahulu
-      List<RegistrationData> statusFilteredData;
-      if (status == 'Semua') {
-        statusFilteredData = _allData;
+      // Apply filter jenis mutasi terlebih dahulu
+      List<MutasiData> jenisFilteredData;
+      if (jenisMutasi == 'Semua') {
+        jenisFilteredData = _allData;
       } else {
-        statusFilteredData = _allData.where((data) => data.statusRegistrasi == status).toList();
+        jenisFilteredData = _allData.where((data) => data.jenisMutasi == jenisMutasi).toList();
       }
       
       // Kemudian apply search filter jika ada
       if (_searchController.text.isNotEmpty) {
-        _filteredData = statusFilteredData
+        _filteredData = jenisFilteredData
             .where((data) =>
-                data.nama.toLowerCase().contains(_searchController.text.toLowerCase()) ||
-                data.nik.toLowerCase().contains(_searchController.text.toLowerCase()))
+                data.keluarga.toLowerCase().contains(_searchController.text.toLowerCase()) ||
+                data.jenisMutasi.toLowerCase().contains(_searchController.text.toLowerCase()))
             .toList();
       } else {
-        _filteredData = statusFilteredData;
+        _filteredData = jenisFilteredData;
       }
     });
   }
@@ -109,20 +109,20 @@ class _PenerimaanPageState extends State<PenerimaanPage> {
   void _onSearchChanged(String value) {
     setState(() {
       // Apply search filter terlebih dahulu
-      List<RegistrationData> searchFilteredData;
+      List<MutasiData> searchFilteredData;
       if (value.isEmpty) {
         searchFilteredData = _allData;
       } else {
         searchFilteredData = _allData
             .where((data) =>
-                data.nama.toLowerCase().contains(value.toLowerCase()) ||
-                data.nik.toLowerCase().contains(value.toLowerCase()))
+                data.keluarga.toLowerCase().contains(value.toLowerCase()) ||
+                data.jenisMutasi.toLowerCase().contains(value.toLowerCase()))
             .toList();
       }
       
-      // Kemudian apply status filter jika bukan 'Semua'
+      // Kemudian apply jenis mutasi filter jika bukan 'Semua'
       if (_selectedFilter != 'Semua') {
-        _filteredData = searchFilteredData.where((data) => data.statusRegistrasi == _selectedFilter).toList();
+        _filteredData = searchFilteredData.where((data) => data.jenisMutasi == _selectedFilter).toList();
       } else {
         _filteredData = searchFilteredData;
       }
@@ -132,14 +132,14 @@ class _PenerimaanPageState extends State<PenerimaanPage> {
   void _showFilterDialog() {
     showDialog(
       context: context,
-      builder: (context) => FilterPenerimaanWargaDialog(
-        initialStatus: _selectedFilter,
+      builder: (context) => FilterMutasiKeluargaDialog(
+        initialJenisMutasi: _selectedFilter,
         onApplyFilter: _applyFilter,
       ),
     );
   }
 
-  void _showDetailModal(BuildContext context, RegistrationData item) {
+  void _showDetailModal(BuildContext context, MutasiData item) {
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
@@ -159,7 +159,7 @@ class _PenerimaanPageState extends State<PenerimaanPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Text(
-                      'Detail Pendaftaran Warga',
+                      'Detail Mutasi Keluarga',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -175,41 +175,29 @@ class _PenerimaanPageState extends State<PenerimaanPage> {
                 const Divider(thickness: 1.2),
                 const SizedBox(height: 16),
 
-                // Nama (besar dan bold di kiri)
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    item.nama,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-
-                // NIK
-                _detailRow('NIK', item.nik),
+                // Keluarga
+                _detailRow('Keluarga', item.keluarga),
                 const SizedBox(height: 12),
 
-                // Email
-                _detailRow('Email', item.email),
+                // Alamat Lama
+                _detailRow('Alamat Lama', item.alamatLama),
                 const SizedBox(height: 12),
 
-                // Jenis Kelamin
-                _detailRow(
-                  'Jenis Kelamin',
-                  item.jenisKelamin == 'L' ? 'Laki-laki' : 'Perempuan',
-                ),
+                // Alamat Baru
+                _detailRow('Alamat Baru', item.alamatBaru),
                 const SizedBox(height: 12),
 
-                // Status Pendaftaran dengan label warna
+                // Tanggal Mutasi
+                _detailRow('Tanggal Mutasi', item.tanggalMutasi),
+                const SizedBox(height: 12),
+
+                // Jenis Mutasi dengan label warna
                 Row(
                   children: [
                     const SizedBox(
                       width: 120,
                       child: Text(
-                        'Status Pendaftaran:',
+                        'Jenis Mutasi:',
                         style: TextStyle(fontWeight: FontWeight.w600),
                       ),
                     ),
@@ -219,11 +207,11 @@ class _PenerimaanPageState extends State<PenerimaanPage> {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: _getStatusColor(item.statusRegistrasi),
+                        color: _getJenisMutasiColor(item.jenisMutasi),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
-                        item.statusRegistrasi,
+                        item.jenisMutasi,
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 12,
@@ -233,40 +221,15 @@ class _PenerimaanPageState extends State<PenerimaanPage> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 12),
 
-                // Foto Identitas
-                const Text(
-                  'Foto Identitas:',
-                  style: TextStyle(fontWeight: FontWeight.w600),
-                ),
-                const SizedBox(height: 8),
-                Center(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: Container(
-                      width: 150,
-                      height: 150,
-                      color: Colors.grey.shade200,
-                      child: Image.asset(
-                        item.fotoIdentitasAsset,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return const Icon(
-                            Icons.person,
-                            size: 50,
-                            color: Colors.grey,
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                ),
+                // Alasan
+                _detailRow('Alasan', item.alasan),
                 const SizedBox(height: 20),
 
                 // Tombol Tutup (sebelah kiri)
                 Align(
-                  alignment: Alignment.centerLeft,
+                  alignment: Alignment.centerRight,
                   child: ElevatedButton(
                     onPressed: () => Navigator.of(dialogContext).pop(),
                     style: ElevatedButton.styleFrom(
@@ -312,28 +275,28 @@ class _PenerimaanPageState extends State<PenerimaanPage> {
     );
   }
 
-  Color _getStatusColor(String status) {
-    switch (status.toLowerCase()) {
-      case 'pending':
-        return Colors.orange;
-      case 'diterima':
+  Color _getJenisMutasiColor(String jenisMutasi) {
+    switch (jenisMutasi.toLowerCase()) {
+      case 'pindah domisili':
+        return Colors.blue;
+      case 'pindah kota':
         return Colors.green;
-      case 'ditolak':
-        return Colors.red;
+      case 'pindah provinsi':
+        return Colors.orange;
       default:
         return Colors.grey;
     }
   }
 
-  Widget _buildStatusBadge(String status) {
+  Widget _buildJenisMutasiBadge(String jenisMutasi) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: _getStatusColor(status),
+        color: _getJenisMutasiColor(jenisMutasi),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
-        status,
+        jenisMutasi,
         style: const TextStyle(
           color: Colors.white,
           fontSize: 12,
@@ -349,7 +312,7 @@ class _PenerimaanPageState extends State<PenerimaanPage> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text(
-          'Data Pendaftaran Warga',
+          'Data Mutasi Keluarga',
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 20,
@@ -387,7 +350,7 @@ class _PenerimaanPageState extends State<PenerimaanPage> {
                     controller: _searchController,
                     onChanged: _onSearchChanged,
                     decoration: const InputDecoration(
-                      hintText: 'Cari berdasarkan Nama atau NIK...',
+                      hintText: 'Cari berdasarkan keluarga atau jenis mutasi...',
                       border: InputBorder.none,
                       hintStyle: TextStyle(color: Colors.grey),
                     ),
@@ -435,7 +398,7 @@ class _PenerimaanPageState extends State<PenerimaanPage> {
     );
   }
 
-  Widget _buildDataCard(RegistrationData item) {
+  Widget _buildDataCard(MutasiData item) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
@@ -463,7 +426,7 @@ class _PenerimaanPageState extends State<PenerimaanPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        item.nama,
+                        item.keluarga,
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
@@ -471,15 +434,7 @@ class _PenerimaanPageState extends State<PenerimaanPage> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'NIK: ${item.nik}',
-                        style: const TextStyle(
-                          color: Colors.grey,
-                          fontSize: 14,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Email: ${item.email}',
+                        'Jenis Mutasi: ${item.jenisMutasi}',
                         style: const TextStyle(
                           color: Colors.grey,
                           fontSize: 14,
@@ -488,22 +443,16 @@ class _PenerimaanPageState extends State<PenerimaanPage> {
                     ],
                   ),
                 ),
-                Row(
-                  children: [
-                    _buildStatusBadge(item.statusRegistrasi),
-                    const SizedBox(width: 8),
-                    PopupMenuButton<String>(
-                      onSelected: (value) {
-                        if (value == 'detail') {
-                          _showDetailModal(context, item);
-                        }
-                      },
-                      itemBuilder: (context) => const [
-                        PopupMenuItem(value: 'detail', child: Text('Detail')),
-                      ],
-                      icon: const Icon(Icons.more_vert, color: Colors.grey),
-                    ),
+                PopupMenuButton<String>(
+                  onSelected: (value) {
+                    if (value == 'detail') {
+                      _showDetailModal(context, item);
+                    }
+                  },
+                  itemBuilder: (context) => const [
+                    PopupMenuItem(value: 'detail', child: Text('Detail')),
                   ],
+                  icon: const Icon(Icons.more_vert, color: Colors.grey),
                 ),
               ],
             ),
