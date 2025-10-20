@@ -41,7 +41,6 @@ import 'package:jawara/presentation/pages/report/report.dart';
 import 'package:jawara/presentation/pages/report/report_finance.dart';
 
 // Tambahan import (buat rute sesuai sidebar)
-import 'package:jawara/presentation/pages/dashboard/dashboard_keuangan.dart';
 // import 'package:jawara/presentation/pages/dashboard/dashboard_kegiatan.dart';
 // import 'package:jawara/presentation/pages/dashboard/dashboard_kependudukan.dart';
 

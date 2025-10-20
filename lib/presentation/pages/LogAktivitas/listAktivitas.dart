@@ -99,109 +99,165 @@ class _ListAktivitasState extends State<ListAktivitasPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey.shade100,
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: const Text(
+          'Log Aktivitas',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: const Color(0xFF4F6DF5),
+        centerTitle: true,
+        elevation: 0,
+      ),
+      body: Column(
+        children: [
+          // Search Bar
+          Container(
+            margin: const EdgeInsets.all(16),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.grey.shade300),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.1),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Row(
               children: [
-                ElevatedButton(
-                  onPressed: _openFilterDialog,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.deepPurple,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                const Icon(Icons.search, color: Colors.grey),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: TextField(
+                    onChanged: (value) {
+                      setState(() {
+                        logs = _data.where((log) {
+                          final matchDesc = log.description.toLowerCase().contains(value.toLowerCase());
+                          final matchActor = log.actor.toLowerCase().contains(value.toLowerCase());
+                          return matchDesc || matchActor;
+                        }).toList();
+                      });
+                    },
+                    decoration: const InputDecoration(
+                      hintText: 'Cari berdasarkan deskripsi atau aktor...',
+                      border: InputBorder.none,
+                      hintStyle: TextStyle(color: Colors.grey),
                     ),
-                    padding: const EdgeInsets.all(16),
-                    elevation: 4,
-                    minimumSize: const Size(56, 56), // ukuran tombol kotak
-                  ),
-                  child: const Icon(
-                    Icons.filter_list,
-                    color: Colors.white,
-                    size: 24,
                   ),
                 ),
               ],
             ),
+          ),
 
-            const SizedBox(height: 12),
+          // Jumlah data ditemukan
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Text(
+              '${logs.length} data ditemukan',
+              style: const TextStyle(color: Colors.grey, fontSize: 14),
+            ),
+          ),
 
-            // --- Card/Container untuk Tabel dan Pagination ---
-            Card(
-              elevation: 4,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              child: Column(
-                children: [
-                  // --- Tabel Data ---
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: DataTable(
-                        columnSpacing: 30,
-                        dataRowHeight: 50,
-                        headingRowHeight: 40,
-                        border: const TableBorder(
-                          bottom: BorderSide(color: Colors.grey, width: 0.5),
-                          horizontalInside: BorderSide(
-                            color: Colors.grey,
-                            width: 0.5,
-                          ),
-                        ),
-                        columns: const [
-                          DataColumn(
-                            label: Text(
-                              'NO',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          DataColumn(
-                            label: Text(
-                              'Deskripsi',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          DataColumn(
-                            label: Text(
-                              'Aktor',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          DataColumn(
-                            label: Text(
-                              'Tanggal',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ],
-                        rows: logs
-                            .map(
-                              (item) => DataRow(
-                                cells: [
-                                  DataCell(Text(item.no.toString())),
-                                  DataCell(Text(item.description)),
-                                  DataCell(Text(item.actor)),
-                                  DataCell(Text(item.date)),
-                                ],
-                              ),
-                            )
-                            .toList(),
-                      ),
+          // List Data
+          Expanded(
+            child: logs.isEmpty
+                ? Center(
+                    child: Text(
+                      'Data tidak ditemukan',
+                      style: TextStyle(color: Colors.grey.shade500),
                     ),
+                  )
+                : ListView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    itemCount: logs.length,
+                    itemBuilder: (context, index) {
+                      final log = logs[index];
+                      return _buildDataCard(log);
+                    },
                   ),
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _openFilterDialog,
+        backgroundColor: const Color(0xFF4F6DF5),
+        child: const Icon(Icons.filter_list, color: Colors.white),
+      ),
+    );
+  }
 
-                  // --- Pagination ---
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16.0),
-                    child: _buildPagination(),
+  Widget _buildDataCard(ActivityLog log) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade300),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        log.description,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Aktor: ${log.actor}',
+                        style: const TextStyle(
+                          color: Colors.grey,
+                          fontSize: 14,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Tanggal: ${log.date}',
+                        style: const TextStyle(
+                          color: Colors.grey,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+                PopupMenuButton<String>(
+                  onSelected: (value) {
+                    // Handle actions if needed
+                  },
+                  itemBuilder: (context) => const [
+                    PopupMenuItem(value: 'detail', child: Text('Detail')),
+                  ],
+                  icon: const Icon(Icons.more_vert, color: Colors.grey),
+                ),
+              ],
             ),
           ],
         ),
