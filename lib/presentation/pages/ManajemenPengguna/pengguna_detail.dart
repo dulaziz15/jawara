@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
-import 'daftar_pengguna.dart';
+import 'package:jawara/core/models/pengguna_models.dart';
 
 @RoutePage()
 class PenggunaDetailPage extends StatelessWidget {

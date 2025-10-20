@@ -29,28 +29,6 @@ class FilterAktivitas extends StatelessWidget {
             ),
             const SizedBox(height: 12),
 
-            // Input Deskripsi
-            const Text('Deskripsi'),
-            const SizedBox(height: 6),
-            const TextField(
-              decoration: InputDecoration(
-                hintText: 'Cari deskripsi...',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 12),
-
-            // Input Nama Pelaku
-            const Text('Nama Pelaku'),
-            const SizedBox(height: 6),
-            const TextField(
-              decoration: InputDecoration(
-                hintText: 'Contoh: Admin Jawara',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 12),
-
             // Input Tanggal
             const Text('Dari Tanggal'),
             const SizedBox(height: 6),
