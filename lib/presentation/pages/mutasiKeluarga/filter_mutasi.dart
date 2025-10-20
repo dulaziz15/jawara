@@ -1,37 +1,34 @@
 import 'package:flutter/material.dart';
 
-typedef ApplyFilterCallback = void Function(String newStatus);
+typedef ApplyFilterCallback = void Function(String newJenisMutasi);
 
-class FilterPesanWargaDialog extends StatefulWidget {
-  final String initialStatus;
+class FilterMutasiKeluargaDialog extends StatefulWidget {
+  final String initialJenisMutasi;
   final ApplyFilterCallback onApplyFilter;
 
-  const FilterPesanWargaDialog({
+  const FilterMutasiKeluargaDialog({
     super.key,
-    required this.initialStatus,
+    required this.initialJenisMutasi,
     required this.onApplyFilter,
   });
 
   @override
-  State<FilterPesanWargaDialog> createState() => _FilterPesanWargaDialogState();
+  State<FilterMutasiKeluargaDialog> createState() => _FilterMutasiKeluargaDialogState();
 }
 
-class _FilterPesanWargaDialogState extends State<FilterPesanWargaDialog> {
-  String? _selectedStatus;
-  final List<String> statusOptions = const [
+class _FilterMutasiKeluargaDialogState extends State<FilterMutasiKeluargaDialog> {
+  String? _selectedJenisMutasi;
+  final List<String> jenisMutasiOptions = const [
     'Semua',
-    'Pending',
-    'Diproses',
-    'Selesai',
-    'Ditolak',
+    'Pindah Domisili',
+    'Pindah Kota',
+    'Pindah Provinsi',
   ];
 
   @override
   void initState() {
     super.initState();
-    _selectedStatus = widget.initialStatus == '-- Pilih Status --' 
-        ? 'Semua' 
-        : widget.initialStatus;
+    _selectedJenisMutasi = widget.initialJenisMutasi;
   }
 
   @override
@@ -66,9 +63,9 @@ class _FilterPesanWargaDialogState extends State<FilterPesanWargaDialog> {
             const Divider(thickness: 1.2),
             const SizedBox(height: 16),
 
-            // Pilih Status
+            // Pilih Jenis Mutasi
             const Text(
-              'Pilih Status',
+              'Pilih Jenis Mutasi',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
@@ -76,13 +73,13 @@ class _FilterPesanWargaDialogState extends State<FilterPesanWargaDialog> {
             ),
             const SizedBox(height: 12),
 
-            // Daftar Status
+            // Daftar Jenis Mutasi
             Column(
-              children: statusOptions.map((status) {
+              children: jenisMutasiOptions.map((jenisMutasi) {
                 return InkWell(
                   onTap: () {
                     setState(() {
-                      _selectedStatus = status;
+                      _selectedJenisMutasi = jenisMutasi;
                     });
                   },
                   child: Padding(
@@ -90,11 +87,11 @@ class _FilterPesanWargaDialogState extends State<FilterPesanWargaDialog> {
                     child: Row(
                       children: [
                         Radio<String>(
-                          value: status,
-                          groupValue: _selectedStatus,
+                          value: jenisMutasi,
+                          groupValue: _selectedJenisMutasi,
                           onChanged: (String? value) {
                             setState(() {
-                              _selectedStatus = value;
+                              _selectedJenisMutasi = value;
                             });
                           },
                           activeColor: const Color(0xFF4F6DF5),
@@ -102,7 +99,7 @@ class _FilterPesanWargaDialogState extends State<FilterPesanWargaDialog> {
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
-                            status,
+                            jenisMutasi,
                             style: const TextStyle(fontSize: 14),
                           ),
                         ),
@@ -125,7 +122,7 @@ class _FilterPesanWargaDialogState extends State<FilterPesanWargaDialog> {
                 TextButton(
                   onPressed: () {
                     setState(() {
-                      _selectedStatus = 'Semua';
+                      _selectedJenisMutasi = 'Semua';
                     });
                     widget.onApplyFilter('Semua');
                     Navigator.of(context).pop();
@@ -143,8 +140,8 @@ class _FilterPesanWargaDialogState extends State<FilterPesanWargaDialog> {
                 // Terapkan
                 ElevatedButton(
                   onPressed: () {
-                    if (_selectedStatus != null) {
-                      widget.onApplyFilter(_selectedStatus!);
+                    if (_selectedJenisMutasi != null) {
+                      widget.onApplyFilter(_selectedJenisMutasi!);
                       Navigator.of(context).pop();
                     }
                   },
