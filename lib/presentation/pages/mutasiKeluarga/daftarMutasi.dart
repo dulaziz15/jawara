@@ -163,7 +163,7 @@ class _MutasiKeluargaPageState extends State<DaftarMutasiPage> {
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF4F6DF5),
+                        color: Color(0xFF6C63FF),
                       ),
                     ),
                     IconButton(
@@ -233,7 +233,7 @@ class _MutasiKeluargaPageState extends State<DaftarMutasiPage> {
                   child: ElevatedButton(
                     onPressed: () => Navigator.of(dialogContext).pop(),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF4F6DF5),
+                      backgroundColor: const Color(0xFF6C63FF),
                       padding: const EdgeInsets.symmetric(
                         horizontal: 32,
                         vertical: 12,
@@ -379,7 +379,7 @@ class _MutasiKeluargaPageState extends State<DaftarMutasiPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _showFilterDialog,
-        backgroundColor: const Color(0xFF4F6DF5),
+        backgroundColor: const Color(0xFF6C63FF),
         child: const Icon(Icons.filter_list, color: Colors.white),
       ),
     );

@@ -184,7 +184,7 @@ class _AspirasiPageState extends State<AspirasiPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _showFilterDialog,
-        backgroundColor: const Color(0xFF4F6DF5),
+        backgroundColor: const Color(0xFF6C63FF),
         child: const Icon(Icons.filter_list, color: Colors.white),
       ),
     );

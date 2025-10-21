@@ -49,7 +49,7 @@ class _EditAspirasiPageState extends State<EditAspirasiPage> {
     return Scaffold(
       backgroundColor: Colors.grey.shade200,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF4F6DF5),
+        backgroundColor: const Color(0xFF6C63FF),
         elevation: 4,
         iconTheme: const IconThemeData(color: Colors.white),
         leading: IconButton(
@@ -107,7 +107,7 @@ class _EditAspirasiPageState extends State<EditAspirasiPage> {
               ElevatedButton(
                 onPressed: _saveChanges,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF4F6DF5),
+                  backgroundColor: const Color(0xFF6C63FF),
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                   elevation: 4,
