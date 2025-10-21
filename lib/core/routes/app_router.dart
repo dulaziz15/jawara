@@ -27,6 +27,7 @@ import 'package:jawara/presentation/pages/mutasiKeluarga/daftarMutasi.dart';
 import 'package:jawara/presentation/pages/mutasiKeluarga/mutasiKeluarga.dart';
 import 'package:jawara/presentation/pages/mutasiKeluarga/tambahMutasi.dart';
 import 'package:jawara/presentation/pages/pemasukan/pemasukan.dart';
+import 'package:jawara/presentation/pages/pemasukan/tagih_iuran.dart';
 import 'package:jawara/presentation/pages/penerimaanWarga/penerimaan.dart';
 import 'package:jawara/presentation/pages/penerimaanWarga/penerimaanWarga.dart';
 import 'package:jawara/presentation/pages/pengeluaran/laporan_pemasukan_detail.dart';
@@ -50,9 +51,10 @@ import 'package:jawara/presentation/pages/report/report_finance.dart';
 // import 'package:jawara/presentation/pages/rumah/rumah_daftar.dart';
 // import 'package:jawara/presentation/pages/rumah/rumah_tambah.dart';
 
-// import 'package:jawara/presentation/pages/pemasukan/pemasukan_kategori.dart';
-// import 'package:jawara/presentation/pages/pemasukan/pemasukan_tagih.dart';
-// import 'package:jawara/presentation/pages/pemasukan/pemasukan_tagihan.dart';
+import 'package:jawara/presentation/pages/pemasukan/kategori_iuran.dart';
+import 'package:jawara/presentation/pages/pemasukan/pemasukan_daftar.dart';
+import 'package:jawara/presentation/pages/pemasukan/tagihan_daftar.dart';
+import 'package:jawara/presentation/pages/pemasukan/tagihan_detail.dart';
 // import 'package:jawara/presentation/pages/pemasukan/pemasukan_lain_daftar.dart';
 // import 'package:jawara/presentation/pages/pemasukan/pemasukan_lain_tambah.dart';
 
@@ -130,14 +132,15 @@ class AppRouter extends _$AppRouter {
       ],
     ),
 
-    // === PENGELUARAN ===
+    // === PEMASUKAN ===
     AutoRoute(
-      page: PengeluaranRoute.page,
-      path: '/pengeluaran',
+      page: PemasukanRoute.page,
+      path: '/pemasukan',
       children: [
-        AutoRoute(page: PengeluaranDaftarRoute.page, path: 'daftar'),
-        AutoRoute(page: PengeluaranDetailRoute.page, path: 'detail/:id'),
-        AutoRoute(page: PengeluaranTambahRoute.page, path: 'tambah'),
+        AutoRoute(page: TagihanDaftarRoute.page, path: 'tagihan_daftar'),
+        AutoRoute(page: TagihanDetailRoute.page, path: 'tagihan_detail/:id'),
+        AutoRoute(page: TagihIuranRoute.page, path: 'tagih_iuran'),
+        AutoRoute(page: KategoriIuranRoute.page, path: 'kategori_iuran'),
       ],
     ),
 

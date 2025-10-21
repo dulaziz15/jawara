@@ -101,15 +101,15 @@ class _SidebarState extends State<Sidebar> {
             children: [
               ListTile(
                 title: const Text("Kategori Iuran"),
-                onTap: () => context.router.pushNamed('/pemasukan/kategori'),
+                onTap: () => context.router.pushNamed('/pemasukan/kategori_iuran'),
               ),
               ListTile(
                 title: const Text("Tagih Iuran"),
-                onTap: () => context.router.pushNamed('/pemasukan/tagih'),
+                onTap: () => context.router.pushNamed('/pemasukan/tagih_iuran'),
               ),
               ListTile(
                 title: const Text("Tagihan"),
-                onTap: () => context.router.pushNamed('/pemasukan/tagihan'),
+                onTap: () => context.router.pushNamed('/pemasukan/tagihan_daftar'),
               ),
               ListTile(
                 title: const Text("Pemasukan Lain - Daftar"),
