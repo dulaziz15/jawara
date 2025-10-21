@@ -154,7 +154,7 @@ class _LaporanPemasukanPageState extends State<LaporanPemasukanPage> {
                     color: Color(0xFF6C63FF),
                   ),
                   onPressed: () {
-                    // Navigate to detail page if exists
+                    // Aksi ketika tombol lihat detail ditekan
                   },
                 ),
               ],
