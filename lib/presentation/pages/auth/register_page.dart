@@ -1,7 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:jawara/presentation/pages/auth/component/image_picker.dart';
 
 @RoutePage()
