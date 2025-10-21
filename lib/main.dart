@@ -16,6 +16,7 @@ class MyApp extends StatelessWidget {
       title: 'Jawara Pintar',
       routerConfig: _appRouter.config(),
       theme: ThemeData(useMaterial3: true),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
