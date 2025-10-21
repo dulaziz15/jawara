@@ -264,23 +264,15 @@ class _PemasukanDaftarPageState extends State<PemasukanDaftarPage> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'Jumlah: Rp ${item.jumlahPemasukan.toStringAsFixed(0)}',
-                        style: const TextStyle(
-                          color: Colors.grey,
-                          fontSize: 14,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Verifikator: ${item.verifikator}',
-                        style: const TextStyle(
-                          color: Colors.grey,
-                          fontSize: 14,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
                         'Tanggal: ${item.tanggalPemasukan.day.toString().padLeft(2, '0')} ${_getBulan(item.tanggalPemasukan.month)} ${item.tanggalPemasukan.year}',
+                        style: const TextStyle(
+                          color: Colors.grey,
+                          fontSize: 14,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Jumlah: Rp ${item.jumlahPemasukan.toStringAsFixed(0)}',
                         style: const TextStyle(
                           color: Colors.grey,
                           fontSize: 14,
@@ -291,7 +283,7 @@ class _PemasukanDaftarPageState extends State<PemasukanDaftarPage> {
                 ),
                 Column(
                   children: [
-                    _buildVerifikasiBadge(item.tanggalTerverifikasi),
+                    // _buildVerifikasiBadge(item.tanggalTerverifikasi),
                     const SizedBox(height: 8),
                     PopupMenuButton<String>(
                       onSelected: (value) {

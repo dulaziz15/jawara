@@ -82,14 +82,14 @@ class UserController {
 }
 
 // ==================== VIEW ====================
-class AddUserPage extends StatefulWidget {
-  const AddUserPage({super.key});
+class PenggunaTambahPage extends StatefulWidget {
+  const PenggunaTambahPage({super.key});
 
   @override
-  State<AddUserPage> createState() => _AddUserPageState();
+  State<PenggunaTambahPage> createState() => _PenggunaTambahPageState();
 }
 
-class _AddUserPageState extends State<AddUserPage> {
+class _PenggunaTambahPageState extends State<PenggunaTambahPage> {
   final UserController controller = UserController();
 
   final List<String> roles = [
