@@ -46,11 +46,6 @@ class ChannelDetailPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 24),
 
-                // Thumbnail dari assets
-                
-
-                const SizedBox(height: 24),
-
                 _buildDetailItem('Nama Channel', channel.nama),
                 _buildDetailItem('Tipe Channel', channel.tipe),
                 _buildDetailItem('Nama Pemilik', channel.an),

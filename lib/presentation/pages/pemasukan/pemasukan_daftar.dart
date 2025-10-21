@@ -1,45 +1,45 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:jawara/core/models/pengeluaran_model.dart'; // pastikan path sesuai struktur project-mu
+import 'package:jawara/core/models/pemasukan_model.dart'; // pastikan path sesuai struktur project-mu
 
 @RoutePage()
-class PengeluaranDaftarPage extends StatefulWidget {
-  const PengeluaranDaftarPage({super.key});
+class PemasukanDaftarPage extends StatefulWidget {
+  const PemasukanDaftarPage({super.key});
 
   @override
-  State<PengeluaranDaftarPage> createState() => _PengeluaranDaftarPageState();
+  State<PemasukanDaftarPage> createState() => _PemasukanDaftarPageState();
 }
 
-class _PengeluaranDaftarPageState extends State<PengeluaranDaftarPage> {
-  List<PengeluaranModel> _filteredData = dummyPengeluaran;
+class _PemasukanDaftarPageState extends State<PemasukanDaftarPage> {
+  List<PemasukanModel> _filteredData = dummyPemasukan;
   final TextEditingController _searchController = TextEditingController();
   String _selectedFilter = 'Semua';
 
   @override
   void initState() {
     super.initState();
-    _filteredData = dummyPengeluaran;
+    _filteredData = dummyPemasukan;
   }
 
   void _applyFilter(String kategori) {
     setState(() {
       _selectedFilter = kategori;
-      List<PengeluaranModel> kategoriFilteredData;
+      List<PemasukanModel> kategoriFilteredData;
       if (kategori == 'Semua') {
-        kategoriFilteredData = dummyPengeluaran;
+        kategoriFilteredData = dummyPemasukan;
       } else {
-        kategoriFilteredData = dummyPengeluaran
-            .where((data) => data.kategoriPengeluaran == kategori)
+        kategoriFilteredData = dummyPemasukan
+            .where((data) => data.kategoriPemasukan == kategori)
             .toList();
       }
       if (_searchController.text.isNotEmpty) {
         _filteredData = kategoriFilteredData
             .where(
               (data) =>
-                  data.namaPengeluaran.toLowerCase().contains(
+                  data.namaPemasukan.toLowerCase().contains(
                     _searchController.text.toLowerCase(),
                   ) ||
-                  data.kategoriPengeluaran.toLowerCase().contains(
+                  data.kategoriPemasukan.toLowerCase().contains(
                     _searchController.text.toLowerCase(),
                   ),
             )
@@ -52,17 +52,17 @@ class _PengeluaranDaftarPageState extends State<PengeluaranDaftarPage> {
 
   void _onSearchChanged(String value) {
     setState(() {
-      List<PengeluaranModel> searchFilteredData;
+      List<PemasukanModel> searchFilteredData;
       if (value.isEmpty) {
-        searchFilteredData = dummyPengeluaran;
+        searchFilteredData = dummyPemasukan;
       } else {
-        searchFilteredData = dummyPengeluaran
+        searchFilteredData = dummyPemasukan
             .where(
               (data) =>
-                  data.namaPengeluaran.toLowerCase().contains(
+                  data.namaPemasukan.toLowerCase().contains(
                     value.toLowerCase(),
                   ) ||
-                  data.kategoriPengeluaran.toLowerCase().contains(
+                  data.kategoriPemasukan.toLowerCase().contains(
                     value.toLowerCase(),
                   ),
             )
@@ -70,7 +70,7 @@ class _PengeluaranDaftarPageState extends State<PengeluaranDaftarPage> {
       }
       if (_selectedFilter != 'Semua') {
         _filteredData = searchFilteredData
-            .where((data) => data.kategoriPengeluaran == _selectedFilter)
+            .where((data) => data.kategoriPemasukan == _selectedFilter)
             .toList();
       } else {
         _filteredData = searchFilteredData;
@@ -79,13 +79,13 @@ class _PengeluaranDaftarPageState extends State<PengeluaranDaftarPage> {
   }
 
   void _showFilterDialog() {
-    final List<String> kategoriList = dummyPengeluaran
-        .map((e) => e.kategoriPengeluaran)
+    final List<String> kategoriList = dummyPemasukan
+        .map((e) => e.kategoriPemasukan)
         .toSet()
         .toList();
     showDialog(
       context: context,
-      builder: (context) => FilterPengeluaranDialog(
+      builder: (context) => FilterPemasukanDialog(
         initialKategori: _selectedFilter,
         kategoriList: kategoriList,
         onApplyFilter: _applyFilter,
@@ -220,7 +220,7 @@ class _PengeluaranDaftarPageState extends State<PengeluaranDaftarPage> {
     );
   }
 
-  Widget _buildDataCard(PengeluaranModel item) {
+  Widget _buildDataCard(PemasukanModel item) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
@@ -248,7 +248,7 @@ class _PengeluaranDaftarPageState extends State<PengeluaranDaftarPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        item.namaPengeluaran,
+                        item.namaPemasukan,
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
@@ -256,7 +256,7 @@ class _PengeluaranDaftarPageState extends State<PengeluaranDaftarPage> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'Kategori: ${item.kategoriPengeluaran}',
+                        'Kategori: ${item.kategoriPemasukan}',
                         style: const TextStyle(
                           color: Colors.grey,
                           fontSize: 14,
@@ -264,7 +264,7 @@ class _PengeluaranDaftarPageState extends State<PengeluaranDaftarPage> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'Jumlah: Rp ${item.jumlahPengeluaran.toStringAsFixed(0)}',
+                        'Tanggal: ${item.tanggalPemasukan.day.toString().padLeft(2, '0')} ${_getBulan(item.tanggalPemasukan.month)} ${item.tanggalPemasukan.year}',
                         style: const TextStyle(
                           color: Colors.grey,
                           fontSize: 14,
@@ -272,15 +272,7 @@ class _PengeluaranDaftarPageState extends State<PengeluaranDaftarPage> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'Verifikator: ${item.verifikator}',
-                        style: const TextStyle(
-                          color: Colors.grey,
-                          fontSize: 14,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Tanggal: ${item.tanggalPengeluaran.day.toString().padLeft(2, '0')} ${_getBulan(item.tanggalPengeluaran.month)} ${item.tanggalPengeluaran.year}',
+                        'Jumlah: Rp ${item.jumlahPemasukan.toStringAsFixed(0)}',
                         style: const TextStyle(
                           color: Colors.grey,
                           fontSize: 14,
@@ -291,13 +283,13 @@ class _PengeluaranDaftarPageState extends State<PengeluaranDaftarPage> {
                 ),
                 Column(
                   children: [
-                    _buildVerifikasiBadge(item.tanggalTerverifikasi),
+                    // _buildVerifikasiBadge(item.tanggalTerverifikasi),
                     const SizedBox(height: 8),
                     PopupMenuButton<String>(
                       onSelected: (value) {
                         if (value == 'detail') {
                           context.router.pushNamed(
-                            '/pengeluaran/detail/${item.id}',
+                            '/pemasukan/detail/${item.id}',
                           );
                         }
                       },
@@ -317,12 +309,12 @@ class _PengeluaranDaftarPageState extends State<PengeluaranDaftarPage> {
   }
 }
 
-class FilterPengeluaranDialog extends StatefulWidget {
+class FilterPemasukanDialog extends StatefulWidget {
   final String initialKategori;
   final List<String> kategoriList;
   final Function(String) onApplyFilter;
 
-  const FilterPengeluaranDialog({
+  const FilterPemasukanDialog({
     super.key,
     required this.initialKategori,
     required this.kategoriList,
@@ -330,11 +322,11 @@ class FilterPengeluaranDialog extends StatefulWidget {
   });
 
   @override
-  State<FilterPengeluaranDialog> createState() =>
-      _FilterPengeluaranDialogState();
+  State<FilterPemasukanDialog> createState() =>
+      _FilterPemasukanDialogState();
 }
 
-class _FilterPengeluaranDialogState extends State<FilterPengeluaranDialog> {
+class _FilterPemasukanDialogState extends State<FilterPemasukanDialog> {
   late String _selectedKategori;
 
   @override
@@ -346,7 +338,7 @@ class _FilterPengeluaranDialogState extends State<FilterPengeluaranDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Filter Pengeluaran'),
+      title: const Text('Filter Pemasukan'),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [

@@ -1,25 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
-import 'package:jawara/core/models/pemasukan_model.dart';
+import 'package:jawara/core/models/tagihan_model.dart';
 import 'package:jawara/core/utils/formatter_util.dart';
 
 @RoutePage()
-class LaporanPemasukanDetailPage extends StatelessWidget {
-  final int laporanPemasukanId;
+class TagihanDetailPage extends StatelessWidget {
+  final int tagihanId;
 
-  const LaporanPemasukanDetailPage({
+  const TagihanDetailPage({
     super.key,
-    @PathParam('id') required this.laporanPemasukanId,
+    @PathParam('id') required this.tagihanId,
   });
-
-  // Helper untuk format bulan
-  String _getBulan(int bulan) {
-    const namaBulan = [
-      'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli',
-      'Agustus', 'September', 'Oktober', 'November', 'Desember',
-    ];
-    return namaBulan[bulan - 1];
-  }
 
   // Helper widget untuk menampilkan baris detail teks
   Widget _buildDetailRow(String label, String value) {
@@ -94,25 +85,50 @@ class LaporanPemasukanDetailPage extends StatelessWidget {
     );
   }
 
+  // Helper widget untuk status dengan badge
+  Widget _buildStatusBadge(String status) {
+    Color statusColor;
+    String statusText;
+
+    switch (status.toLowerCase()) {
+      case 'paid':
+        statusColor = Colors.green;
+        statusText = 'Lunas';
+        break;
+      case 'unpaid':
+        statusColor = Colors.red;
+        statusText = 'Belum Lunas';
+        break;
+      default:
+        statusColor = Colors.grey;
+        statusText = 'Tidak Diketahui';
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: statusColor.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: statusColor.withOpacity(0.3)),
+      ),
+      child: Text(
+        statusText,
+        style: TextStyle(
+          color: statusColor,
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Ambil data pemasukan yang sesuai berdasarkan ID
-    final pemasukan = dummyPemasukan.firstWhere((item) => item.id == laporanPemasukanId);
+    // Ambil data tagihan yang sesuai berdasarkan ID
+    final tagihan = dummyTagihan.firstWhere((item) => item.id == tagihanId);
 
-    // Format tanggal pemasukan
-    final String tanggalPemasukanFormatted =
-        '${pemasukan.tanggalPemasukan.day} '
-        '${_getBulan(pemasukan.tanggalPemasukan.month)} '
-        '${pemasukan.tanggalPemasukan.year}';
-
-    // Format tanggal terverifikasi
-    final String tanggalTerverifikasiFormatted =
-        '${pemasukan.tanggalTerverifikasi.day} '
-        '${_getBulan(pemasukan.tanggalTerverifikasi.month)} '
-        '${pemasukan.tanggalTerverifikasi.year}';
-
-    // Format jumlah pemasukan
-    final String jumlahFormatted = FormatterUtil.formatCurrency(pemasukan.jumlahPemasukan);
+    // Format nominal
+    final String nominalFormatted = FormatterUtil.formatCurrency(tagihan.nominal);
 
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
@@ -129,7 +145,7 @@ class LaporanPemasukanDetailPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Card Detail Laporan Pemasukan
+            // Card Detail Tagihan
             Card(
               color: Colors.white,
               elevation: 2,
@@ -141,14 +157,31 @@ class LaporanPemasukanDetailPage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildDetailRow("Nama Pemasukan:", pemasukan.namaPemasukan),
-                    _buildDetailRow("Kategori Pemasukan:", pemasukan.kategoriPemasukan),
-                    _buildDetailRow("Jumlah Pemasukan:", 'Rp $jumlahFormatted'),
-                    _buildDetailRow("Tanggal Pemasukan:", tanggalPemasukanFormatted),
-                    _buildDetailRow("Verifikator:", pemasukan.verifikator),
-                    _buildDetailRow("Tanggal Terverifikasi:", tanggalTerverifikasiFormatted),
+                    _buildDetailRow("Kode Iuran:", tagihan.kodeIuran),
+                    _buildDetailRow("Nama Iuran:", tagihan.namaIuran),
+                    _buildDetailRow("Kategori:", tagihan.kategori),
+                    _buildDetailRow("Periode:", tagihan.periode),
+                    _buildDetailRow("Nominal:", 'Rp $nominalFormatted'),
+                    _buildDetailRow("Nama KK:", tagihan.namaKK),
+                    _buildDetailRow("Alamat:", tagihan.alamat),
+                    _buildDetailRow("Metode Pembayaran:", tagihan.metodePembayaran.isEmpty ? '-' : tagihan.metodePembayaran),
                     const Divider(height: 24),
-                    _buildAttachmentRow("Bukti:", pemasukan.bukti),
+                    _buildAttachmentRow("Bukti Pembayaran:", tagihan.bukti),
+                    if (tagihan.alasanPenolakan.isNotEmpty) ...[
+                      const Divider(height: 24),
+                      _buildDetailRow("Alasan Penolakan:", tagihan.alasanPenolakan),
+                    ],
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        const Text(
+                          "Status:",
+                          style: TextStyle(fontSize: 14, color: Colors.grey),
+                        ),
+                        const SizedBox(width: 12),
+                        _buildStatusBadge(tagihan.status),
+                      ],
+                    ),
                   ],
                 ),
               ),

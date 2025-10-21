@@ -103,18 +103,6 @@ class _WargaDaftarPageState extends State<WargaDaftarPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[50],
-      appBar: AppBar(
-        title: const Text(
-          'Data Keluarga',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
-        backgroundColor: Colors.blue[700],
-        elevation: 0,
-        centerTitle: true,
-      ),
       body: Column(
         children: [
           // Search and Filter Section

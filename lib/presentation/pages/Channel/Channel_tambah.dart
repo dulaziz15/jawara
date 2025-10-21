@@ -98,8 +98,8 @@ class TransferChannelController with ChangeNotifier {
 /// ============================
 /// VIEW
 /// ============================
-class TransferChannelPage extends StatelessWidget {
-  const TransferChannelPage({Key? key}) : super(key: key);
+class ChannelTambahPage extends StatelessWidget {
+  const ChannelTambahPage({Key? key}) : super(key: key);
 
   InputDecoration _inputDecoration(String label, String hint) {
     return InputDecoration(

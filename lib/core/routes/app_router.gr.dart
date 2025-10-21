@@ -24,9 +24,8 @@ abstract class _$AppRouter extends RootStackRouter {
     BroadcastDetailRoute.name: (routeData) {
       final pathParams = routeData.inheritedPathParams;
       final args = routeData.argsAs<BroadcastDetailRouteArgs>(
-        orElse: () =>
-            BroadcastDetailRouteArgs(broadcastId: pathParams.getInt('id')),
-      );
+          orElse: () =>
+              BroadcastDetailRouteArgs(broadcastId: pathParams.getInt('id')));
       return AutoRoutePage<dynamic>(
         routeData: routeData,
         child: BroadcastDetailPage(
@@ -38,12 +37,14 @@ abstract class _$AppRouter extends RootStackRouter {
     BroadcastEditRoute.name: (routeData) {
       final pathParams = routeData.inheritedPathParams;
       final args = routeData.argsAs<BroadcastEditRouteArgs>(
-        orElse: () =>
-            BroadcastEditRouteArgs(broadcastId: pathParams.getInt('id')),
-      );
+          orElse: () =>
+              BroadcastEditRouteArgs(broadcastId: pathParams.getInt('id')));
       return AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: BroadcastEditPage(key: args.key, broadcastId: args.broadcastId),
+        child: BroadcastEditPage(
+          key: args.key,
+          broadcastId: args.broadcastId,
+        ),
       );
     },
     BroadcastTambahRoute.name: (routeData) {
@@ -52,10 +53,53 @@ abstract class _$AppRouter extends RootStackRouter {
         child: const BroadcastTambahPage(),
       );
     },
+    ChannelDaftarRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const ChannelDaftarPage(),
+      );
+    },
+    ChannelDetailRoute.name: (routeData) {
+      final args = routeData.argsAs<ChannelDetailRouteArgs>();
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: ChannelDetailPage(
+          key: args.key,
+          channelId: args.channelId,
+        ),
+      );
+    },
+    ChannelEditRoute.name: (routeData) {
+      final args = routeData.argsAs<ChannelEditRouteArgs>();
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: ChannelEditPage(
+          key: args.key,
+          channelId: args.channelId,
+        ),
+      );
+    },
+    ChannelRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const ChannelPage(),
+      );
+    },
+    DaftarMutasiRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const DaftarMutasiPage(),
+      );
+    },
+    DaftarPenggunaRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const DaftarPenggunaPage(),
+      );
+    },
     DashboardKegiatanRoute.name: (routeData) {
       final args = routeData.argsAs<DashboardKegiatanRouteArgs>(
-        orElse: () => const DashboardKegiatanRouteArgs(),
-      );
+          orElse: () => const DashboardKegiatanRouteArgs());
       return AutoRoutePage<dynamic>(
         routeData: routeData,
         child: DashboardKegiatanPage(key: args.key),
@@ -63,8 +107,7 @@ abstract class _$AppRouter extends RootStackRouter {
     },
     DashboardKependudukanRoute.name: (routeData) {
       final args = routeData.argsAs<DashboardKependudukanRouteArgs>(
-        orElse: () => const DashboardKependudukanRouteArgs(),
-      );
+          orElse: () => const DashboardKependudukanRouteArgs());
       return AutoRoutePage<dynamic>(
         routeData: routeData,
         child: DashboardKependudukanPage(key: args.key),
@@ -72,8 +115,7 @@ abstract class _$AppRouter extends RootStackRouter {
     },
     DashboardKeuanganRoute.name: (routeData) {
       final args = routeData.argsAs<DashboardKeuanganRouteArgs>(
-        orElse: () => const DashboardKeuanganRouteArgs(),
-      );
+          orElse: () => const DashboardKeuanganRouteArgs());
       return AutoRoutePage<dynamic>(
         routeData: routeData,
         child: DashboardKeuanganPage(key: args.key),
@@ -83,6 +125,12 @@ abstract class _$AppRouter extends RootStackRouter {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
         child: const DashboardPage(),
+      );
+    },
+    KategoriIuranRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const KategoriIuranPage(),
       );
     },
     KegiatanDaftarRoute.name: (routeData) {
@@ -100,23 +148,27 @@ abstract class _$AppRouter extends RootStackRouter {
     KegiatanDetailRoute.name: (routeData) {
       final pathParams = routeData.inheritedPathParams;
       final args = routeData.argsAs<KegiatanDetailRouteArgs>(
-        orElse: () =>
-            KegiatanDetailRouteArgs(kegiatanId: pathParams.getInt('id')),
-      );
+          orElse: () =>
+              KegiatanDetailRouteArgs(kegiatanId: pathParams.getInt('id')));
       return AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: KegiatanDetailPage(key: args.key, kegiatanId: args.kegiatanId),
+        child: KegiatanDetailPage(
+          key: args.key,
+          kegiatanId: args.kegiatanId,
+        ),
       );
     },
     KegiatanEditRoute.name: (routeData) {
       final pathParams = routeData.inheritedPathParams;
       final args = routeData.argsAs<KegiatanEditRouteArgs>(
-        orElse: () =>
-            KegiatanEditRouteArgs(kegiatanId: pathParams.getInt('id')),
-      );
+          orElse: () =>
+              KegiatanEditRouteArgs(kegiatanId: pathParams.getInt('id')));
       return AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: KegiatanEditPage(key: args.key, kegiatanId: args.kegiatanId),
+        child: KegiatanEditPage(
+          key: args.key,
+          kegiatanId: args.kegiatanId,
+        ),
       );
     },
     KegiatanTambahRoute.name: (routeData) {
@@ -146,15 +198,26 @@ abstract class _$AppRouter extends RootStackRouter {
     LaporanPemasukanDetailRoute.name: (routeData) {
       final pathParams = routeData.inheritedPathParams;
       final args = routeData.argsAs<LaporanPemasukanDetailRouteArgs>(
-        orElse: () => LaporanPemasukanDetailRouteArgs(
-          laporanPemasukanId: pathParams.getInt('id'),
-        ),
-      );
+          orElse: () => LaporanPemasukanDetailRouteArgs(
+              laporanPemasukanId: pathParams.getInt('id')));
       return AutoRoutePage<dynamic>(
         routeData: routeData,
         child: LaporanPemasukanDetailPage(
           key: args.key,
           laporanPemasukanId: args.laporanPemasukanId,
+        ),
+      );
+    },
+    PemasukanLainDetailRoute.name: (routeData) {
+      final pathParams = routeData.inheritedPathParams;
+      final args = routeData.argsAs<PemasukanLainDetailRouteArgs>(
+          orElse: () => PemasukanLainDetailRouteArgs(
+              laporanPemasukanId: pathParams.getInt('id')));
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: PengeluaranDetailPage(
+          key: args.key,
+          pengeluaranId: args.laporanPemasukanId,
         ),
       );
     },
@@ -167,10 +230,8 @@ abstract class _$AppRouter extends RootStackRouter {
     LaporanPengeluaranDetailRoute.name: (routeData) {
       final pathParams = routeData.inheritedPathParams;
       final args = routeData.argsAs<LaporanPengeluaranDetailRouteArgs>(
-        orElse: () => LaporanPengeluaranDetailRouteArgs(
-          laporanPengeluaranId: pathParams.getInt('id'),
-        ),
-      );
+          orElse: () => LaporanPengeluaranDetailRouteArgs(
+              laporanPengeluaranId: pathParams.getInt('id')));
       return AutoRoutePage<dynamic>(
         routeData: routeData,
         child: LaporanPengeluaranDetailPage(
@@ -185,6 +246,18 @@ abstract class _$AppRouter extends RootStackRouter {
         child: const LaporanPengeluaranPage(),
       );
     },
+    ListAktivitasRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const ListAktivitasPage(),
+      );
+    },
+    LogAktivitasRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const LogAktivitasPage(),
+      );
+    },
     LoginRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
@@ -193,17 +266,34 @@ abstract class _$AppRouter extends RootStackRouter {
     },
     MainDashboardRoute.name: (routeData) {
       final args = routeData.argsAs<MainDashboardRouteArgs>(
-        orElse: () => const MainDashboardRouteArgs(),
-      );
+          orElse: () => const MainDashboardRouteArgs());
       return AutoRoutePage<dynamic>(
         routeData: routeData,
         child: MainDashboardPage(key: args.key),
+      );
+    },
+    ManajemenPenggunaRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const ManajemenPenggunaPage(),
       );
     },
     MutasiKeluargaRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
         child: const MutasiKeluargaPage(),
+      );
+    },
+    PemasukanDaftarRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const PemasukanDaftarPage(),
+      );
+    },
+    PemasukanLainTambahRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const PemasukanLainTambahPage(),
       );
     },
     PemasukanRoute.name: (routeData) {
@@ -233,9 +323,8 @@ abstract class _$AppRouter extends RootStackRouter {
     PengeluaranDetailRoute.name: (routeData) {
       final pathParams = routeData.inheritedPathParams;
       final args = routeData.argsAs<PengeluaranDetailRouteArgs>(
-        orElse: () =>
-            PengeluaranDetailRouteArgs(pengeluaranId: pathParams.getInt('id')),
-      );
+          orElse: () => PengeluaranDetailRouteArgs(
+              pengeluaranId: pathParams.getInt('id')));
       return AutoRoutePage<dynamic>(
         routeData: routeData,
         child: PengeluaranDetailPage(
@@ -256,13 +345,33 @@ abstract class _$AppRouter extends RootStackRouter {
         child: const PengeluaranTambahPage(),
       );
     },
+    PenggunaDetailRoute.name: (routeData) {
+      final args = routeData.argsAs<PenggunaDetailRouteArgs>();
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: PenggunaDetailPage(
+          key: args.key,
+          userId: args.userId,
+        ),
+      );
+    },
+    PenggunaEditRoute.name: (routeData) {
+      final args = routeData.argsAs<PenggunaEditRouteArgs>();
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: PenggunaEditPage(
+          key: args.key,
+          userId: args.userId,
+        ),
+      );
+    },
     PesanWargaRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
         child: const PesanWargaPage(),
       );
     },
-    AspirasiRoute.name: (routeData) {
+    AspirasiWargaRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
         child: const AspirasiPage(),
@@ -310,16 +419,41 @@ abstract class _$AppRouter extends RootStackRouter {
         child: const SettingsPage(),
       );
     },
+    TagihIuranRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const TagihIuranPage(),
+      );
+    },
+    TagihanDaftarRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const TagihanDaftarPage(),
+      );
+    },
+    TagihanDetailRoute.name: (routeData) {
+      final pathParams = routeData.inheritedPathParams;
+      final args = routeData.argsAs<TagihanDetailRouteArgs>(
+          orElse: () =>
+              TagihanDetailRouteArgs(tagihanId: pathParams.getInt('id')));
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: TagihanDetailPage(
+          key: args.key,
+          tagihanId: args.tagihanId,
+        ),
+      );
+    },
     TambahMutasiRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
         child: const TambahMutasiPage(),
       );
     },
-    DaftarMutasiRoute.name: (routeData) {
+    PenggunaTambahRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const DaftarMutasiPage(),
+        child: PenggunaTambahPage(),
       );
     },
     WargaRoute.name: (routeData) {
@@ -334,115 +468,17 @@ abstract class _$AppRouter extends RootStackRouter {
         child: const WargaTambahPage(),
       );
     },
-    LogAktivitasRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const LogAktivitasPage(),
-      );
-    },
-    LisAktivitasRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const ListAktivitasPage(),
-      );
-    },
-    ManajemenPenggunaRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const ManajemenPenggunaPage(),
-      );
-    },
-    DetailPenggunaRoute.name: (routeData) {
-      final pathParams = routeData.inheritedPathParams;
-      final args = routeData.argsAs<DetailPenggunaRouteArgs>(
-        orElse: () =>
-            DetailPenggunaRouteArgs(userId: pathParams.getInt('id')),
-      );
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: PenggunaDetailPage( key: args.key,userId: args.userId),
-      );
-    },
-    TambahPenggunaRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const AddUserPage(),
-      );
-    },
-    EditPenggunaRoute.name: (routeData) {
-      final pathParams = routeData.inheritedPathParams;
-      final args = routeData.argsAs<EditPenggunaRouteArgs>(
-        orElse: () => EditPenggunaRouteArgs(userId: pathParams.getInt('id')),
-      );
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: PenggunaEditPage(key: args.key, userId: args.userId),
-      );
-    },
-    DaftarPenggunaRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const DaftarPenggunaPage(),
-      );
-    },
-    ChannelRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const ChannelPage(),
-      );
-    },
-    ChannelDaftarRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const ChannelDaftarPage(),
-      );
-    },
-    DetailChannelRoute.name: (routeData) {
-      final pathParams = routeData.inheritedPathParams;
-      final args = routeData.argsAs<DetailChannelRouteArgs>(
-        orElse: () =>
-            DetailChannelRouteArgs(channelId: pathParams.getInt('id')),
-      );
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: ChannelDetailPage( key: args.key, channelId: args.channelId),
-      );
-    },
-    ChannelEditRoute.name: (routeData) {
-      final pathParams = routeData.inheritedPathParams;
-      final args = routeData.argsAs<ChannelEditRouteArgs>(
-        orElse: () => ChannelEditRouteArgs(channelId: pathParams.getInt('id')),
-      );
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: ChannelEditPage(key: args.key, channelId: args.channelId),
-      );
-    },
-    ChannelTambahRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const TransferChannelPage(),
-      );
-    },
   };
-}
-
-/// generated route for
-/// [AspirasiPage]
-class AspirasiRoute extends PageRouteInfo<void> {
-  const AspirasiRoute({List<PageRouteInfo>? children})
-    : super(AspirasiRoute.name, initialChildren: children);
-
-  static const String name = 'AspirasiRoute';
-
-  static const PageInfo<void> page = PageInfo<void>(name);
 }
 
 /// generated route for
 /// [BroadcastDaftarPage]
 class BroadcastDaftarRoute extends PageRouteInfo<void> {
   const BroadcastDaftarRoute({List<PageRouteInfo>? children})
-    : super(BroadcastDaftarRoute.name, initialChildren: children);
+      : super(
+          BroadcastDaftarRoute.name,
+          initialChildren: children,
+        );
 
   static const String name = 'BroadcastDaftarRoute';
 
@@ -457,11 +493,14 @@ class BroadcastDetailRoute extends PageRouteInfo<BroadcastDetailRouteArgs> {
     required int broadcastId,
     List<PageRouteInfo>? children,
   }) : super(
-         BroadcastDetailRoute.name,
-         args: BroadcastDetailRouteArgs(key: key, broadcastId: broadcastId),
-         rawPathParams: {'id': broadcastId},
-         initialChildren: children,
-       );
+          BroadcastDetailRoute.name,
+          args: BroadcastDetailRouteArgs(
+            key: key,
+            broadcastId: broadcastId,
+          ),
+          rawPathParams: {'id': broadcastId},
+          initialChildren: children,
+        );
 
   static const String name = 'BroadcastDetailRoute';
 
@@ -470,7 +509,10 @@ class BroadcastDetailRoute extends PageRouteInfo<BroadcastDetailRouteArgs> {
 }
 
 class BroadcastDetailRouteArgs {
-  const BroadcastDetailRouteArgs({this.key, required this.broadcastId});
+  const BroadcastDetailRouteArgs({
+    this.key,
+    required this.broadcastId,
+  });
 
   final Key? key;
 
@@ -490,11 +532,14 @@ class BroadcastEditRoute extends PageRouteInfo<BroadcastEditRouteArgs> {
     required int broadcastId,
     List<PageRouteInfo>? children,
   }) : super(
-         BroadcastEditRoute.name,
-         args: BroadcastEditRouteArgs(key: key, broadcastId: broadcastId),
-         rawPathParams: {'id': broadcastId},
-         initialChildren: children,
-       );
+          BroadcastEditRoute.name,
+          args: BroadcastEditRouteArgs(
+            key: key,
+            broadcastId: broadcastId,
+          ),
+          rawPathParams: {'id': broadcastId},
+          initialChildren: children,
+        );
 
   static const String name = 'BroadcastEditRoute';
 
@@ -503,7 +548,10 @@ class BroadcastEditRoute extends PageRouteInfo<BroadcastEditRouteArgs> {
 }
 
 class BroadcastEditRouteArgs {
-  const BroadcastEditRouteArgs({this.key, required this.broadcastId});
+  const BroadcastEditRouteArgs({
+    this.key,
+    required this.broadcastId,
+  });
 
   final Key? key;
 
@@ -519,7 +567,10 @@ class BroadcastEditRouteArgs {
 /// [BroadcastTambahPage]
 class BroadcastTambahRoute extends PageRouteInfo<void> {
   const BroadcastTambahRoute({List<PageRouteInfo>? children})
-    : super(BroadcastTambahRoute.name, initialChildren: children);
+      : super(
+          BroadcastTambahRoute.name,
+          initialChildren: children,
+        );
 
   static const String name = 'BroadcastTambahRoute';
 
@@ -527,14 +578,162 @@ class BroadcastTambahRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
+/// [ChannelDaftarPage]
+class ChannelDaftarRoute extends PageRouteInfo<void> {
+  const ChannelDaftarRoute({List<PageRouteInfo>? children})
+      : super(
+          ChannelDaftarRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'ChannelDaftarRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [ChannelTambahPage]
+class ChannelTambahRoute extends PageRouteInfo<void> {
+  const ChannelTambahRoute({List<PageRouteInfo>? children})
+      : super(
+          ChannelTambahRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'ChannelTambahRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [ChannelDetailPage]
+class ChannelDetailRoute extends PageRouteInfo<ChannelDetailRouteArgs> {
+  ChannelDetailRoute({
+    Key? key,
+    required int channelId,
+    List<PageRouteInfo>? children,
+  }) : super(
+          ChannelDetailRoute.name,
+          args: ChannelDetailRouteArgs(
+            key: key,
+            channelId: channelId,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'ChannelDetailRoute';
+
+  static const PageInfo<ChannelDetailRouteArgs> page =
+      PageInfo<ChannelDetailRouteArgs>(name);
+}
+
+class ChannelDetailRouteArgs {
+  const ChannelDetailRouteArgs({
+    this.key,
+    required this.channelId,
+  });
+
+  final Key? key;
+
+  final int channelId;
+
+  @override
+  String toString() {
+    return 'ChannelDetailRouteArgs{key: $key, channelId: $channelId}';
+  }
+}
+
+/// generated route for
+/// [ChannelEditPage]
+class ChannelEditRoute extends PageRouteInfo<ChannelEditRouteArgs> {
+  ChannelEditRoute({
+    Key? key,
+    required int channelId,
+    List<PageRouteInfo>? children,
+  }) : super(
+          ChannelEditRoute.name,
+          args: ChannelEditRouteArgs(
+            key: key,
+            channelId: channelId,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'ChannelEditRoute';
+
+  static const PageInfo<ChannelEditRouteArgs> page =
+      PageInfo<ChannelEditRouteArgs>(name);
+}
+
+class ChannelEditRouteArgs {
+  const ChannelEditRouteArgs({
+    this.key,
+    required this.channelId,
+  });
+
+  final Key? key;
+
+  final int channelId;
+
+  @override
+  String toString() {
+    return 'ChannelEditRouteArgs{key: $key, channelId: $channelId}';
+  }
+}
+
+/// generated route for
+/// [ChannelPage]
+class ChannelRoute extends PageRouteInfo<void> {
+  const ChannelRoute({List<PageRouteInfo>? children})
+      : super(
+          ChannelRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'ChannelRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [DaftarMutasiPage]
+class DaftarMutasiRoute extends PageRouteInfo<void> {
+  const DaftarMutasiRoute({List<PageRouteInfo>? children})
+      : super(
+          DaftarMutasiRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'DaftarMutasiRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [DaftarPenggunaPage]
+class DaftarPenggunaRoute extends PageRouteInfo<void> {
+  const DaftarPenggunaRoute({List<PageRouteInfo>? children})
+      : super(
+          DaftarPenggunaRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'DaftarPenggunaRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
 /// [DashboardKegiatanPage]
 class DashboardKegiatanRoute extends PageRouteInfo<DashboardKegiatanRouteArgs> {
-  DashboardKegiatanRoute({Key? key, List<PageRouteInfo>? children})
-    : super(
-        DashboardKegiatanRoute.name,
-        args: DashboardKegiatanRouteArgs(key: key),
-        initialChildren: children,
-      );
+  DashboardKegiatanRoute({
+    Key? key,
+    List<PageRouteInfo>? children,
+  }) : super(
+          DashboardKegiatanRoute.name,
+          args: DashboardKegiatanRouteArgs(key: key),
+          initialChildren: children,
+        );
 
   static const String name = 'DashboardKegiatanRoute';
 
@@ -557,12 +756,14 @@ class DashboardKegiatanRouteArgs {
 /// [DashboardKependudukanPage]
 class DashboardKependudukanRoute
     extends PageRouteInfo<DashboardKependudukanRouteArgs> {
-  DashboardKependudukanRoute({Key? key, List<PageRouteInfo>? children})
-    : super(
-        DashboardKependudukanRoute.name,
-        args: DashboardKependudukanRouteArgs(key: key),
-        initialChildren: children,
-      );
+  DashboardKependudukanRoute({
+    Key? key,
+    List<PageRouteInfo>? children,
+  }) : super(
+          DashboardKependudukanRoute.name,
+          args: DashboardKependudukanRouteArgs(key: key),
+          initialChildren: children,
+        );
 
   static const String name = 'DashboardKependudukanRoute';
 
@@ -584,12 +785,14 @@ class DashboardKependudukanRouteArgs {
 /// generated route for
 /// [DashboardKeuanganPage]
 class DashboardKeuanganRoute extends PageRouteInfo<DashboardKeuanganRouteArgs> {
-  DashboardKeuanganRoute({Key? key, List<PageRouteInfo>? children})
-    : super(
-        DashboardKeuanganRoute.name,
-        args: DashboardKeuanganRouteArgs(key: key),
-        initialChildren: children,
-      );
+  DashboardKeuanganRoute({
+    Key? key,
+    List<PageRouteInfo>? children,
+  }) : super(
+          DashboardKeuanganRoute.name,
+          args: DashboardKeuanganRouteArgs(key: key),
+          initialChildren: children,
+        );
 
   static const String name = 'DashboardKeuanganRoute';
 
@@ -612,9 +815,26 @@ class DashboardKeuanganRouteArgs {
 /// [DashboardPage]
 class DashboardRoute extends PageRouteInfo<void> {
   const DashboardRoute({List<PageRouteInfo>? children})
-    : super(DashboardRoute.name, initialChildren: children);
+      : super(
+          DashboardRoute.name,
+          initialChildren: children,
+        );
 
   static const String name = 'DashboardRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [KategoriIuranPage]
+class KategoriIuranRoute extends PageRouteInfo<void> {
+  const KategoriIuranRoute({List<PageRouteInfo>? children})
+      : super(
+          KategoriIuranRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'KategoriIuranRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }
@@ -623,7 +843,10 @@ class DashboardRoute extends PageRouteInfo<void> {
 /// [KegiatanDaftarPage]
 class KegiatanDaftarRoute extends PageRouteInfo<void> {
   const KegiatanDaftarRoute({List<PageRouteInfo>? children})
-    : super(KegiatanDaftarRoute.name, initialChildren: children);
+      : super(
+          KegiatanDaftarRoute.name,
+          initialChildren: children,
+        );
 
   static const String name = 'KegiatanDaftarRoute';
 
@@ -634,7 +857,10 @@ class KegiatanDaftarRoute extends PageRouteInfo<void> {
 /// [KegiatanDanBroadcastPage]
 class KegiatanDanBroadcastRoute extends PageRouteInfo<void> {
   const KegiatanDanBroadcastRoute({List<PageRouteInfo>? children})
-    : super(KegiatanDanBroadcastRoute.name, initialChildren: children);
+      : super(
+          KegiatanDanBroadcastRoute.name,
+          initialChildren: children,
+        );
 
   static const String name = 'KegiatanDanBroadcastRoute';
 
@@ -649,11 +875,14 @@ class KegiatanDetailRoute extends PageRouteInfo<KegiatanDetailRouteArgs> {
     required int kegiatanId,
     List<PageRouteInfo>? children,
   }) : super(
-         KegiatanDetailRoute.name,
-         args: KegiatanDetailRouteArgs(key: key, kegiatanId: kegiatanId),
-         rawPathParams: {'id': kegiatanId},
-         initialChildren: children,
-       );
+          KegiatanDetailRoute.name,
+          args: KegiatanDetailRouteArgs(
+            key: key,
+            kegiatanId: kegiatanId,
+          ),
+          rawPathParams: {'id': kegiatanId},
+          initialChildren: children,
+        );
 
   static const String name = 'KegiatanDetailRoute';
 
@@ -662,7 +891,10 @@ class KegiatanDetailRoute extends PageRouteInfo<KegiatanDetailRouteArgs> {
 }
 
 class KegiatanDetailRouteArgs {
-  const KegiatanDetailRouteArgs({this.key, required this.kegiatanId});
+  const KegiatanDetailRouteArgs({
+    this.key,
+    required this.kegiatanId,
+  });
 
   final Key? key;
 
@@ -682,11 +914,14 @@ class KegiatanEditRoute extends PageRouteInfo<KegiatanEditRouteArgs> {
     required int kegiatanId,
     List<PageRouteInfo>? children,
   }) : super(
-         KegiatanEditRoute.name,
-         args: KegiatanEditRouteArgs(key: key, kegiatanId: kegiatanId),
-         rawPathParams: {'id': kegiatanId},
-         initialChildren: children,
-       );
+          KegiatanEditRoute.name,
+          args: KegiatanEditRouteArgs(
+            key: key,
+            kegiatanId: kegiatanId,
+          ),
+          rawPathParams: {'id': kegiatanId},
+          initialChildren: children,
+        );
 
   static const String name = 'KegiatanEditRoute';
 
@@ -695,7 +930,10 @@ class KegiatanEditRoute extends PageRouteInfo<KegiatanEditRouteArgs> {
 }
 
 class KegiatanEditRouteArgs {
-  const KegiatanEditRouteArgs({this.key, required this.kegiatanId});
+  const KegiatanEditRouteArgs({
+    this.key,
+    required this.kegiatanId,
+  });
 
   final Key? key;
 
@@ -711,7 +949,10 @@ class KegiatanEditRouteArgs {
 /// [KegiatanTambahPage]
 class KegiatanTambahRoute extends PageRouteInfo<void> {
   const KegiatanTambahRoute({List<PageRouteInfo>? children})
-    : super(KegiatanTambahRoute.name, initialChildren: children);
+      : super(
+          KegiatanTambahRoute.name,
+          initialChildren: children,
+        );
 
   static const String name = 'KegiatanTambahRoute';
 
@@ -722,7 +963,10 @@ class KegiatanTambahRoute extends PageRouteInfo<void> {
 /// [KeluargaPage]
 class KeluargaRoute extends PageRouteInfo<void> {
   const KeluargaRoute({List<PageRouteInfo>? children})
-    : super(KeluargaRoute.name, initialChildren: children);
+      : super(
+          KeluargaRoute.name,
+          initialChildren: children,
+        );
 
   static const String name = 'KeluargaRoute';
 
@@ -733,7 +977,10 @@ class KeluargaRoute extends PageRouteInfo<void> {
 /// [LaporanCetakPage]
 class LaporanCetakRoute extends PageRouteInfo<void> {
   const LaporanCetakRoute({List<PageRouteInfo>? children})
-    : super(LaporanCetakRoute.name, initialChildren: children);
+      : super(
+          LaporanCetakRoute.name,
+          initialChildren: children,
+        );
 
   static const String name = 'LaporanCetakRoute';
 
@@ -744,7 +991,10 @@ class LaporanCetakRoute extends PageRouteInfo<void> {
 /// [LaporanPage]
 class LaporanRoute extends PageRouteInfo<void> {
   const LaporanRoute({List<PageRouteInfo>? children})
-    : super(LaporanRoute.name, initialChildren: children);
+      : super(
+          LaporanRoute.name,
+          initialChildren: children,
+        );
 
   static const String name = 'LaporanRoute';
 
@@ -760,14 +1010,14 @@ class LaporanPemasukanDetailRoute
     required int laporanPemasukanId,
     List<PageRouteInfo>? children,
   }) : super(
-         LaporanPemasukanDetailRoute.name,
-         args: LaporanPemasukanDetailRouteArgs(
-           key: key,
-           laporanPemasukanId: laporanPemasukanId,
-         ),
-         rawPathParams: {'id': laporanPemasukanId},
-         initialChildren: children,
-       );
+          LaporanPemasukanDetailRoute.name,
+          args: LaporanPemasukanDetailRouteArgs(
+            key: key,
+            laporanPemasukanId: laporanPemasukanId,
+          ),
+          rawPathParams: {'id': laporanPemasukanId},
+          initialChildren: children,
+        );
 
   static const String name = 'LaporanPemasukanDetailRoute';
 
@@ -792,10 +1042,53 @@ class LaporanPemasukanDetailRouteArgs {
 }
 
 /// generated route for
+/// [PemasukanLainDetailPage]
+class PemasukanLainDetailRoute
+    extends PageRouteInfo<PemasukanLainDetailRouteArgs> {
+  PemasukanLainDetailRoute({
+    Key? key,
+    required int laporanPemasukanId,
+    List<PageRouteInfo>? children,
+  }) : super(
+          PemasukanLainDetailRoute.name,
+          args: PemasukanLainDetailRouteArgs(
+            key: key,
+            laporanPemasukanId: laporanPemasukanId,
+          ),
+          rawPathParams: {'id': laporanPemasukanId},
+          initialChildren: children,
+        );
+
+  static const String name = 'PemasukanLainDetailRoute';
+
+  static const PageInfo<PemasukanLainDetailRouteArgs> page =
+      PageInfo<PemasukanLainDetailRouteArgs>(name);
+}
+
+class PemasukanLainDetailRouteArgs {
+  const PemasukanLainDetailRouteArgs({
+    this.key,
+    required this.laporanPemasukanId,
+  });
+
+  final Key? key;
+
+  final int laporanPemasukanId;
+
+  @override
+  String toString() {
+    return 'PemasukanLainDetailRouteArgs{key: $key, laporanPemasukanId: $laporanPemasukanId}';
+  }
+}
+
+/// generated route for
 /// [LaporanPemasukanPage]
 class LaporanPemasukanRoute extends PageRouteInfo<void> {
   const LaporanPemasukanRoute({List<PageRouteInfo>? children})
-    : super(LaporanPemasukanRoute.name, initialChildren: children);
+      : super(
+          LaporanPemasukanRoute.name,
+          initialChildren: children,
+        );
 
   static const String name = 'LaporanPemasukanRoute';
 
@@ -811,14 +1104,14 @@ class LaporanPengeluaranDetailRoute
     required int laporanPengeluaranId,
     List<PageRouteInfo>? children,
   }) : super(
-         LaporanPengeluaranDetailRoute.name,
-         args: LaporanPengeluaranDetailRouteArgs(
-           key: key,
-           laporanPengeluaranId: laporanPengeluaranId,
-         ),
-         rawPathParams: {'id': laporanPengeluaranId},
-         initialChildren: children,
-       );
+          LaporanPengeluaranDetailRoute.name,
+          args: LaporanPengeluaranDetailRouteArgs(
+            key: key,
+            laporanPengeluaranId: laporanPengeluaranId,
+          ),
+          rawPathParams: {'id': laporanPengeluaranId},
+          initialChildren: children,
+        );
 
   static const String name = 'LaporanPengeluaranDetailRoute';
 
@@ -846,9 +1139,40 @@ class LaporanPengeluaranDetailRouteArgs {
 /// [LaporanPengeluaranPage]
 class LaporanPengeluaranRoute extends PageRouteInfo<void> {
   const LaporanPengeluaranRoute({List<PageRouteInfo>? children})
-    : super(LaporanPengeluaranRoute.name, initialChildren: children);
+      : super(
+          LaporanPengeluaranRoute.name,
+          initialChildren: children,
+        );
 
   static const String name = 'LaporanPengeluaranRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [ListAktivitasPage]
+class ListAktivitasRoute extends PageRouteInfo<void> {
+  const ListAktivitasRoute({List<PageRouteInfo>? children})
+      : super(
+          ListAktivitasRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'ListAktivitasRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [LogAktivitasPage]
+class LogAktivitasRoute extends PageRouteInfo<void> {
+  const LogAktivitasRoute({List<PageRouteInfo>? children})
+      : super(
+          LogAktivitasRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'LogAktivitasRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }
@@ -857,7 +1181,10 @@ class LaporanPengeluaranRoute extends PageRouteInfo<void> {
 /// [LoginPage]
 class LoginRoute extends PageRouteInfo<void> {
   const LoginRoute({List<PageRouteInfo>? children})
-    : super(LoginRoute.name, initialChildren: children);
+      : super(
+          LoginRoute.name,
+          initialChildren: children,
+        );
 
   static const String name = 'LoginRoute';
 
@@ -867,12 +1194,14 @@ class LoginRoute extends PageRouteInfo<void> {
 /// generated route for
 /// [MainDashboardPage]
 class MainDashboardRoute extends PageRouteInfo<MainDashboardRouteArgs> {
-  MainDashboardRoute({Key? key, List<PageRouteInfo>? children})
-    : super(
-        MainDashboardRoute.name,
-        args: MainDashboardRouteArgs(key: key),
-        initialChildren: children,
-      );
+  MainDashboardRoute({
+    Key? key,
+    List<PageRouteInfo>? children,
+  }) : super(
+          MainDashboardRoute.name,
+          args: MainDashboardRouteArgs(key: key),
+          initialChildren: children,
+        );
 
   static const String name = 'MainDashboardRoute';
 
@@ -892,6 +1221,20 @@ class MainDashboardRouteArgs {
 }
 
 /// generated route for
+/// [ManajemenPenggunaPage]
+class ManajemenPenggunaRoute extends PageRouteInfo<void> {
+  const ManajemenPenggunaRoute({List<PageRouteInfo>? children})
+      : super(
+          ManajemenPenggunaRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'ManajemenPenggunaRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
 /// [MutasiKeluargaPage]
 class MutasiKeluargaRoute extends PageRouteInfo<void> {
   const MutasiKeluargaRoute({List<PageRouteInfo>? children})
@@ -906,10 +1249,41 @@ class MutasiKeluargaRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
+/// [PemasukanDaftarPage]
+class PemasukanDaftarRoute extends PageRouteInfo<void> {
+  const PemasukanDaftarRoute({List<PageRouteInfo>? children})
+      : super(
+          PemasukanDaftarRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'PemasukanDaftarRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [PemasukanLainTambahPage]
+class PemasukanLainTambahRoute extends PageRouteInfo<void> {
+  const PemasukanLainTambahRoute({List<PageRouteInfo>? children})
+      : super(
+          PemasukanLainTambahRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'PemasukanLainTambahRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
 /// [PemasukanPage]
 class PemasukanRoute extends PageRouteInfo<void> {
   const PemasukanRoute({List<PageRouteInfo>? children})
-    : super(PemasukanRoute.name, initialChildren: children);
+      : super(
+          PemasukanRoute.name,
+          initialChildren: children,
+        );
 
   static const String name = 'PemasukanRoute';
 
@@ -920,7 +1294,10 @@ class PemasukanRoute extends PageRouteInfo<void> {
 /// [PenerimaanPage]
 class PenerimaanRoute extends PageRouteInfo<void> {
   const PenerimaanRoute({List<PageRouteInfo>? children})
-    : super(PenerimaanRoute.name, initialChildren: children);
+      : super(
+          PenerimaanRoute.name,
+          initialChildren: children,
+        );
 
   static const String name = 'PenerimaanRoute';
 
@@ -931,7 +1308,10 @@ class PenerimaanRoute extends PageRouteInfo<void> {
 /// [PenerimaanWargaPage]
 class PenerimaanWargaRoute extends PageRouteInfo<void> {
   const PenerimaanWargaRoute({List<PageRouteInfo>? children})
-    : super(PenerimaanWargaRoute.name, initialChildren: children);
+      : super(
+          PenerimaanWargaRoute.name,
+          initialChildren: children,
+        );
 
   static const String name = 'PenerimaanWargaRoute';
 
@@ -942,7 +1322,10 @@ class PenerimaanWargaRoute extends PageRouteInfo<void> {
 /// [PengeluaranDaftarPage]
 class PengeluaranDaftarRoute extends PageRouteInfo<void> {
   const PengeluaranDaftarRoute({List<PageRouteInfo>? children})
-    : super(PengeluaranDaftarRoute.name, initialChildren: children);
+      : super(
+          PengeluaranDaftarRoute.name,
+          initialChildren: children,
+        );
 
   static const String name = 'PengeluaranDaftarRoute';
 
@@ -957,14 +1340,14 @@ class PengeluaranDetailRoute extends PageRouteInfo<PengeluaranDetailRouteArgs> {
     required int pengeluaranId,
     List<PageRouteInfo>? children,
   }) : super(
-         PengeluaranDetailRoute.name,
-         args: PengeluaranDetailRouteArgs(
-           key: key,
-           pengeluaranId: pengeluaranId,
-         ),
-         rawPathParams: {'id': pengeluaranId},
-         initialChildren: children,
-       );
+          PengeluaranDetailRoute.name,
+          args: PengeluaranDetailRouteArgs(
+            key: key,
+            pengeluaranId: pengeluaranId,
+          ),
+          rawPathParams: {'id': pengeluaranId},
+          initialChildren: children,
+        );
 
   static const String name = 'PengeluaranDetailRoute';
 
@@ -973,7 +1356,10 @@ class PengeluaranDetailRoute extends PageRouteInfo<PengeluaranDetailRouteArgs> {
 }
 
 class PengeluaranDetailRouteArgs {
-  const PengeluaranDetailRouteArgs({this.key, required this.pengeluaranId});
+  const PengeluaranDetailRouteArgs({
+    this.key,
+    required this.pengeluaranId,
+  });
 
   final Key? key;
 
@@ -989,7 +1375,10 @@ class PengeluaranDetailRouteArgs {
 /// [PengeluaranPage]
 class PengeluaranRoute extends PageRouteInfo<void> {
   const PengeluaranRoute({List<PageRouteInfo>? children})
-    : super(PengeluaranRoute.name, initialChildren: children);
+      : super(
+          PengeluaranRoute.name,
+          initialChildren: children,
+        );
 
   static const String name = 'PengeluaranRoute';
 
@@ -1000,7 +1389,10 @@ class PengeluaranRoute extends PageRouteInfo<void> {
 /// [PengeluaranTambahPage]
 class PengeluaranTambahRoute extends PageRouteInfo<void> {
   const PengeluaranTambahRoute({List<PageRouteInfo>? children})
-    : super(PengeluaranTambahRoute.name, initialChildren: children);
+      : super(
+          PengeluaranTambahRoute.name,
+          initialChildren: children,
+        );
 
   static const String name = 'PengeluaranTambahRoute';
 
@@ -1008,22 +1400,115 @@ class PengeluaranTambahRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
+/// [PenggunaDetailPage]
+class PenggunaDetailRoute extends PageRouteInfo<PenggunaDetailRouteArgs> {
+  PenggunaDetailRoute({
+    Key? key,
+    required int userId,
+    List<PageRouteInfo>? children,
+  }) : super(
+          PenggunaDetailRoute.name,
+          args: PenggunaDetailRouteArgs(
+            key: key,
+            userId: userId,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'PenggunaDetailRoute';
+
+  static const PageInfo<PenggunaDetailRouteArgs> page =
+      PageInfo<PenggunaDetailRouteArgs>(name);
+}
+
+class PenggunaDetailRouteArgs {
+  const PenggunaDetailRouteArgs({
+    this.key,
+    required this.userId,
+  });
+
+  final Key? key;
+
+  final int userId;
+
+  @override
+  String toString() {
+    return 'PenggunaDetailRouteArgs{key: $key, userId: $userId}';
+  }
+}
+
+/// generated route for
+/// [PenggunaEditPage]
+class PenggunaEditRoute extends PageRouteInfo<PenggunaEditRouteArgs> {
+  PenggunaEditRoute({
+    Key? key,
+    required int userId,
+    List<PageRouteInfo>? children,
+  }) : super(
+          PenggunaEditRoute.name,
+          args: PenggunaEditRouteArgs(
+            key: key,
+            userId: userId,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'PenggunaEditRoute';
+
+  static const PageInfo<PenggunaEditRouteArgs> page =
+      PageInfo<PenggunaEditRouteArgs>(name);
+}
+
+class PenggunaEditRouteArgs {
+  const PenggunaEditRouteArgs({
+    this.key,
+    required this.userId,
+  });
+
+  final Key? key;
+
+  final int userId;
+
+  @override
+  String toString() {
+    return 'PenggunaEditRouteArgs{key: $key, userId: $userId}';
+  }
+}
+
+/// generated route for
 /// [PesanWargaPage]
 class PesanWargaRoute extends PageRouteInfo<void> {
   const PesanWargaRoute({List<PageRouteInfo>? children})
-    : super(PesanWargaRoute.name, initialChildren: children);
+      : super(
+          PesanWargaRoute.name,
+          initialChildren: children,
+        );
 
   static const String name = 'PesanWargaRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }
+
 /// generated route for
+/// [AspirasiWargaPage]
+class AspirasiWargaRoute extends PageRouteInfo<void> {
+  const AspirasiWargaRoute({List<PageRouteInfo>? children})
+      : super(
+          AspirasiWargaRoute.name,
+          initialChildren: children,
+        );
+  static const String name = 'AspirasiWargaRoute';
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
 
 /// generated route for
 /// [RegisterPage]
 class RegisterRoute extends PageRouteInfo<void> {
   const RegisterRoute({List<PageRouteInfo>? children})
-    : super(RegisterRoute.name, initialChildren: children);
+      : super(
+          RegisterRoute.name,
+          initialChildren: children,
+        );
 
   static const String name = 'RegisterRoute';
 
@@ -1034,7 +1519,10 @@ class RegisterRoute extends PageRouteInfo<void> {
 /// [ReportFinancePage]
 class ReportFinanceRoute extends PageRouteInfo<void> {
   const ReportFinanceRoute({List<PageRouteInfo>? children})
-    : super(ReportFinanceRoute.name, initialChildren: children);
+      : super(
+          ReportFinanceRoute.name,
+          initialChildren: children,
+        );
 
   static const String name = 'ReportFinanceRoute';
 
@@ -1045,7 +1533,10 @@ class ReportFinanceRoute extends PageRouteInfo<void> {
 /// [ReportPage]
 class ReportRoute extends PageRouteInfo<void> {
   const ReportRoute({List<PageRouteInfo>? children})
-    : super(ReportRoute.name, initialChildren: children);
+      : super(
+          ReportRoute.name,
+          initialChildren: children,
+        );
 
   static const String name = 'ReportRoute';
 
@@ -1056,7 +1547,10 @@ class ReportRoute extends PageRouteInfo<void> {
 /// [RumahDaftarPage]
 class RumahDaftarRoute extends PageRouteInfo<void> {
   const RumahDaftarRoute({List<PageRouteInfo>? children})
-    : super(RumahDaftarRoute.name, initialChildren: children);
+      : super(
+          RumahDaftarRoute.name,
+          initialChildren: children,
+        );
 
   static const String name = 'RumahDaftarRoute';
 
@@ -1067,7 +1561,10 @@ class RumahDaftarRoute extends PageRouteInfo<void> {
 /// [RumahPage]
 class RumahRoute extends PageRouteInfo<void> {
   const RumahRoute({List<PageRouteInfo>? children})
-    : super(RumahRoute.name, initialChildren: children);
+      : super(
+          RumahRoute.name,
+          initialChildren: children,
+        );
 
   static const String name = 'RumahRoute';
 
@@ -1078,7 +1575,10 @@ class RumahRoute extends PageRouteInfo<void> {
 /// [RumahTambahPage]
 class RumahTambahRoute extends PageRouteInfo<void> {
   const RumahTambahRoute({List<PageRouteInfo>? children})
-    : super(RumahTambahRoute.name, initialChildren: children);
+      : super(
+          RumahTambahRoute.name,
+          initialChildren: children,
+        );
 
   static const String name = 'RumahTambahRoute';
 
@@ -1089,11 +1589,81 @@ class RumahTambahRoute extends PageRouteInfo<void> {
 /// [SettingsPage]
 class SettingsRoute extends PageRouteInfo<void> {
   const SettingsRoute({List<PageRouteInfo>? children})
-    : super(SettingsRoute.name, initialChildren: children);
+      : super(
+          SettingsRoute.name,
+          initialChildren: children,
+        );
 
   static const String name = 'SettingsRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [TagihIuranPage]
+class TagihIuranRoute extends PageRouteInfo<void> {
+  const TagihIuranRoute({List<PageRouteInfo>? children})
+      : super(
+          TagihIuranRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'TagihIuranRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [TagihanDaftarPage]
+class TagihanDaftarRoute extends PageRouteInfo<void> {
+  const TagihanDaftarRoute({List<PageRouteInfo>? children})
+      : super(
+          TagihanDaftarRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'TagihanDaftarRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [TagihanDetailPage]
+class TagihanDetailRoute extends PageRouteInfo<TagihanDetailRouteArgs> {
+  TagihanDetailRoute({
+    Key? key,
+    required int tagihanId,
+    List<PageRouteInfo>? children,
+  }) : super(
+          TagihanDetailRoute.name,
+          args: TagihanDetailRouteArgs(
+            key: key,
+            tagihanId: tagihanId,
+          ),
+          rawPathParams: {'id': tagihanId},
+          initialChildren: children,
+        );
+
+  static const String name = 'TagihanDetailRoute';
+
+  static const PageInfo<TagihanDetailRouteArgs> page =
+      PageInfo<TagihanDetailRouteArgs>(name);
+}
+
+class TagihanDetailRouteArgs {
+  const TagihanDetailRouteArgs({
+    this.key,
+    required this.tagihanId,
+  });
+
+  final Key? key;
+
+  final int tagihanId;
+
+  @override
+  String toString() {
+    return 'TagihanDetailRouteArgs{key: $key, tagihanId: $tagihanId}';
+  }
 }
 
 /// generated route for
@@ -1109,16 +1679,17 @@ class TambahMutasiRoute extends PageRouteInfo<void> {
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }
+
 /// generated route for
-/// [DaftarMutasiPage]
-class DaftarMutasiRoute extends PageRouteInfo<void> {
-  const DaftarMutasiRoute({List<PageRouteInfo>? children})
+/// [PenggunaTambahPage]
+class PenggunaTambahRoute extends PageRouteInfo<void> {
+  const PenggunaTambahRoute({List<PageRouteInfo>? children})
       : super(
-          DaftarMutasiRoute.name,
+          PenggunaTambahRoute.name,
           initialChildren: children,
         );
 
-  static const String name = 'DaftarMutasiRoute';
+  static const String name = 'PenggunaTambahRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }
@@ -1127,7 +1698,10 @@ class DaftarMutasiRoute extends PageRouteInfo<void> {
 /// [WargaPage]
 class WargaRoute extends PageRouteInfo<void> {
   const WargaRoute({List<PageRouteInfo>? children})
-    : super(WargaRoute.name, initialChildren: children);
+      : super(
+          WargaRoute.name,
+          initialChildren: children,
+        );
 
   static const String name = 'WargaRoute';
 
@@ -1138,212 +1712,12 @@ class WargaRoute extends PageRouteInfo<void> {
 /// [WargaTambahPage]
 class WargaTambahRoute extends PageRouteInfo<void> {
   const WargaTambahRoute({List<PageRouteInfo>? children})
-    : super(WargaTambahRoute.name, initialChildren: children);
+      : super(
+          WargaTambahRoute.name,
+          initialChildren: children,
+        );
 
   static const String name = 'WargaTambahRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
-}
-
-//LogAktivitas
-class LogAktivitasRoute extends PageRouteInfo<void> {
-  const LogAktivitasRoute({List<PageRouteInfo>? children})
-    : super(LogAktivitasRoute.name, initialChildren: children);
-
-  static const String name = 'LogAktivitasRoute';
-
-  static const PageInfo<void> page = PageInfo<void>(name);
-}
-
-/// generated route for
-class LisAktivitasRoute extends PageRouteInfo<void> {
-  const LisAktivitasRoute({List<PageRouteInfo>? children})
-    : super(LisAktivitasRoute.name, initialChildren: children);
-
-  static const String name = 'LisAktivitasRoute';
-
-  static const PageInfo<void> page = PageInfo<void>(name);
-}
-
-//Manajemen Pengguna
-class ManajemenPenggunaRoute extends PageRouteInfo<void> {
-  const ManajemenPenggunaRoute({List<PageRouteInfo>? children})
-    : super(ManajemenPenggunaRoute.name, initialChildren: children);
-
-  static const String name = 'ManajemenPenggunaRoute';
-
-  static const PageInfo<void> page = PageInfo<void>(name);
-}
-
-//detail
-class DetailPenggunaRoute extends PageRouteInfo<DetailPenggunaRouteArgs> {
-  DetailPenggunaRoute({
-    Key? key,
-    required int userId,
-    List<PageRouteInfo>? children,
-  }) : super(
-         DetailPenggunaRoute.name,
-         args: DetailPenggunaRouteArgs(key: key, userId: userId),
-         rawPathParams: {'id': userId},
-         initialChildren: children,
-       );
-
-  static const String name = 'DetailPenggunaRoute';
-
-  static const PageInfo<DetailPenggunaRouteArgs> page =
-      PageInfo<DetailPenggunaRouteArgs>(name);
-}
-
-class DetailPenggunaRouteArgs {
-  const DetailPenggunaRouteArgs({this.key, required this.userId});
-
-  final Key? key;
-
-  final int userId;
-
-  @override
-  String toString() {
-    return 'DetailPenggunaRouteArgs{key: $key, userId: $userId}';
-  }
-}
-
-//tambah
-class TambahPenggunaRoute extends PageRouteInfo<void> {
-  const TambahPenggunaRoute({List<PageRouteInfo>? children})
-    : super(TambahPenggunaRoute.name, initialChildren: children);
-
-  static const String name = 'TambahPenggunaRoute';
-
-  static const PageInfo<void> page = PageInfo<void>(name);
-}
-
-//edit
-
-class EditPenggunaRoute extends PageRouteInfo<EditPenggunaRouteArgs> {
-  EditPenggunaRoute({
-    Key? key,
-    required int userId,
-    List<PageRouteInfo>? children,
-  }) : super(
-         EditPenggunaRoute.name,
-         args: EditPenggunaRouteArgs(key: key, userId: userId),
-         rawPathParams: {'id': userId},
-         initialChildren: children,
-       );
-
-  static const String name = 'EditPenggunaRoute';
-
-  static const PageInfo<EditPenggunaRouteArgs> page =
-      PageInfo<EditPenggunaRouteArgs>(name);
-}
-
-class EditPenggunaRouteArgs {
-  const EditPenggunaRouteArgs({this.key, required this.userId});
-
-  final Key? key;
-  final int userId;
-
-  @override
-  String toString() {
-    return 'EditPenggunaRouteArgs{key: $key, userId: $userId}';
-  }
-}
-
-//Daftar pengguna
-class DaftarPenggunaRoute extends PageRouteInfo<void> {
-  const DaftarPenggunaRoute({List<PageRouteInfo>? children})
-    : super(DaftarPenggunaRoute.name, initialChildren: children);
-
-  static const String name = 'DaftarPenggunaRoute';
-
-  static const PageInfo<void> page = PageInfo<void>(name);
-}
-
-class ChannelRoute extends PageRouteInfo<void> {
-  const ChannelRoute({List<PageRouteInfo>? children})
-    : super(ChannelRoute.name, initialChildren: children);
-
-  static const String name = 'ChannelRoute';
-
-  static const PageInfo<void> page = PageInfo<void>(name);
-}
-
-//detail
-class DetailChannelRoute extends PageRouteInfo<DetailChannelRouteArgs> {
-  DetailChannelRoute({
-    Key? key,
-    required int channelId,
-    List<PageRouteInfo>? children,
-  }) : super(
-         DetailChannelRoute.name,
-         args: DetailChannelRouteArgs(key: key, channelId: channelId),
-         rawPathParams: {'id': channelId},
-         initialChildren: children,
-       );
-
-  static const String name = 'DetailChannelRoute';
-
-  static const PageInfo<DetailChannelRouteArgs> page =
-      PageInfo<DetailChannelRouteArgs>(name);
-}
-
-class DetailChannelRouteArgs {
-  const DetailChannelRouteArgs({this.key, required this.channelId});
-
-  final Key? key;
-
-  final int channelId;
-
-  @override
-  String toString() {
-    return 'DetailChannelRouteArgs{key: $key, channelId: $channelId}';
-  }
-}
-
-class ChannelDaftarRoute extends PageRouteInfo<void> {
-  const ChannelDaftarRoute({List<PageRouteInfo>? children})
-    : super(ChannelDaftarRoute.name, initialChildren: children);
-
-  static const String name = 'ChannelDaftarRoute';
-
-  static const PageInfo<void> page = PageInfo<void>(name);
-}
-
-class ChannelTambahRoute extends PageRouteInfo<void> {
-  const ChannelTambahRoute({List<PageRouteInfo>? children})
-    : super(ChannelTambahRoute.name, initialChildren: children);
-
-  static const String name = 'ChannelTambahRoute';
-
-  static const PageInfo<void> page = PageInfo<void>(name);
-}
-
-class ChannelEditRoute extends PageRouteInfo<ChannelEditRouteArgs> {
-  ChannelEditRoute({
-    Key? key,
-    required int channelId,
-    List<PageRouteInfo>? children,
-  }) : super(
-         ChannelEditRoute.name,
-         args: ChannelEditRouteArgs(key: key, channelId: channelId),
-         rawPathParams: {'id': channelId},
-         initialChildren: children,
-       );
-
-  static const String name = 'ChannelEditRoute';
-
-  static const PageInfo<ChannelEditRouteArgs> page =
-      PageInfo<ChannelEditRouteArgs>(name);
-}
-
-class ChannelEditRouteArgs {
-  const ChannelEditRouteArgs({this.key, required this.channelId});
-
-  final Key? key;
-  final int channelId;
-
-  @override
-  String toString() {
-    return 'ChannelEditRouteArgs{key: $key, channelId: $channelId}';
-  }
 }

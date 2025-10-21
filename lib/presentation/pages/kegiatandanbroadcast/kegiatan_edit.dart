@@ -262,16 +262,11 @@ class _KegiatanEditPageState extends State<KegiatanEditPage> {
     return Scaffold(
       backgroundColor: Colors.grey.shade200,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF4F6DF5),
-        elevation: 4,
-        iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor: Colors.grey.shade100,
+        elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: const Text(
-          'Edit Kegiatan',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),
+          icon: const Icon(Icons.arrow_back, color: Colors.black87),
+          onPressed: () => context.router.pop(),
         ),
       ),
       body: SingleChildScrollView(
@@ -341,7 +336,7 @@ class _KegiatanEditPageState extends State<KegiatanEditPage> {
                 ElevatedButton(
                   onPressed: _saveChanges,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF4F6DF5),
+                    backgroundColor: const Color(0xFF6C63FF),
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                     elevation: 4,

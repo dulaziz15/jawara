@@ -127,7 +127,7 @@ class _LaporanPengeluaranPageState extends State<LaporanPengeluaranPage> {
                 IconButton(
                   icon: const Icon(
                     Icons.visibility,
-                    color: Color(0xFF4F6DF5),
+                    color: Color(0xFF6C63FF),
                   ),
                   onPressed: () {
                     context.router.pushNamed(
@@ -157,19 +157,7 @@ class _LaporanPengeluaranPageState extends State<LaporanPengeluaranPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: const Text(
-          'Laporan Pengeluaran',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-            color: Colors.white,
-          ),
-        ),
-        backgroundColor: const Color(0xFF4F6DF5),
-        centerTitle: true,
-        elevation: 0,
-      ),
+      
       body: Column(
         children: [
           // Search Bar
@@ -239,7 +227,7 @@ class _LaporanPengeluaranPageState extends State<LaporanPengeluaranPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _showFilterDialog,
-        backgroundColor: const Color(0xFF4F6DF5),
+        backgroundColor: const Color(0xFF6C63FF),
         child: const Icon(Icons.filter_list, color: Colors.white),
       ),
     );

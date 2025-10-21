@@ -10,7 +10,19 @@ class LaporanPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: const Sidebar(),
-      appBar: AppBar(title: const Text("Laporan")),
+      appBar: AppBar(
+        title: const Text(
+          'Laporan',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: const Color(0xFF6C63FF),
+        centerTitle: true,
+        elevation: 0,
+      ),
       body: const AutoRouter(), // Nested route
     );
   }

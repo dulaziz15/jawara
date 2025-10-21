@@ -118,19 +118,6 @@ class _BroadcastDaftarPageState extends State<BroadcastDaftarPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: const Text(
-          'Data Broadcast',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-            color: Colors.white,
-          ),
-        ),
-        backgroundColor: const Color(0xFF4F6DF5),
-        centerTitle: true,
-        elevation: 0,
-      ),
       body: Column(
         children: [
           // Search Bar
@@ -200,7 +187,7 @@ class _BroadcastDaftarPageState extends State<BroadcastDaftarPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _showFilterDialog,
-        backgroundColor: const Color(0xFF4F6DF5),
+        backgroundColor: const Color(0xFF6C63FF),
         child: const Icon(Icons.filter_list, color: Colors.white),
       ),
     );
@@ -289,9 +276,9 @@ class _BroadcastDaftarPageState extends State<BroadcastDaftarPage> {
                       value: 'detail',
                       child: Row(
                         children: [
-                          Icon(Icons.visibility_outlined, color: Colors.blue, size: 20),
+                          // Icon(Icons.visibility_outlined, color: Colors.blue, size: 20),
                           SizedBox(width: 10),
-                          Text('Lihat Detail'),
+                          Text('Detail'),
                         ],
                       ),
                     ),
@@ -299,7 +286,7 @@ class _BroadcastDaftarPageState extends State<BroadcastDaftarPage> {
                       value: 'edit',
                       child: Row(
                         children: [
-                          Icon(Icons.edit_outlined, color: Colors.green, size: 20),
+                          // Icon(Icons.edit_outlined, color: Colors.green, size: 20),
                           SizedBox(width: 10),
                           Text('Edit'),
                         ],
@@ -309,7 +296,7 @@ class _BroadcastDaftarPageState extends State<BroadcastDaftarPage> {
                       value: 'hapus',
                       child: Row(
                         children: [
-                          Icon(Icons.delete_outline, color: Colors.red, size: 20),
+                          // Icon(Icons.delete_outline, color: Colors.red, size: 20),
                           SizedBox(width: 10),
                           Text('Hapus'),
                         ],

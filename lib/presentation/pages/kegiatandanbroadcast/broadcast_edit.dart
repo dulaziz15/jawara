@@ -5,7 +5,7 @@ import 'package:jawara/core/models/broadcast_models.dart';
 // import 'package:intl/intl.dart';
 
 @RoutePage()
-class BroadcastEditPage extends StatefulWidget { 
+class BroadcastEditPage extends StatefulWidget {
   final int broadcastId;
 
   const BroadcastEditPage({
@@ -23,7 +23,7 @@ class _BroadcastEditPageState extends State<BroadcastEditPage> {
   late TextEditingController _judulController;
   late TextEditingController _isiPesanController;
   late TextEditingController _dibuatOlehController;
-  
+
   // Variabel untuk menyimpan data yang sedang diedit
   late BroadcastModels _broadcast;
   late DateTime _selectedDate;
@@ -34,7 +34,9 @@ class _BroadcastEditPageState extends State<BroadcastEditPage> {
   void initState() {
     super.initState();
     // 3. Ambil data asli dan inisialisasi controller
-    _broadcast = dummyBroadcast.firstWhere((item) => item.id == widget.broadcastId);
+    _broadcast = dummyBroadcast.firstWhere(
+      (item) => item.id == widget.broadcastId,
+    );
 
     _judulController = TextEditingController(text: _broadcast.judulBroadcast);
     _isiPesanController = TextEditingController(text: _broadcast.isiPesan);
@@ -74,7 +76,11 @@ class _BroadcastEditPageState extends State<BroadcastEditPage> {
         children: [
           Text(
             label,
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Colors.grey.shade700),
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: Colors.grey.shade700,
+            ),
           ),
           const SizedBox(height: 8),
           TextFormField(
@@ -87,7 +93,10 @@ class _BroadcastEditPageState extends State<BroadcastEditPage> {
               ),
               filled: readOnly,
               fillColor: Colors.grey.shade100,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 14,
+              ),
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -110,7 +119,11 @@ class _BroadcastEditPageState extends State<BroadcastEditPage> {
         children: [
           Text(
             'Tanggal Publikasi',
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Colors.grey.shade700),
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: Colors.grey.shade700,
+            ),
           ),
           const SizedBox(height: 8),
           InkWell(
@@ -137,7 +150,11 @@ class _BroadcastEditPageState extends State<BroadcastEditPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(_formatTanggal(_selectedDate)),
-                  const Icon(Icons.calendar_today, size: 20, color: Colors.grey),
+                  const Icon(
+                    Icons.calendar_today,
+                    size: 20,
+                    color: Colors.grey,
+                  ),
                 ],
               ),
             ),
@@ -148,7 +165,11 @@ class _BroadcastEditPageState extends State<BroadcastEditPage> {
   }
 
   // --- Helper widget untuk File Picker (Stub) ---
-  Widget _buildAttachmentPicker(String label, String currentFile, IconData icon) {
+  Widget _buildAttachmentPicker(
+    String label,
+    String currentFile,
+    IconData icon,
+  ) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
       child: Column(
@@ -156,7 +177,11 @@ class _BroadcastEditPageState extends State<BroadcastEditPage> {
         children: [
           Text(
             label,
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Colors.grey.shade700),
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: Colors.grey.shade700,
+            ),
           ),
           const SizedBox(height: 8),
           Container(
@@ -190,7 +215,11 @@ class _BroadcastEditPageState extends State<BroadcastEditPage> {
                     //   });
                     // }
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Logika ganti file belum diimplementasi.')),
+                      const SnackBar(
+                        content: Text(
+                          'Logika ganti file belum diimplementasi.',
+                        ),
+                      ),
                     );
                   },
                   child: const Text("Ganti"),
@@ -211,7 +240,7 @@ class _BroadcastEditPageState extends State<BroadcastEditPage> {
       final String updatedJudul = _judulController.text;
       final String updatedIsi = _isiPesanController.text;
       // ... ambil juga data file yang baru jika ada
-      
+
       // 3. TODO: Implementasi logika penyimpanan data
       // Di aplikasi nyata, Anda akan panggil API atau update database di sini.
       // Untuk demo, kita print datanya:
@@ -223,7 +252,7 @@ class _BroadcastEditPageState extends State<BroadcastEditPage> {
       print('Gambar: $_currentGambar');
       print('Dokumen: $_currentDokumen');
       print('--------------------');
-      
+
       // 4. Tampilkan notifikasi sukses
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -231,7 +260,7 @@ class _BroadcastEditPageState extends State<BroadcastEditPage> {
           backgroundColor: Colors.green,
         ),
       );
-      
+
       // 5. Kembali ke halaman sebelumnya
       AutoRouter.of(context).pop();
     } else {
@@ -250,16 +279,11 @@ class _BroadcastEditPageState extends State<BroadcastEditPage> {
     return Scaffold(
       backgroundColor: Colors.grey.shade200,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF4F6DF5),
-        elevation: 4,
-        iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor: Colors.grey.shade100,
+        elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: const Text(
-          'Edit Broadcast',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),
+          icon: const Icon(Icons.arrow_back, color: Colors.black87),
+          onPressed: () => context.router.pop(),
         ),
       ),
       body: SingleChildScrollView(
@@ -306,10 +330,16 @@ class _BroadcastEditPageState extends State<BroadcastEditPage> {
 
                 // Lampiran
                 _buildAttachmentPicker(
-                    "Lampiran Gambar:", _currentGambar, Icons.image_outlined),
+                  "Lampiran Gambar:",
+                  _currentGambar,
+                  Icons.image_outlined,
+                ),
                 const SizedBox(height: 16),
                 _buildAttachmentPicker(
-                    "Lampiran Dokumen:", _currentDokumen, Icons.description_outlined),
+                  "Lampiran Dokumen:",
+                  _currentDokumen,
+                  Icons.description_outlined,
+                ),
 
                 const SizedBox(height: 24),
 
@@ -317,14 +347,20 @@ class _BroadcastEditPageState extends State<BroadcastEditPage> {
                 ElevatedButton(
                   onPressed: _saveChanges,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF4F6DF5),
+                    backgroundColor: const Color(0xFF6C63FF),
                     padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                     elevation: 4,
                   ),
                   child: const Text(
                     'Simpan Perubahan',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ],

@@ -141,11 +141,11 @@ class _DaftarPenggunaPageState extends State<DaftarPenggunaPage> {
   }
 
   void _showDetailDialog(UserModel user) {
-    context.router.push(DetailPenggunaRoute(userId: user.id));
+    context.router.push(PenggunaDetailRoute(userId: user.id));
   }
 
   void _navigateToEdit(UserModel user) {
-    context.router.push(EditPenggunaRoute(userId: user.id));
+    context.router.push(PenggunaEditRoute(userId: user.id));
   }
 
   
@@ -163,7 +163,7 @@ class _DaftarPenggunaPageState extends State<DaftarPenggunaPage> {
           value: 'detail',
           child: Row(
             children: [
-              Icon(Icons.visibility, size: 18, color: Colors.blue),
+              // Icon(Icons.visibility, size: 18, color: Colors.blue),
               SizedBox(width: 8),
               Text('Detail'),
             ],
@@ -173,7 +173,7 @@ class _DaftarPenggunaPageState extends State<DaftarPenggunaPage> {
           value: 'edit',
           child: Row(
             children: [
-              Icon(Icons.edit, size: 18, color: Colors.orange),
+              // Icon(Icons.edit, size: 18, color: Colors.orange),
               SizedBox(width: 8),
               Text('Edit'),
             ],
@@ -188,19 +188,6 @@ class _DaftarPenggunaPageState extends State<DaftarPenggunaPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: const Text(
-          'Data Pengguna',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-            color: Colors.white,
-          ),
-        ),
-        backgroundColor:  Colors.deepPurple,
-        centerTitle: true,
-        elevation: 0,
-      ),
       body: Column(
         children: [
           // Search Bar

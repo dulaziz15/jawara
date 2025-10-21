@@ -66,7 +66,7 @@ class _ChannelDaftarPageState extends State<ChannelDaftarPage> {
       icon: const Icon(Icons.more_vert, color: Colors.black54),
       onSelected: (value) {
         if (value == 'detail') {
-          context.router.push(DetailChannelRoute(channelId: channel.id));
+          context.router.push(ChannelDetailRoute(channelId: channel.id));
         } else if (value == 'edit') {
           context.router.push(ChannelEditRoute(channelId: channel.id));
         } else if (value == 'delete') {
@@ -77,7 +77,7 @@ class _ChannelDaftarPageState extends State<ChannelDaftarPage> {
         const PopupMenuItem(
           value: 'detail',
           child: Row(children: [
-            Icon(Icons.visibility, size: 18, color: Colors.blue),
+            // Icon(Icons.visibility, size: 18, color: Colors.blue),
             SizedBox(width: 8),
             Text('Detail'),
           ]),
@@ -85,7 +85,7 @@ class _ChannelDaftarPageState extends State<ChannelDaftarPage> {
         const PopupMenuItem(
           value: 'edit',
           child: Row(children: [
-            Icon(Icons.edit, size: 18, color: Colors.orange),
+            // Icon(Icons.edit, size: 18, color: Colors.orange),
             SizedBox(width: 8),
             Text('Edit'),
           ]),
@@ -93,7 +93,7 @@ class _ChannelDaftarPageState extends State<ChannelDaftarPage> {
         const PopupMenuItem(
           value: 'delete',
           child: Row(children: [
-            Icon(Icons.delete, size: 18, color: Colors.red),
+            // Icon(Icons.delete, size: 18, color: Colors.red),
             SizedBox(width: 8),
             Text('Hapus'),
           ]),
@@ -106,19 +106,7 @@ class _ChannelDaftarPageState extends State<ChannelDaftarPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: const Text(
-          'Data Channel',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-            color: Colors.white,
-          ),
-        ),
-        backgroundColor:  Colors.deepPurple,
-        centerTitle: true,
-        elevation: 0,
-      ),
+     
       body: Column(
         children: [
           // Search Bar
@@ -249,7 +237,7 @@ class _ChannelDaftarPageState extends State<ChannelDaftarPage> {
                 ),
                 Column(
                   children: [
-                    _buildStatusBadge(channel.tipe),
+                    // _buildStatusBadge(channel.tipe),
                     const SizedBox(height: 8),
                     _buildActionButton(channel),
                   ],
