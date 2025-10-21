@@ -19,7 +19,6 @@ class FilterPesanWargaDialog extends StatefulWidget {
 class _FilterPesanWargaDialogState extends State<FilterPesanWargaDialog> {
   String? _selectedStatus;
   final List<String> statusOptions = const [
-    'Semua',
     'Pending',
     'Diproses',
     'Selesai',
@@ -29,8 +28,8 @@ class _FilterPesanWargaDialogState extends State<FilterPesanWargaDialog> {
   @override
   void initState() {
     super.initState();
-    _selectedStatus = widget.initialStatus == '-- Pilih Status --' 
-        ? 'Semua' 
+    _selectedStatus = widget.initialStatus == '-- Pilih Status --'
+        ? 'Semua'
         : widget.initialStatus;
   }
 
@@ -69,10 +68,7 @@ class _FilterPesanWargaDialogState extends State<FilterPesanWargaDialog> {
             // Pilih Status
             const Text(
               'Pilih Status',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 12),
 
@@ -124,14 +120,22 @@ class _FilterPesanWargaDialogState extends State<FilterPesanWargaDialog> {
                 // Reset Filter
                 TextButton(
                   onPressed: () {
-                    setState(() {
-                      _selectedStatus = 'Semua';
-                    });
+                    // Hanya terapkan filter 'Semua' tanpa mengubah state dialog
                     widget.onApplyFilter('Semua');
                     Navigator.of(context).pop();
                   },
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 12,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    side: const BorderSide(color: Colors.grey),
+                  ),
                   child: const Text(
-                    'RESET',
+                    'Reset',
                     style: TextStyle(
                       color: Colors.grey,
                       fontWeight: FontWeight.bold,
@@ -150,13 +154,16 @@ class _FilterPesanWargaDialogState extends State<FilterPesanWargaDialog> {
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF6C63FF),
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 12,
+                    ),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(20),
                     ),
                   ),
                   child: const Text(
-                    'TERAPKAN',
+                    'Terapkan',
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,

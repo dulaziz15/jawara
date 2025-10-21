@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
+import 'model_mutasi.dart'; // Import model baru
 
 @RoutePage()
 class TambahMutasiPage extends StatefulWidget {
@@ -11,29 +12,32 @@ class TambahMutasiPage extends StatefulWidget {
 
 class _TambahMutasiPageState extends State<TambahMutasiPage> {
   final _formKey = GlobalKey<FormState>();
-  
-  // Data untuk dropdown
+
+  // Data untuk dropdown - sekarang menggunakan data dari model
   final List<String> _jenisMutasiOptions = [
     'Pindah Domisili',
     'Pindah Kota',
     'Pindah Provinsi',
     'Pindah Negara',
   ];
-  
-  final List<String> _keluargaOptions = [
-    'Keluarga Rendha Putra Rahmadya',
-    'Keluarga Anti Micin',
-    'Keluarga varizky naldiba rimra',
-    'Keluarga Ijat',
-    'Keluarga Raudhli Firdaus Naufal',
-  ];
+
+  // Ambil daftar keluarga dari data dummy
+  List<String> get _keluargaOptions {
+    final keluargaSet = <String>{};
+    for (var data in MutasiDataProvider.dummyData) {
+      keluargaSet.add(data.keluarga);
+    }
+    return keluargaSet.toList();
+  }
 
   // Controller untuk form fields
   String? _selectedJenisMutasi;
   String? _selectedKeluarga;
   final TextEditingController _alasanController = TextEditingController();
   final TextEditingController _tanggalController = TextEditingController();
-  
+  final TextEditingController _alamatLamaController = TextEditingController();
+  final TextEditingController _alamatBaruController = TextEditingController();
+
   // Fungsi untuk memilih tanggal
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -44,7 +48,8 @@ class _TambahMutasiPageState extends State<TambahMutasiPage> {
     );
     if (picked != null) {
       setState(() {
-        _tanggalController.text = "${picked.day}-${picked.month}-${picked.year}";
+        _tanggalController.text =
+            "${picked.day}-${picked.month}-${picked.year}";
       });
     }
   }
@@ -56,28 +61,89 @@ class _TambahMutasiPageState extends State<TambahMutasiPage> {
       _selectedKeluarga = null;
       _alasanController.clear();
       _tanggalController.clear();
+      _alamatLamaController.clear();
+      _alamatBaruController.clear();
     });
   }
 
   // Fungsi submit form
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
-      // Proses submit data
-      print('Jenis Mutasi: $_selectedJenisMutasi');
-      print('Keluarga: $_selectedKeluarga');
-      print('Alasan: ${_alasanController.text}');
-      print('Tanggal: ${_tanggalController.text}');
-      
+      // Validasi tambahan
+      if (_selectedKeluarga == null || _selectedJenisMutasi == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Harap pilih keluarga dan jenis mutasi'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
+      // Cari data keluarga yang dipilih untuk mendapatkan alamat lama
+      final keluargaData = MutasiDataProvider.dummyData.firstWhere(
+        (data) => data.keluarga == _selectedKeluarga,
+        orElse: () => MutasiDataProvider.dummyData.first,
+      );
+
+      // Buat objek MutasiData baru
+      final newMutasi = MutasiData(
+        no: MutasiDataProvider.dummyData.length + 1, // Generate nomor baru
+        keluarga: _selectedKeluarga!,
+        alamatLama: _alamatLamaController.text.isNotEmpty
+            ? _alamatLamaController.text
+            : keluargaData.alamatLama,
+        alamatBaru: _alamatBaruController.text,
+        tanggalMutasi: _tanggalController.text,
+        jenisMutasi: _selectedJenisMutasi!,
+        alasan: _alasanController.text,
+      );
+
+      // Proses submit data (simulasi)
+      print('Data mutasi baru:');
+      print('No: ${newMutasi.no}');
+      print('Keluarga: ${newMutasi.keluarga}');
+      print('Alamat Lama: ${newMutasi.alamatLama}');
+      print('Alamat Baru: ${newMutasi.alamatBaru}');
+      print('Tanggal: ${newMutasi.tanggalMutasi}');
+      print('Jenis Mutasi: ${newMutasi.jenisMutasi}');
+      print('Alasan: ${newMutasi.alasan}');
+
       // Tampilkan snackbar sukses
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Data mutasi berhasil ditambahkan'),
           backgroundColor: Colors.green,
         ),
       );
-      
+
       // Reset form setelah submit
       _resetForm();
+
+      // Optional: Navigasi kembali setelah delay
+      Future.delayed(const Duration(milliseconds: 1500), () {
+        context.router.pop();
+      });
+    }
+  }
+
+  // Fungsi untuk mendapatkan alamat lama berdasarkan keluarga yang dipilih
+  void _onKeluargaChanged(String? selectedKeluarga) {
+    setState(() {
+      _selectedKeluarga = selectedKeluarga;
+    });
+
+    if (selectedKeluarga != null) {
+      // Cari data keluarga yang dipilih
+      final keluargaData = MutasiDataProvider.dummyData.firstWhere(
+        (data) => data.keluarga == selectedKeluarga,
+        orElse: () => MutasiDataProvider.dummyData.first,
+      );
+
+      // Isi otomatis alamat lama
+      _alamatLamaController.text = keluargaData.alamatLama;
+    } else {
+      _alamatLamaController.clear();
     }
   }
 
@@ -85,19 +151,6 @@ class _TambahMutasiPageState extends State<TambahMutasiPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
-      // appBar: AppBar(
-      //   title: const Text(
-      //     'Tambah Mutasi Keluarga',
-      //     style: TextStyle(
-      //       fontWeight: FontWeight.bold,
-      //       fontSize: 20,
-      //       color: Colors.white,
-      //     ),
-      //   ),
-      //   backgroundColor: const Color(0xFF4F6DF5),
-      //   centerTitle: true,
-      //   elevation: 0,
-      // ),
       body: Center(
         child: SingleChildScrollView(
           child: Column(
@@ -144,6 +197,141 @@ class _TambahMutasiPageState extends State<TambahMutasiPage> {
                       ),
                       const SizedBox(height: 30),
 
+                      // Pilih Keluarga (Dropdown)
+                      const Text(
+                        "Pilih Keluarga",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      DropdownButtonFormField<String>(
+                        decoration: InputDecoration(
+                          hintText: "Pilih Keluarga",
+                          enabledBorder: const OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(8)),
+                            borderSide: BorderSide(
+                              color: Color.fromARGB(255, 216, 216, 216),
+                              width: 1,
+                            ),
+                          ),
+                          focusedBorder: const OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(8)),
+                            borderSide: BorderSide(
+                              color: Color(0xFF4F6DF5),
+                              width: 1.5,
+                            ),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 15,
+                            vertical: 12,
+                          ),
+                        ),
+                        value: _selectedKeluarga,
+                        items: _keluargaOptions.map((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                        onChanged: _onKeluargaChanged,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Pilih keluarga';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 20),
+
+                      // Alamat Lama (Auto-filled berdasarkan keluarga)
+                      const Text(
+                        "Alamat Lama",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      TextFormField(
+                        controller: _alamatLamaController,
+                        maxLines: 2,
+                        decoration: const InputDecoration(
+                          hintText: "Alamat lama akan terisi otomatis...",
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(8)),
+                            borderSide: BorderSide(
+                              color: Color.fromARGB(255, 216, 216, 216),
+                              width: 1,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(8)),
+                            borderSide: BorderSide(
+                              color: Color(0xFF4F6DF5),
+                              width: 1.5,
+                            ),
+                          ),
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 15,
+                            vertical: 12,
+                          ),
+                          filled: true,
+                          fillColor: Color(0xFFF8F9FA),
+                        ),
+                        readOnly: true,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Alamat lama wajib diisi';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 20),
+
+                      // Alamat Baru (Text Field)
+                      const Text(
+                        "Alamat Baru",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      TextFormField(
+                        controller: _alamatBaruController,
+                        maxLines: 2,
+                        decoration: const InputDecoration(
+                          hintText: "Masukkan alamat baru...",
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(8)),
+                            borderSide: BorderSide(
+                              color: Color.fromARGB(255, 216, 216, 216),
+                              width: 1,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(8)),
+                            borderSide: BorderSide(
+                              color: Color(0xFF4F6DF5),
+                              width: 1.5,
+                            ),
+                          ),
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 15,
+                            vertical: 12,
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Masukkan alamat baru';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 20),
+
                       // Pilih Jenis Mutasi (Dropdown)
                       const Text(
                         "Pilih Jenis Mutasi",
@@ -166,7 +354,7 @@ class _TambahMutasiPageState extends State<TambahMutasiPage> {
                           focusedBorder: const OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(8)),
                             borderSide: BorderSide(
-                              color: Color(0xFF6C63FF),
+                              color: Color(0xFF4F6DF5),
                               width: 1.5,
                             ),
                           ),
@@ -190,100 +378,6 @@ class _TambahMutasiPageState extends State<TambahMutasiPage> {
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Pilih jenis mutasi';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 20),
-
-                      // Pilih Keluarga (Dropdown)
-                      const Text(
-                        "Pilih Keluarga",
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      DropdownButtonFormField<String>(
-                        decoration: InputDecoration(
-                          hintText: "Pilih Keluarga",
-                          enabledBorder: const OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(8)),
-                            borderSide: BorderSide(
-                              color: Color.fromARGB(255, 216, 216, 216),
-                              width: 1,
-                            ),
-                          ),
-                          focusedBorder: const OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(8)),
-                            borderSide: BorderSide(
-                              color: Color(0xFF6C63FF),
-                              width: 1.5,
-                            ),
-                          ),
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 15,
-                            vertical: 12,
-                          ),
-                        ),
-                        value: _selectedKeluarga,
-                        items: _keluargaOptions.map((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            _selectedKeluarga = newValue;
-                          });
-                        },
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Pilih keluarga';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 20),
-
-                      // Alasan Mutasi (Text Field)
-                      const Text(
-                        "Alasan Mutasi",
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      TextFormField(
-                        controller: _alasanController,
-                        maxLines: 3,
-                        decoration: InputDecoration(
-                          hintText: "Masukkan alasan mutasi...",
-                          enabledBorder: const OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(8)),
-                            borderSide: BorderSide(
-                              color: Color.fromARGB(255, 216, 216, 216),
-                              width: 1,
-                            ),
-                          ),
-                          focusedBorder: const OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(8)),
-                            borderSide: BorderSide(
-                              color: Color(0xFF6C63FF),
-                              width: 1.5,
-                            ),
-                          ),
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 15,
-                            vertical: 12,
-                          ),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Masukkan alasan mutasi';
                           }
                           return null;
                         },
@@ -318,7 +412,7 @@ class _TambahMutasiPageState extends State<TambahMutasiPage> {
                           focusedBorder: const OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(8)),
                             borderSide: BorderSide(
-                              color: Color(0xFF6C63FF),
+                              color: Color(0xFF4F6DF5),
                               width: 1.5,
                             ),
                           ),
@@ -335,40 +429,64 @@ class _TambahMutasiPageState extends State<TambahMutasiPage> {
                         },
                         onTap: () => _selectDate(context),
                       ),
+                      const SizedBox(height: 20),
+
+                      // Alasan Mutasi (Text Field)
+                      const Text(
+                        "Alasan Mutasi",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      TextFormField(
+                        controller: _alasanController,
+                        maxLines: 3,
+                        decoration: const InputDecoration(
+                          hintText: "Masukkan alasan mutasi...",
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(8)),
+                            borderSide: BorderSide(
+                              color: Color.fromARGB(255, 216, 216, 216),
+                              width: 1,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(8)),
+                            borderSide: BorderSide(
+                              color: Color(0xFF4F6DF5),
+                              width: 1.5,
+                            ),
+                          ),
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 15,
+                            vertical: 12,
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Masukkan alasan mutasi';
+                          }
+                          return null;
+                        },
+                      ),
                       const SizedBox(height: 30),
 
                       // Tombol Submit dan Reset
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Expanded(
-                            child: ElevatedButton(
-                              onPressed: _submitForm,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF6C63FF),
-                                padding: const EdgeInsets.symmetric(vertical: 14),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                ),
-                              ),
-                              child: const Text(
-                                "Submit",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
+                          SizedBox(
+                            width: 120,
                             child: OutlinedButton(
                               onPressed: _resetForm,
                               style: OutlinedButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(vertical: 14),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 14,
+                                ),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8.0),
+                                  borderRadius: BorderRadius.circular(20.0),
                                 ),
                                 side: const BorderSide(color: Colors.grey),
                               ),
@@ -376,7 +494,30 @@ class _TambahMutasiPageState extends State<TambahMutasiPage> {
                                 "Reset",
                                 style: TextStyle(
                                   fontSize: 16,
-                                  color: Colors.black,
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 120,
+                            child: ElevatedButton(
+                              onPressed: _submitForm,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF4F6DF5),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 14,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                ),
+                              ),
+                              child: const Text(
+                                "Submit",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.white,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -401,6 +542,8 @@ class _TambahMutasiPageState extends State<TambahMutasiPage> {
   void dispose() {
     _alasanController.dispose();
     _tanggalController.dispose();
+    _alamatLamaController.dispose();
+    _alamatBaruController.dispose();
     super.dispose();
   }
 }

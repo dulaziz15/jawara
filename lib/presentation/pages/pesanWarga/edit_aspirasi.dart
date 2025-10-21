@@ -16,14 +16,21 @@ class _EditAspirasiPageState extends State<EditAspirasiPage> {
   late TextEditingController _deskripsiController;
   String _status = '';
 
-  final List<String> _statusOptions = ['Diterima', 'Pending', 'Diproses', 'Selesai'];
+  final List<String> _statusOptions = [
+    'Diterima',
+    'Pending',
+    'Diproses',
+    'Selesai',
+  ];
 
   @override
   void initState() {
     super.initState();
     _judulController = TextEditingController(text: widget.item.judul);
     _deskripsiController = TextEditingController(text: widget.item.deskripsi);
-    _status = _statusOptions.contains(widget.item.status) ? widget.item.status : 'Pending';
+    _status = _statusOptions.contains(widget.item.status)
+        ? widget.item.status
+        : 'Pending';
   }
 
   @override
@@ -44,7 +51,7 @@ class _EditAspirasiPageState extends State<EditAspirasiPage> {
       print('Judul: ${_judulController.text}');
       print('Deskripsi: ${_deskripsiController.text}');
       print('Status: $_status');
-      
+
       // Tampilkan snackbar sukses
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -52,7 +59,7 @@ class _EditAspirasiPageState extends State<EditAspirasiPage> {
           backgroundColor: Colors.green,
         ),
       );
-      
+
       // Kembali ke halaman sebelumnya
       Navigator.pop(context);
     }
@@ -70,10 +77,7 @@ class _EditAspirasiPageState extends State<EditAspirasiPage> {
       ),
       focusedBorder: const OutlineInputBorder(
         borderRadius: BorderRadius.all(Radius.circular(8)),
-        borderSide: BorderSide(
-          color: Color(0xFF6C63FF),
-          width: 1.5,
-        ),
+        borderSide: BorderSide(color: Color(0xFF6C63FF), width: 1.5),
       ),
       disabledBorder: const OutlineInputBorder(
         borderRadius: BorderRadius.all(Radius.circular(8)),
@@ -149,7 +153,10 @@ class _EditAspirasiPageState extends State<EditAspirasiPage> {
                       TextFormField(
                         controller: _judulController,
                         enabled: false, // Field tidak bisa diedit
-                        decoration: _inputDecoration("Judul Aspirasi", enabled: false),
+                        decoration: _inputDecoration(
+                          "Judul Aspirasi",
+                          enabled: false,
+                        ),
                       ),
                       const SizedBox(height: 20),
 
@@ -166,7 +173,10 @@ class _EditAspirasiPageState extends State<EditAspirasiPage> {
                         enabled: false, // Field tidak bisa diedit
                         maxLines: 4,
                         minLines: 3,
-                        decoration: _inputDecoration("Deskripsi Aspirasi", enabled: false),
+                        decoration: _inputDecoration(
+                          "Deskripsi Aspirasi",
+                          enabled: false,
+                        ),
                       ),
                       const SizedBox(height: 20),
 
@@ -235,17 +245,46 @@ class _EditAspirasiPageState extends State<EditAspirasiPage> {
                       const SizedBox(height: 30),
 
                       // Tombol Update dan Cancel
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                                            Row(
+                        mainAxisAlignment: MainAxisAlignment
+                            .spaceBetween, // Submit kanan, Cancel kiri
                         children: [
-                          Expanded(
+                          // Cancel Button - Paling Kiri
+                          SizedBox(
+                            width: 120,
+                            child: OutlinedButton(
+                              onPressed: _cancelForm,
+                              style: OutlinedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 14,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                ),
+                                side: const BorderSide(color: Colors.grey),
+                              ),
+                              child: const Text(
+                                "Cancel",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                          // Submit Button - Paling Kanan
+                          SizedBox(
+                            width: 120,
                             child: ElevatedButton(
                               onPressed: _submitForm,
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF6C63FF),
-                                padding: const EdgeInsets.symmetric(vertical: 14),
+                                backgroundColor: const Color(0xFF4F6DF5),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 14,
+                                ),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8.0),
+                                  borderRadius: BorderRadius.circular(20.0),
                                 ),
                               ),
                               child: const Text(
@@ -253,27 +292,6 @@ class _EditAspirasiPageState extends State<EditAspirasiPage> {
                                 style: TextStyle(
                                   fontSize: 16,
                                   color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: OutlinedButton(
-                              onPressed: _cancelForm,
-                              style: OutlinedButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(vertical: 14),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                ),
-                                side: const BorderSide(color: Colors.grey),
-                              ),
-                              child: const Text(
-                                "Cancel", // Diubah dari Reset menjadi Cancel
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.black,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),

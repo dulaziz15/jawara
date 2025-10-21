@@ -18,12 +18,12 @@ void showDetailModal(BuildContext context, AspirationData item) {
             _detailRow('Tanggal', item.tanggal),
           ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(),
-            child: const Text('Tutup'),
-          ),
-        ],
+        // actions: [
+        //   TextButton(
+        //     onPressed: () => Navigator.of(dialogContext).pop(),
+        //     child: const Text('Tutup'),
+        //   ),
+        // ],
       );
     },
   );
