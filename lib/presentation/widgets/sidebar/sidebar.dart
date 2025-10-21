@@ -30,11 +30,39 @@ class _SidebarState extends State<Sidebar> {
         padding: const EdgeInsets.all(8),
         children: [
           const DrawerHeader(
-            child: Center(
-              child: Text("Jawara Pintar",
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-            ),
+  decoration: BoxDecoration(
+    color: Color(0xFF6C63FF),
+    borderRadius: BorderRadius.only(
+      // bottomLeft: Radius.circular(20),
+      // bottomRight: Radius.circular(20),
+      // topLeft: Radius.circular(20),
+      topRight: Radius.circular(20),
+    ),
+  ),
+  child: Center(
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(
+          Icons.menu_book_rounded,
+          color: Colors.white,
+          size: 48,
+        ),
+        SizedBox(height: 10),
+        Text(
+          "Jawara Pintar",
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
           ),
+        ),
+      ],
+    ),
+  ),
+),
+
+
 
           // DASHBOARD
           ExpansionTile(
@@ -101,23 +129,23 @@ class _SidebarState extends State<Sidebar> {
             children: [
               ListTile(
                 title: const Text("Kategori Iuran"),
-                onTap: () => context.router.pushNamed('/pemasukan/kategori'),
+                onTap: () => context.router.pushNamed('/pemasukan/kategori_iuran'),
               ),
               ListTile(
                 title: const Text("Tagih Iuran"),
-                onTap: () => context.router.pushNamed('/pemasukan/tagih'),
+                onTap: () => context.router.pushNamed('/pemasukan/tagih_iuran'),
               ),
               ListTile(
                 title: const Text("Tagihan"),
-                onTap: () => context.router.pushNamed('/pemasukan/tagihan'),
+                onTap: () => context.router.pushNamed('/pemasukan/tagihan_daftar'),
               ),
               ListTile(
                 title: const Text("Pemasukan Lain - Daftar"),
-                onTap: () => context.router.pushNamed('/pemasukan/lain/daftar'),
+                onTap: () => context.router.pushNamed('/pemasukan/daftar'),
               ),
               ListTile(
                 title: const Text("Pemasukan Lain - Tambah"),
-                onTap: () => context.router.pushNamed('/pemasukan/lain/tambah'),
+                onTap: () => context.router.pushNamed('/pemasukan/tambah'),
               ),
             ],
           ),
@@ -225,11 +253,11 @@ class _SidebarState extends State<Sidebar> {
             children: [
               ListTile(
                 title: const Text("Daftar"),
-                onTap: () => context.router.pushNamed('/mutasi/daftar'),
+                onTap: () => context.router.pushNamed('/mutasiKeluarga/daftarMutasi'),
               ),
               ListTile(
                 title: const Text("Tambah"),
-                onTap: () => context.router.pushNamed('/mutasi/tambah'),
+                onTap: () => context.router.pushNamed('/mutasiKeluarga/tambahMutasi'),
               ),
             ],
           ),

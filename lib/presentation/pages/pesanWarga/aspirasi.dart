@@ -1,220 +1,691 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-// Import relatif untuk FilterPesanWargaDialog karena berada di folder yang sama
-import 'filter.dart'; 
-import 'package:jawara/presentation/widgets/sidebar/sidebar.dart';
+import 'model_aspirasi.dart';
+import 'filter.dart';
+import 'edit_aspirasi.dart';
 
-
-// --- DEFINISI DATA MODEL ---
-class AspirationData {
-  final int no;
-  final String pengirim;
-  final String judul;
-  final String status;
-
-  // Constructor harus const agar list _data bisa const
-  const AspirationData({
-    required this.no,
-    required this.pengirim,
-    required this.judul,
-    required this.status,
-  });
-}
-
-@RoutePage()
-class AspirasiPage extends StatelessWidget {
+class AspirasiPage extends StatefulWidget {
   const AspirasiPage({super.key});
 
-  // --- Sample Data List ---
-  final List<AspirationData> _data = const [
-    const AspirationData(
-        no: 1, pengirim: 'Habibie Ed Dien', judul: 'tes', status: 'Pending'),
-    // Contoh data tambahan (opsional)
-    const AspirationData(
-        no: 2, pengirim: 'Budi Santoso', judul: 'Lampu Jalan Mati', status: 'Diproses'),
-    const AspirationData(
-        no: 3, pengirim: 'Siti Aisyah', judul: 'Masalah Kebersihan', status: 'Selesai'),
+  @override
+  State<AspirasiPage> createState() => _AspirasiPageState();
+}
+
+class _AspirasiPageState extends State<AspirasiPage> {
+  final List<AspirationData> _allAspirasi = [
+    AspirationData(
+      judul: 'Lampu jalan di persimpangan padam',
+      deskripsi:
+          'Pada hari minggu malam saya cek lampu nya berkedip kemudian keesokan hari nya lampu sudah mati total',
+      status: 'Pending',
+      pengirim: 'Tono',
+      tanggal: '10-10-2025',
+    ),
+    AspirationData(
+      judul: 'Tempat sampah kurang',
+      deskripsi: 'aku hanya ingin pergi ke wisata kota yang ada di malang',
+      status: 'Diproses',
+      pengirim: 'Budi Doremi',
+      tanggal: '12-10-2025',
+    ),
+    AspirationData(
+      judul: 'Pipa bocor',
+      deskripsi: 'pipa bocor karena tidak sengaja saat penggalian tanah',
+      status: 'Diproses',
+      pengirim: 'Ehsan',
+      tanggal: '13-10-2025',
+    ),
+    AspirationData(
+      judul: 'Jalan rusak',
+      deskripsi: 'Jalan rusak akibat ada truk tronton lewat dini hari',
+      status: 'Selesai',
+      pengirim: 'Darmini',
+      tanggal: '1-09-2025',
+    ),
+    AspirationData(
+      judul: 'Jalan rusak 2',
+      deskripsi: 'Jalan rusak akibat ada truk tronton lewat dini hari',
+      status: 'Selesai',
+      pengirim: 'Darmini',
+      tanggal: '1-09-2025',
+    ),
+    AspirationData(
+      judul: 'Jalan rusak 3',
+      deskripsi: 'Jalan rusak akibat ada truk tronton lewat dini hari',
+      status: 'Selesai',
+      pengirim: 'Darmini',
+      tanggal: '1-09-2025',
+    ),
+    AspirationData(
+      judul: 'Jalan rusak 4',
+      deskripsi: 'Jalan rusak akibat ada truk tronton lewat dini hari',
+      status: 'Selesai',
+      pengirim: 'Darmini',
+      tanggal: '1-09-2025',
+    ),
+    AspirationData(
+      judul: 'Jalan rusak 5',
+      deskripsi: 'Jalan rusak akibat ada truk tronton lewat dini hari',
+      status: 'Selesai',
+      pengirim: 'Darmini',
+      tanggal: '1-09-2025',
+    ),
+    AspirationData(
+      judul: 'Jalan rusak 6',
+      deskripsi: 'Jalan rusak akibat ada truk tronton lewat dini hari',
+      status: 'Selesai',
+      pengirim: 'Darmini',
+      tanggal: '1-09-2025',
+    ),
+    AspirationData(
+      judul: 'Jalan rusak 7',
+      deskripsi: 'Jalan rusak akibat ada truk tronton lewat dini hari',
+      status: 'Selesai',
+      pengirim: 'Darmini',
+      tanggal: '1-09-2025',
+    ),
+    AspirationData(
+      judul: 'Jalan rusak 8',
+      deskripsi: 'Jalan rusak akibat ada truk tronton lewat dini hari',
+      status: 'Selesai',
+      pengirim: 'Darmini',
+      tanggal: '1-09-2025',
+    ),
+    AspirationData(
+      judul: 'Jalan rusak 9',
+      deskripsi: 'Jalan rusak akibat ada truk tronton lewat dini hari',
+      status: 'Selesai',
+      pengirim: 'Darmini',
+      tanggal: '1-09-2025',
+    ),
   ];
 
-  // --- Widget untuk menampilkan badge status berwarna ---
-  Widget _buildStatusBadge(String status) {
-    Color backgroundColor;
-    Color textColor = Colors.black;
+  List<AspirationData> _filteredAspirasi = [];
+  List<AspirationData> _currentPageData = [];
+  final TextEditingController _searchController = TextEditingController();
+  String _selectedFilter = 'Semua';
+  
+  // Pagination variables
+  int _currentPage = 1;
+  final int _itemsPerPage = 5;
+  int _totalPages = 1;
 
-    switch (status.toLowerCase()) {
-      case 'pending':
-        backgroundColor = Colors.yellow.shade200;
-        break;
-      case 'diproses':
-        backgroundColor = Colors.blue.shade200;
-        break;
-      case 'selesai':
-        backgroundColor = Colors.green.shade200;
-        break;
-      default:
-        backgroundColor = Colors.grey.shade300;
-        break;
+  @override
+  void initState() {
+    super.initState();
+    _filteredAspirasi = List.from(_allAspirasi);
+    _updatePagination();
+  }
+
+  void _updatePagination() {
+    try {
+      setState(() {
+        // Pastikan _filteredAspirasi tidak null
+        final filteredList = _filteredAspirasi;
+        
+        _totalPages = (filteredList.length / _itemsPerPage).ceil();
+        if (_totalPages == 0) _totalPages = 1;
+        
+        if (_currentPage > _totalPages) {
+          _currentPage = _totalPages;
+        }
+        
+        final startIndex = (_currentPage - 1) * _itemsPerPage;
+        final endIndex = startIndex + _itemsPerPage;
+        
+        _currentPageData = filteredList.sublist(
+          startIndex,
+          endIndex > filteredList.length ? filteredList.length : endIndex,
+        );
+      });
+    } catch (e) {
+      print('Error in pagination: $e');
+      setState(() {
+        _currentPageData = [];
+        _totalPages = 1;
+        _currentPage = 1;
+      });
     }
+  }
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: BorderRadius.circular(4.0),
-      ),
-      child: Text(
-        status,
-        style: TextStyle(
-          color: textColor,
-          fontSize: 12,
-          fontWeight: FontWeight.w500,
-        ),
+  void _goToPage(int page) {
+    if (page >= 1 && page <= _totalPages) {
+      setState(() {
+        _currentPage = page;
+        _updatePagination();
+      });
+    }
+  }
+
+  void _nextPage() {
+    if (_currentPage < _totalPages) {
+      _goToPage(_currentPage + 1);
+    }
+  }
+
+  void _previousPage() {
+    if (_currentPage > 1) {
+      _goToPage(_currentPage - 1);
+    }
+  }
+
+  void _applyFilter(String status) {
+    try {
+      setState(() {
+        _selectedFilter = status;
+        _currentPage = 1;
+
+        // Pastikan _allAspirasi tidak null
+        final allData = _allAspirasi;
+        
+        List<AspirationData> statusFilteredData;
+        if (status == 'Semua') {
+          statusFilteredData = List.from(allData);
+        } else {
+          statusFilteredData = allData
+              .where((a) => a.status == status)
+              .toList();
+        }
+
+        // Handle search text dengan null safety
+        final searchText = _searchController.text;
+        if (searchText.isNotEmpty) {
+          _filteredAspirasi = statusFilteredData
+              .where((a) =>
+                  (a.judul ?? '').toLowerCase().contains(searchText.toLowerCase()) ||
+                  (a.pengirim ?? '').toLowerCase().contains(searchText.toLowerCase()))
+              .toList();
+        } else {
+          _filteredAspirasi = List.from(statusFilteredData);
+        }
+        
+        _updatePagination();
+      });
+    } catch (e) {
+      print('Error applying filter: $e');
+      setState(() {
+        _filteredAspirasi = List.from(_allAspirasi);
+        _updatePagination();
+      });
+    }
+  }
+
+  void _onSearchChanged(String value) {
+    try {
+      setState(() {
+        _currentPage = 1;
+        
+        // Pastikan _allAspirasi tidak null
+        final allData = _allAspirasi;
+        
+        List<AspirationData> searchFilteredData;
+        if (value.isEmpty) {
+          searchFilteredData = List.from(allData);
+        } else {
+          searchFilteredData = allData
+              .where((a) =>
+                  (a.judul ?? '').toLowerCase().contains(value.toLowerCase()) ||
+                  (a.pengirim ?? '').toLowerCase().contains(value.toLowerCase()))
+              .toList();
+        }
+
+        if (_selectedFilter != 'Semua') {
+          _filteredAspirasi = searchFilteredData
+              .where((a) => a.status == _selectedFilter)
+              .toList();
+        } else {
+          _filteredAspirasi = List.from(searchFilteredData);
+        }
+        
+        _updatePagination();
+      });
+    } catch (e) {
+      print('Error in search: $e');
+      setState(() {
+        _filteredAspirasi = List.from(_allAspirasi);
+        _updatePagination();
+      });
+    }
+  }
+
+  void _showFilterDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => FilterPesanWargaDialog(
+        initialStatus: _selectedFilter,
+        onApplyFilter: _applyFilter,
       ),
     );
   }
 
-  // --- Widget untuk tombol pagination ---
-  Widget _buildPagination() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        // Previous Button
-        IconButton(
-          onPressed: () {},
-          icon: const Icon(Icons.chevron_left),
-          style: IconButton.styleFrom(
-            backgroundColor: Colors.white,
-            side: const BorderSide(color: Colors.grey, width: 0.5),
-          ),
-        ),
-        const SizedBox(width: 8),
+  // FUNGSI DELETE CONFIRMATION
+  void _showDeleteConfirmation(BuildContext context, AspirationData item) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Text('Konfirmasi Hapus'),
+          content: Text('Apakah Anda yakin ingin menghapus aspirasi "${item.judul}"?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: const Text('Batal'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                _deleteAspirasi(item);
+                Navigator.of(dialogContext).pop();
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+              ),
+              child: const Text('Hapus', style: TextStyle(color: Colors.white)),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
-        // Current Page Button (Page 1)
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          decoration: BoxDecoration(
-            color: Colors.deepPurple,
-            borderRadius: BorderRadius.circular(4.0),
-          ),
-          child: const Text(
-            '1',
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-          ),
-        ),
-        const SizedBox(width: 8),
+  // FUNGSI DELETE ASPIRASI
+  void _deleteAspirasi(AspirationData item) {
+    setState(() {
+      _allAspirasi.removeWhere((a) => a.judul == item.judul);
+      _applyFilter(_selectedFilter); // Re-apply filter to update the list
+    });
+    
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Aspirasi "${item.judul}" berhasil dihapus'),
+        backgroundColor: Colors.green,
+      ),
+    );
+  }
 
-        // Next Button
-        IconButton(
-          onPressed: () {},
-          icon: const Icon(Icons.chevron_right),
-          style: IconButton.styleFrom(
-            backgroundColor: Colors.white,
-            side: const BorderSide(color: Colors.grey, width: 0.5),
+  // FUNGSI DETAIL MODAL
+  void _showDetailModal(BuildContext context, AspirationData item) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return Dialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          elevation: 8,
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      'Detail Aspirasi',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF6C63FF),
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.close, color: Colors.grey),
+                      onPressed: () => Navigator.of(dialogContext).pop(),
+                    ),
+                  ],
+                ),
+                const Divider(thickness: 1.2),
+                const SizedBox(height: 16),
+
+                // Content
+                _buildDetailRow('Judul', item.judul ?? '-'),
+                const SizedBox(height: 12),
+                _buildDetailRow('Pengirim', item.pengirim ?? '-'),
+                const SizedBox(height: 12),
+                _buildDetailRow('Tanggal', item.tanggal ?? '-'),
+                const SizedBox(height: 12),
+                
+                // Status
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(
+                      width: 80,
+                      child: Text(
+                        'Status:',
+                        style: TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: _getStatusColor(item.status),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        item.status ?? 'Unknown',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+
+                // Deskripsi
+                const Text(
+                  'Deskripsi:',
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  item.deskripsi ?? '-',
+                  style: const TextStyle(fontSize: 14),
+                ),
+                const SizedBox(height: 20),
+              ],
+            ),
           ),
-        ),
-      ],
+        );
+      },
+    );
+  }
+
+  // HELPER FUNCTION UNTUK DETAIL ROW
+  Widget _buildDetailRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 80,
+            child: Text(
+              '$label:',
+              style: const TextStyle(fontWeight: FontWeight.w600),
+            ),
+          ),
+          Expanded(child: Text(value)),
+        ],
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey.shade100,
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-                       Align(
-              alignment: Alignment.topRight,
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 20.0),
-                child: ElevatedButton(
-                  onPressed: () {
-                    // Panggil FilterPesanWargaDialog
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return const FilterPesanWargaDialog();
-                      },
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.deepPurple,
-                    padding: const EdgeInsets.all(12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
+      backgroundColor: Colors.white,
+      body: Column(
+        children: [
+          // Search Bar
+          Container(
+            margin: const EdgeInsets.all(16),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.grey.shade300),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.1),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.search, color: Colors.grey),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: TextField(
+                    controller: _searchController,
+                    onChanged: _onSearchChanged,
+                    decoration: const InputDecoration(
+                      hintText: 'Cari berdasarkan judul atau pengirim...',
+                      border: InputBorder.none,
+                      hintStyle: TextStyle(color: Colors.grey),
                     ),
-                    minimumSize: const Size(60, 50), // Ukuran tombol kecil
-                  ),
-                  child: const Icon(
-                    Icons.filter_list,
-                    color: Colors.white,
                   ),
                 ),
-              ),
+              ],
             ),
+          ),
 
-            // --- Card/Container untuk Tabel dan Pagination ---
-            Card(
-              elevation: 4,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              child: Column(
-                children: [
-                  // --- Tabel Data ---
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: DataTable(
-                        columnSpacing: 30,
-                        dataRowHeight: 50,
-                        headingRowHeight: 40,
-                        // Border bawah pada header
-                        border: const TableBorder(
-                          bottom: BorderSide(color: Colors.grey, width: 0.5),
-                          horizontalInside: BorderSide(
-                            color: Colors.grey,
-                            width: 0.5,
-                          ),
+          // Jumlah data ditemukan dan info pagination
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  '${_filteredAspirasi.length} data ditemukan',
+                  style: const TextStyle(color: Colors.grey, fontSize: 14),
+                ),
+                if (_totalPages > 1)
+                  Text(
+                    'Halaman $_currentPage dari $_totalPages',
+                    style: const TextStyle(color: Colors.grey, fontSize: 14),
+                  ),
+              ],
+            ),
+          ),
+
+          // List Aspirasi
+          Expanded(
+            child: _currentPageData.isEmpty
+                ? Center(
+                    child: Text(
+                      'Data tidak ditemukan',
+                      style: TextStyle(color: Colors.grey.shade500),
+                    ),
+                  )
+                : ListView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    itemCount: _currentPageData.length,
+                    itemBuilder: (context, index) {
+                      final item = _currentPageData[index];
+                      return _buildAspirasiCard(item);
+                    },
+                  ),
+          ),
+
+          // Pagination Controls
+          if (_totalPages > 1) _buildPaginationControls(),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _showFilterDialog,
+        backgroundColor: const Color(0xFF6C63FF),
+        child: const Icon(Icons.filter_list, color: Colors.white),
+      ),
+    );
+  }
+
+  Widget _buildPaginationControls() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border(top: BorderSide(color: Colors.grey.shade300)),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          // Previous Button
+          IconButton(
+            onPressed: _currentPage > 1 ? _previousPage : null,
+            icon: const Icon(Icons.chevron_left),
+            color: _currentPage > 1 ? const Color(0xFF6C63FF) : Colors.grey,
+          ),
+
+          // Page Numbers
+          ...List.generate(_totalPages, (index) {
+            final pageNumber = index + 1;
+            final isCurrentPage = pageNumber == _currentPage;
+            
+            // Show limited page numbers for better UX
+            if (_totalPages <= 7 || 
+                pageNumber == 1 || 
+                pageNumber == _totalPages ||
+                (pageNumber >= _currentPage - 1 && pageNumber <= _currentPage + 1)) {
+              
+              return Container(
+                margin: const EdgeInsets.symmetric(horizontal: 4),
+                child: InkWell(
+                  onTap: () => _goToPage(pageNumber),
+                  child: Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: isCurrentPage ? const Color(0xFF6C63FF) : Colors.transparent,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: isCurrentPage ? const Color(0xFF6C63FF) : Colors.grey.shade300,
+                      ),
+                    ),
+                    child: Center(
+                      child: Text(
+                        '$pageNumber',
+                        style: TextStyle(
+                          color: isCurrentPage ? Colors.white : Colors.grey.shade700,
+                          fontWeight: isCurrentPage ? FontWeight.bold : FontWeight.normal,
                         ),
-                        // Header Tabel
-                        columns: const [
-                          DataColumn(
-                              label: Text('NO',
-                                  style: TextStyle(fontWeight: FontWeight.bold))),
-                          DataColumn(
-                              label: Text('PENGIRIM',
-                                  style: TextStyle(fontWeight: FontWeight.bold))),
-                          DataColumn(
-                              label: Text('JUDUL',
-                                  style: TextStyle(fontWeight: FontWeight.bold))),
-                          DataColumn(
-                              label: Text('STATUS',
-                                  style: TextStyle(fontWeight: FontWeight.bold))),
-                        ],
-                        // Baris Data
-                        rows: _data
-                            .map(
-                              (item) => DataRow(
-                                cells: [
-                                  DataCell(Text(item.no.toString())),
-                                  DataCell(Text(item.pengirim)),
-                                  DataCell(Text(item.judul)),
-                                  DataCell(_buildStatusBadge(item.status)),
-                                ],
-                              ),
-                            )
-                            .toList(),
                       ),
                     ),
                   ),
+                ),
+              );
+            } else if (pageNumber == _currentPage - 2 || pageNumber == _currentPage + 2) {
+              // Show ellipsis for skipped pages
+              return const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 4),
+                child: Text('...', style: TextStyle(color: Colors.grey)),
+              );
+            } else {
+              return const SizedBox.shrink();
+            }
+          }),
 
-                  // --- Pagination ---
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16.0),
-                    child: _buildPagination(),
+          // Next Button
+          IconButton(
+            onPressed: _currentPage < _totalPages ? _nextPage : null,
+            icon: const Icon(Icons.chevron_right),
+            color: _currentPage < _totalPages ? const Color(0xFF6C63FF) : Colors.grey,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAspirasiCard(AspirationData item) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade300),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    item.judul ?? 'Judul tidak tersedia',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Dikirim oleh: ${item.pengirim ?? 'Tidak diketahui'}',
+                              style: const TextStyle(
+                                color: Colors.grey,
+                                fontSize: 14,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Tanggal: ${item.tanggal ?? 'Tidak diketahui'}',
+                              style: const TextStyle(
+                                color: Colors.grey,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: _getStatusColor(item.status),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              item.status ?? 'Unknown',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          PopupMenuButton<String>(
+                            onSelected: (value) {
+                              switch (value) {
+                                case 'edit':
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => EditAspirasiPage(item: item),
+                                    ),
+                                  );
+                                  break;
+                                case 'delete':
+                                  _showDeleteConfirmation(context, item); // FIXED
+                                  break;
+                                case 'detail':
+                                  _showDetailModal(context, item); // FIXED
+                                  break;
+                              }
+                            },
+                            itemBuilder: (context) => const [
+                              PopupMenuItem(value: 'detail', child: Text('Detail')),
+                              PopupMenuItem(value: 'edit', child: Text('Edit')),
+                              PopupMenuItem(value: 'delete', child: Text('Hapus')),
+                            ],
+                            icon: const Icon(Icons.more_vert, color: Colors.grey),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -223,5 +694,21 @@ class AspirasiPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Color _getStatusColor(String? status) {
+    final statusValue = status?.toLowerCase() ?? '';
+    switch (statusValue) {
+      case 'pending':
+        return Colors.orange;
+      case 'diproses':
+        return Colors.blue;
+      case 'selesai':
+        return Colors.green;
+      case 'ditolak':
+        return Colors.red;
+      default:
+        return Colors.grey;
+    }
   }
 }
