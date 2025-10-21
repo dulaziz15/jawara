@@ -82,7 +82,7 @@ class _ChannelEditPageState extends State<ChannelEditPage> {
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Colors.deepPurple,
+                      color: Color(0xFF6C63FF),
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -152,7 +152,7 @@ class _ChannelEditPageState extends State<ChannelEditPage> {
                       ElevatedButton(
                         onPressed: _simpanPerubahan,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.deepPurple,
+                          backgroundColor: Color(0xFF6C63FF),
                           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                         ),
                         child: const Text('Simpan', style: TextStyle(color: Colors.white)),

@@ -226,7 +226,7 @@ class _PenggunaTambahPageState extends State<PenggunaTambahPage> {
                     ElevatedButton(
                       onPressed: () => controller.saveUser(context),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.deepPurple,
+                        backgroundColor: Color(0xFF6C63FF),
                         padding: const EdgeInsets.symmetric(
                             horizontal: 20, vertical: 12),
                         shape: RoundedRectangleBorder(
@@ -281,7 +281,7 @@ class _PenggunaTambahPageState extends State<PenggunaTambahPage> {
             borderRadius: BorderRadius.circular(8),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.deepPurple.shade400),
+            borderSide: BorderSide(color: Color(0xFF6C63FF)),
           ),
         ),
       ),

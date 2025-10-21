@@ -60,16 +60,15 @@ class _DaftarPenggunaPageState extends State<DaftarPenggunaPage> {
 
   Widget _buildStatusBadge(String status) {
     Color backgroundColor;
-
     switch (status.toLowerCase()) {
       case 'diterima':
-        backgroundColor = Colors.green.shade200;
+        backgroundColor = Colors.green;
         break;
       case 'diproses':
-        backgroundColor = Colors.blue.shade200;
+        backgroundColor = Colors.blue;
         break;
       case 'ditolak':
-        backgroundColor = Colors.red.shade200;
+        backgroundColor = Colors.red;
         break;
       default:
         backgroundColor = Colors.grey.shade300;
@@ -82,7 +81,8 @@ class _DaftarPenggunaPageState extends State<DaftarPenggunaPage> {
         color: backgroundColor,
         borderRadius: BorderRadius.circular(20),
       ),
-      child: Text(status, style: const TextStyle(fontWeight: FontWeight.bold)),
+      child: Text(status, style: const TextStyle(fontWeight: FontWeight.bold,
+          color: Colors.white)),
     );
   }
 
@@ -111,7 +111,7 @@ class _DaftarPenggunaPageState extends State<DaftarPenggunaPage> {
               margin: const EdgeInsets.symmetric(horizontal: 4),
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
               decoration: BoxDecoration(
-                color: i == currentPage ? Colors.deepPurple : Colors.white,
+                color: i == currentPage ? Color(0xFF6C63FF) : Colors.white,
                 border: Border.all(color: Colors.grey, width: 0.5),
                 borderRadius: BorderRadius.circular(4.0),
               ),
@@ -265,7 +265,7 @@ class _DaftarPenggunaPageState extends State<DaftarPenggunaPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _openFilterDialog,
-        backgroundColor:  Colors.deepPurple,
+        backgroundColor:  Color(0xFF6C63FF),
         child: const Icon(Icons.filter_list, color: Colors.white),
       ),
     );

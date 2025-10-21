@@ -41,7 +41,7 @@ class ChannelDetailPage extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: Colors.deepPurple,
+                    color: Color(0xFF6C63FF),
                   ),
                 ),
                 const SizedBox(height: 24),
