@@ -1,73 +1,303 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:jawara/core/models/family_model.dart';
 
-class WargaDaftarPage extends StatefulWidget {
-  const WargaDaftarPage({super.key});
+// Model Data Warga sesuai gambar
+class WargaData {
+  final String no;
+  final String name;
+  final String nik;
+  final String keluarga;
+  final String jenisKelamin;
+  final String statusDomisili;
+  final String statusHidup;
+  final String aksi;
 
-  @override
-  State<WargaDaftarPage> createState() => _WargaDaftarPageState();
+  const WargaData({
+    required this.no,
+    required this.name,
+    required this.nik,
+    required this.keluarga,
+    required this.jenisKelamin,
+    required this.statusDomisili,
+    required this.statusHidup,
+    required this.aksi,
+  });
 }
 
-class _WargaDaftarPageState extends State<WargaDaftarPage> {
-  final List<Family> _allFamilies = [
-    Family(nik: '3505111512040002', name: 'Keluarga Rendha Putra Rahmadya'),
-    Family(nik: '1234567890987654', name: 'Keluarga Anti Micin'),
-    Family(nik: '137111101030005', name: 'Keluarga varizky naldiba rimra'),
-    Family(nik: '1234567890123456', name: 'Keluarga Ijat'),
-    Family(nik: '2025202520252025', name: 'Keluarga Ijat'),
-    Family(nik: '3201122501050002', name: 'Keluarga Raudhli Firdaus Naufal'),
-    Family(nik: '1234567891234567', name: 'Keluarga Habibie Ed Dien'),
-    Family(nik: '1234567890123456', name: 'Keluarga Mara Nunez'),
-    Family(nik: '2341123456756789', name: 'Keluarga Habibie Ed Dien'),
+@RoutePage()
+class DaftarWargaPage extends StatefulWidget {
+  const DaftarWargaPage({super.key});
+
+  @override
+  State<DaftarWargaPage> createState() => _DaftarWargaPageState();
+}
+
+class _DaftarWargaPageState extends State<DaftarWargaPage> {
+  final List<WargaData> _allWarga = [
+    WargaData(
+      no: '1',
+      name: '99999',
+      nik: '12345678901234567',
+      keluarga: 'Kekanga Pana Namet',
+      jenisKelamin: 'Perempuan',
+      statusDomisili: 'Aktif',
+      statusHidup: 'Hidup',
+      aksi: '--',
+    ),
+    WargaData(
+      no: '2',
+      name: 'Varsity Nadiba Birma',
+      nik: '1371110101000005',
+      keluarga: 'Kekanga Varsity Nadiba Birma',
+      jenisKelamin: 'Laki-laki',
+      statusDomisili: 'Aktif',
+      statusHidup: 'Hidup',
+      aksi: '--',
+    ),
+    WargaData(
+      no: '3',
+      name: 'Tea',
+      nik: '22222222222222222',
+      keluarga: 'Kekanga Tea',
+      jenisKelamin: 'Laki-laki',
+      statusDomisili: 'Aktif',
+      statusHidup: 'Meninggal',
+      aksi: '--',
+    ),
+    WargaData(
+      no: '4',
+      name: 'Farhan',
+      nik: '44567890844654356',
+      keluarga: 'Kekanga Farhan',
+      jenisKelamin: 'Laki-laki',
+      statusDomisili: 'Aktif',
+      statusHidup: 'Hidup',
+      aksi: '--',
+    ),
+    WargaData(
+      no: '5',
+      name: 'Buncha Putra Rahmedya',
+      nik: '3505111510040002',
+      keluarga: 'Kekanga Buncha Putra Rahmedya',
+      jenisKelamin: 'Laki-laki',
+      statusDomisili: 'Aktif',
+      statusHidup: 'Hidup',
+      aksi: '--',
+    ),
+    WargaData(
+      no: '6',
+      name: 'Anti Mota',
+      nik: '1234567890087054',
+      keluarga: 'Kekanga Anti Mota',
+      jenisKelamin: 'Laki-laki',
+      statusDomisili: 'Aktif',
+      statusHidup: 'Hidup',
+      aksi: '--',
+    ),
+    WargaData(
+      no: '7',
+      name: 'varsity nadiba irima',
+      nik: '1234123412341234',
+      keluarga: 'Kekanga varsity nadiba irima',
+      jenisKelamin: 'Laki-laki',
+      statusDomisili: 'Aktif',
+      statusHidup: 'Hidup',
+      aksi: '--',
+    ),
+    WargaData(
+      no: '8',
+      name: 'Isiluku',
+      nik: '1234567890123456',
+      keluarga: 'Kekanga Ijat',
+      jenisKelamin: 'Perempuan',
+      statusDomisili: 'Non-Aktif',
+      statusHidup: 'Hidup',
+      aksi: '--',
+    ),
+    WargaData(
+      no: '9',
+      name: 'Ijat',
+      nik: '2005202502050005',
+      keluarga: 'Kekanga Ijat',
+      jenisKelamin: 'Laki-laki',
+      statusDomisili: 'Non-Aktif',
+      statusHidup: 'Hidup',
+      aksi: '--',
+    ),
+    WargaData(
+      no: '10',
+      name: 'Bauditi Firdika Nasrili',
+      nik: '3201122501050002',
+      keluarga: 'Kekanga Bauditi Firdika Nasrili',
+      jenisKelamin: 'Laki-laki',
+      statusDomisili: 'Aktif',
+      statusHidup: 'Hidup',
+      aksi: '--',
+    ),
   ];
 
-  List<Family> _filteredFamilies = [];
+  List<WargaData> _filteredWarga = [];
+  List<WargaData> _currentPageData = [];
   final TextEditingController _searchController = TextEditingController();
   String _selectedFilter = 'Semua';
+  
+  // Pagination variables
+  int _currentPage = 1;
+  final int _itemsPerPage = 5;
+  int _totalPages = 1;
 
   @override
   void initState() {
     super.initState();
-    _filteredFamilies = _allFamilies;
+    _filteredWarga = List.from(_allWarga);
+    _updatePagination();
+  }
+
+  void _updatePagination() {
+    try {
+      setState(() {
+        // Pastikan _filteredWarga tidak null
+        final filteredList = _filteredWarga;
+        
+        _totalPages = (filteredList.length / _itemsPerPage).ceil();
+        if (_totalPages == 0) _totalPages = 1;
+        
+        if (_currentPage > _totalPages) {
+          _currentPage = _totalPages;
+        }
+        
+        final startIndex = (_currentPage - 1) * _itemsPerPage;
+        final endIndex = startIndex + _itemsPerPage;
+        
+        _currentPageData = filteredList.sublist(
+          startIndex,
+          endIndex > filteredList.length ? filteredList.length : endIndex,
+        );
+      });
+    } catch (e) {
+      print('Error in pagination: $e');
+      setState(() {
+        _currentPageData = [];
+        _totalPages = 1;
+        _currentPage = 1;
+      });
+    }
+  }
+
+  void _goToPage(int page) {
+    if (page >= 1 && page <= _totalPages) {
+      setState(() {
+        _currentPage = page;
+        _updatePagination();
+      });
+    }
+  }
+
+  void _nextPage() {
+    if (_currentPage < _totalPages) {
+      _goToPage(_currentPage + 1);
+    }
+  }
+
+  void _previousPage() {
+    if (_currentPage > 1) {
+      _goToPage(_currentPage - 1);
+    }
   }
 
   void _applyFilter(String filter) {
-    setState(() {
-      _selectedFilter = filter;
-      
-      if (filter == 'Semua') {
-        _filteredFamilies = _allFamilies;
-      } else {
-        _filteredFamilies = _allFamilies.where((family) {
-          return family.name.toLowerCase().contains(filter.toLowerCase());
-        }).toList();
-      }
-      
-      // Apply search filter if there's search text
-      if (_searchController.text.isNotEmpty) {
-        _filteredFamilies = _filteredFamilies.where((family) {
-          return family.nik.contains(_searchController.text) ||
-                 family.name.toLowerCase().contains(_searchController.text.toLowerCase());
-        }).toList();
-      }
-    });
+    try {
+      setState(() {
+        _selectedFilter = filter;
+        _currentPage = 1;
+
+        // Pastikan _allWarga tidak null
+        final allData = _allWarga;
+        
+        List<WargaData> filteredData;
+        if (filter == 'Semua') {
+          filteredData = List.from(allData);
+        } else {
+          filteredData = allData
+              .where((w) => w.statusDomisili == filter || w.statusHidup == filter)
+              .toList();
+        }
+
+        // Handle search text dengan null safety
+        final searchText = _searchController.text;
+        if (searchText.isNotEmpty) {
+          _filteredWarga = filteredData
+              .where((w) =>
+                  (w.name).toLowerCase().contains(searchText.toLowerCase()) ||
+                  (w.nik).contains(searchText) ||
+                  (w.keluarga).toLowerCase().contains(searchText.toLowerCase()))
+              .toList();
+        } else {
+          _filteredWarga = List.from(filteredData);
+        }
+        
+        _updatePagination();
+      });
+    } catch (e) {
+      print('Error applying filter: $e');
+      setState(() {
+        _filteredWarga = List.from(_allWarga);
+        _updatePagination();
+      });
+    }
+  }
+
+  void _onSearchChanged(String value) {
+    try {
+      setState(() {
+        _currentPage = 1;
+        
+        // Pastikan _allWarga tidak null
+        final allData = _allWarga;
+        
+        List<WargaData> searchFilteredData;
+        if (value.isEmpty) {
+          searchFilteredData = List.from(allData);
+        } else {
+          searchFilteredData = allData
+              .where((w) =>
+                  (w.name).toLowerCase().contains(value.toLowerCase()) ||
+                  (w.nik).contains(value) ||
+                  (w.keluarga).toLowerCase().contains(value.toLowerCase()))
+              .toList();
+        }
+
+        if (_selectedFilter != 'Semua') {
+          _filteredWarga = searchFilteredData
+              .where((w) => w.statusDomisili == _selectedFilter || w.statusHidup == _selectedFilter)
+              .toList();
+        } else {
+          _filteredWarga = List.from(searchFilteredData);
+        }
+        
+        _updatePagination();
+      });
+    } catch (e) {
+      print('Error in search: $e');
+      setState(() {
+        _filteredWarga = List.from(_allWarga);
+        _updatePagination();
+      });
+    }
   }
 
   void _showFilterDialog() {
-    final uniqueNames = _allFamilies.map((f) => f.name).toSet().toList();
-    
+    final uniqueStatus = _allWarga.map((w) => w.statusDomisili).toSet().toList();
+    uniqueStatus.addAll(_allWarga.map((w) => w.statusHidup).toSet());
+    uniqueStatus.insert(0, 'Semua');
+
     showModalBottomSheet(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) {
-        return FilterBottomSheet(
-          uniqueNames: uniqueNames,
-          selectedFilter: _selectedFilter,
-          onFilterApplied: _applyFilter,
-          onReset: _resetFilters,
-        );
-      },
+      builder: (context) => _FilterBottomSheet(
+        uniqueStatus: uniqueStatus,
+        selectedFilter: _selectedFilter,
+        onFilterApplied: _applyFilter,
+      ),
     );
   }
 
@@ -75,354 +305,449 @@ class _WargaDaftarPageState extends State<WargaDaftarPage> {
     setState(() {
       _selectedFilter = 'Semua';
       _searchController.clear();
-      _filteredFamilies = _allFamilies;
+      _filteredWarga = List.from(_allWarga);
+      _updatePagination();
     });
   }
 
-  void _onSearchChanged(String value) {
+  // FUNGSI DELETE CONFIRMATION
+  void _showDeleteConfirmation(WargaData item) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Text('Konfirmasi Hapus'),
+          content: Text('Apakah Anda yakin ingin menghapus data warga "${item.name}"?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: const Text('Batal'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                _deleteWarga(item);
+                Navigator.of(dialogContext).pop();
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+              ),
+              child: const Text('Hapus', style: TextStyle(color: Colors.white)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // FUNGSI DELETE WARGA
+  void _deleteWarga(WargaData item) {
     setState(() {
-      if (value.isEmpty) {
-        _filteredFamilies = _allFamilies;
-      } else {
-        _filteredFamilies = _allFamilies.where((family) {
-          return family.nik.contains(value) ||
-                 family.name.toLowerCase().contains(value.toLowerCase());
-        }).toList();
-      }
-      
-      // Apply category filter if selected
-      if (_selectedFilter != 'Semua') {
-        _filteredFamilies = _filteredFamilies.where((family) {
-          return family.name == _selectedFilter;
-        }).toList();
-      }
+      _allWarga.removeWhere((w) => w.nik == item.nik);
+      _applyFilter(_selectedFilter); // Re-apply filter to update the list
     });
+    
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Data warga "${item.name}" berhasil dihapus'),
+        backgroundColor: Colors.green,
+      ),
+    );
+  }
+
+  // FUNGSI DETAIL MODAL
+  void _showDetailModal(WargaData item) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return Dialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          elevation: 8,
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      'Detail Warga',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF6C63FF),
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.close, color: Colors.grey),
+                      onPressed: () => Navigator.of(dialogContext).pop(),
+                    ),
+                  ],
+                ),
+                const Divider(thickness: 1.2),
+                const SizedBox(height: 16),
+
+                // Content
+                _buildDetailRow('No', item.no),
+                const SizedBox(height: 12),
+                _buildDetailRow('Nama', item.name),
+                const SizedBox(height: 12),
+                _buildDetailRow('NIK', item.nik),
+                const SizedBox(height: 12),
+                _buildDetailRow('Keluarga', item.keluarga),
+                const SizedBox(height: 12),
+                _buildDetailRow('Jenis Kelamin', item.jenisKelamin),
+                const SizedBox(height: 12),
+                _buildDetailRow('Status Domisili', item.statusDomisili),
+                const SizedBox(height: 12),
+                _buildDetailRow('Status Hidup', item.statusHidup),
+                const SizedBox(height: 20),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  // HELPER FUNCTION UNTUK DETAIL ROW
+  Widget _buildDetailRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 100,
+            child: Text(
+              '$label:',
+              style: const TextStyle(fontWeight: FontWeight.w600),
+            ),
+          ),
+          Expanded(child: Text(value)),
+        ],
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: Colors.white,
       body: Column(
         children: [
-          // Search and Filter Section
-          _buildSearchFilterSection(),
-          
-          // Results Info
-          _buildResultsInfo(),
-          
-          // Data Table
-          _buildDataTable(),
+          // Search Bar
+          Container(
+            margin: const EdgeInsets.all(16),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.grey.shade300),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.1),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.search, color: Colors.grey),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: TextField(
+                    controller: _searchController,
+                    onChanged: _onSearchChanged,
+                    decoration: const InputDecoration(
+                      hintText: 'Cari berdasarkan Nama, NIK, atau Keluarga...',
+                      border: InputBorder.none,
+                      hintStyle: TextStyle(color: Colors.grey),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // Jumlah data ditemukan dan info pagination
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  '${_filteredWarga.length} data ditemukan',
+                  style: const TextStyle(color: Colors.grey, fontSize: 14),
+                ),
+                if (_totalPages > 1)
+                  Text(
+                    'Halaman $_currentPage dari $_totalPages',
+                    style: const TextStyle(color: Colors.grey, fontSize: 14),
+                  ),
+              ],
+            ),
+          ),
+
+          // List Data Warga
+          Expanded(
+            child: _currentPageData.isEmpty
+                ? Center(
+                    child: Text(
+                      'Data tidak ditemukan',
+                      style: TextStyle(color: Colors.grey.shade500),
+                    ),
+                  )
+                : ListView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    itemCount: _currentPageData.length,
+                    itemBuilder: (context, index) {
+                      final item = _currentPageData[index];
+                      return _buildWargaCard(item);
+                    },
+                  ),
+          ),
+
+          // Pagination Controls
+          if (_totalPages > 1) _buildPaginationControls(),
         ],
       ),
-      floatingActionButton: _buildFloatingActionButton(),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _showFilterDialog,
+        backgroundColor: const Color(0xFF6C63FF),
+        child: const Icon(Icons.filter_list, color: Colors.white),
+      ),
     );
   }
 
-  Widget _buildSearchFilterSection() {
+  Widget _buildPaginationControls() {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 4,
-            offset: Offset(0, 2),
-          ),
-        ],
+        border: Border(top: BorderSide(color: Colors.grey.shade300)),
       ),
-      child: Column(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Search Bar
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.grey[100],
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: TextField(
-              controller: _searchController,
-              onChanged: _onSearchChanged,
-              decoration: InputDecoration(
-                hintText: 'Cari berdasarkan NIK atau Nama...',
-                prefixIcon: Icon(Icons.search, color: Colors.grey[600]),
-                border: InputBorder.none,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-              ),
-            ),
+          // Previous Button
+          IconButton(
+            onPressed: _currentPage > 1 ? _previousPage : null,
+            icon: const Icon(Icons.chevron_left),
+            color: _currentPage > 1 ? const Color(0xFF6C63FF) : Colors.grey,
           ),
-          
-          const SizedBox(height: 12),
-          
-          // Active Filter Chip
-          if (_selectedFilter != 'Semua')
-            Row(
-              children: [
-                Text(
-                  'Filter aktif:',
-                  style: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: 12,
+
+          // Page Numbers
+          ...List.generate(_totalPages, (index) {
+            final pageNumber = index + 1;
+            final isCurrentPage = pageNumber == _currentPage;
+            
+            // Show limited page numbers for better UX
+            if (_totalPages <= 7 || 
+                pageNumber == 1 || 
+                pageNumber == _totalPages ||
+                (pageNumber >= _currentPage - 1 && pageNumber <= _currentPage + 1)) {
+              
+              return Container(
+                margin: const EdgeInsets.symmetric(horizontal: 4),
+                child: InkWell(
+                  onTap: () => _goToPage(pageNumber),
+                  child: Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: isCurrentPage ? const Color(0xFF6C63FF) : Colors.transparent,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: isCurrentPage ? const Color(0xFF6C63FF) : Colors.grey.shade300,
+                      ),
+                    ),
+                    child: Center(
+                      child: Text(
+                        '$pageNumber',
+                        style: TextStyle(
+                          color: isCurrentPage ? Colors.white : Colors.grey.shade700,
+                          fontWeight: isCurrentPage ? FontWeight.bold : FontWeight.normal,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
-                const SizedBox(width: 8),
-                Chip(
-                  label: Text(_selectedFilter),
-                  backgroundColor: Colors.blue[50],
-                  deleteIcon: Icon(Icons.close, size: 16),
-                  onDeleted: _resetFilters,
-                ),
-              ],
-            ),
-        ],
-      ),
-    );
-  }
+              );
+            } else if (pageNumber == _currentPage - 2 || pageNumber == _currentPage + 2) {
+              // Show ellipsis for skipped pages
+              return const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 4),
+                child: Text('...', style: TextStyle(color: Colors.grey)),
+              );
+            } else {
+              return const SizedBox.shrink();
+            }
+          }),
 
-  Widget _buildResultsInfo() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            '${_filteredFamilies.length} data ditemukan',
-            style: TextStyle(
-              color: Colors.grey[600],
-              fontWeight: FontWeight.w500,
-            ),
+          // Next Button
+          IconButton(
+            onPressed: _currentPage < _totalPages ? _nextPage : null,
+            icon: const Icon(Icons.chevron_right),
+            color: _currentPage < _totalPages ? const Color(0xFF6C63FF) : Colors.grey,
           ),
-          if (_selectedFilter != 'Semua' || _searchController.text.isNotEmpty)
-            GestureDetector(
-              onTap: _resetFilters,
-              child: Text(
-                'Reset Filter',
-                style: TextStyle(
-                  color: Colors.blue[700],
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
         ],
       ),
     );
   }
 
-  Widget _buildDataTable() {
-    return Expanded(
-      child: _filteredFamilies.isEmpty
-          ? _buildEmptyState()
-          : Container(
-              margin: const EdgeInsets.symmetric(horizontal: 16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black12,
-                    blurRadius: 8,
-                    offset: Offset(0, 2),
+  Widget _buildWargaCard(WargaData item) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade300),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    item.name,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 8),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'NIK: ${item.nik}',
+                        style: const TextStyle(
+                          color: Colors.grey,
+                          fontSize: 14,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Jenis Kelamin: ${item.jenisKelamin}',
+                        style: const TextStyle(
+                          color: Colors.grey,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-              child: Scrollbar(
-                child: ListView.builder(
-                  padding: const EdgeInsets.all(0),
-                  itemCount: _filteredFamilies.length,
-                  itemBuilder: (context, index) {
-                    final family = _filteredFamilies[index];
-                    return _buildFamilyItem(family, index);
+            ),
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: _getStatusDomisiliColor(item.statusDomisili),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    item.statusDomisili,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                PopupMenuButton<String>(
+                  onSelected: (value) {
+                    switch (value) {
+                      case 'edit':
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(
+                        //     builder: (_) => EditWargaPage(item: item),
+                        //   ),
+                        // );
+                        break;
+                      case 'delete':
+                        _showDeleteConfirmation(item);
+                        break;
+                      case 'detail':
+                        _showDetailModal(item);
+                        break;
+                    }
                   },
+                  itemBuilder: (context) => const [
+                    PopupMenuItem(value: 'detail', child: Text('Detail')),
+                    PopupMenuItem(value: 'edit', child: Text('Edit')),
+                    PopupMenuItem(value: 'delete', child: Text('Hapus')),
+                  ],
+                  icon: const Icon(Icons.more_vert, color: Colors.grey),
                 ),
-              ),
+              ],
             ),
-    );
-  }
-
-  Widget _buildFamilyItem(Family family, int index) {
-    return Container(
-      decoration: BoxDecoration(
-        border: index < _filteredFamilies.length - 1
-            ? Border(
-                bottom: BorderSide(
-                  color: Colors.grey[200]!,
-                  width: 1,
-                ),
-              )
-            : null,
-      ),
-      child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        leading: Container(
-          width: 40,
-          height: 40,
-          decoration: BoxDecoration(
-            color: Colors.blue[50],
-            shape: BoxShape.circle,
-          ),
-          child: Icon(
-            Icons.person,
-            color: Colors.blue[700],
-            size: 20,
-          ),
-        ),
-        title: Text(
-          family.name,
-          style: const TextStyle(
-            fontWeight: FontWeight.w600,
-            fontSize: 14,
-          ),
-        ),
-        subtitle: Text(
-          'NIK: ${family.nik}',
-          style: TextStyle(
-            color: Colors.grey[600],
-            fontSize: 12,
-          ),
-        ),
-        trailing: Icon(
-          Icons.chevron_right,
-          color: Colors.grey[400],
-        ),
-        onTap: () {
-          // Handle item tap
-          _showFamilyDetail(family);
-        },
-      ),
-    );
-  }
-
-  Widget _buildEmptyState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.search_off,
-            size: 64,
-            color: Colors.grey[300],
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'Data tidak ditemukan',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.grey[500],
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Coba ubah kata kunci atau reset filter',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey[400],
-            ),
-          ),
-          const SizedBox(height: 16),
-          ElevatedButton(
-            onPressed: _resetFilters,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blue[700],
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-            child: const Text(
-              'Reset Filter',
-              style: TextStyle(color: Colors.white),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildFloatingActionButton() {
-    return FloatingActionButton(
-      onPressed: _showFilterDialog,
-      backgroundColor: Colors.blue[700],
-      child: const Icon(Icons.filter_list, color: Colors.white),
-    );
-  }
-
-  void _showFamilyDetail(Family family) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(
-          'Detail Keluarga',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Colors.blue[700],
-          ),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildDetailItem('NIK', family.nik),
-            _buildDetailItem('Nama Keluarga', family.name),
           ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('TUTUP'),
-          ),
-        ],
       ),
     );
   }
 
-  Widget _buildDetailItem(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey[600],
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            value,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
-      ),
-    );
+  Color _getStatusDomisiliColor(String status) {
+    switch (status) {
+      case 'Aktif':
+        return Colors.green;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  Color _getStatusHidupColor(String status) {
+    switch (status) {
+      case 'Hidup':
+        return Colors.green;
+      case 'Wafat':
+        return Colors.grey;
+      default:
+        return Colors.grey;
+    }
   }
 }
 
-class FilterBottomSheet extends StatefulWidget {
-  final List<String> uniqueNames;
+// Filter Bottom Sheet
+class _FilterBottomSheet extends StatefulWidget {
+  final List<String> uniqueStatus;
   final String selectedFilter;
   final Function(String) onFilterApplied;
-  final VoidCallback onReset;
 
-  const FilterBottomSheet({
-    super.key,
-    required this.uniqueNames,
+  const _FilterBottomSheet({
+    required this.uniqueStatus,
     required this.selectedFilter,
     required this.onFilterApplied,
-    required this.onReset,
   });
 
   @override
-  State<FilterBottomSheet> createState() => _FilterBottomSheetState();
+  State<_FilterBottomSheet> createState() => __FilterBottomSheetState();
 }
 
-class _FilterBottomSheetState extends State<FilterBottomSheet> {
-  String _tempSelectedFilter = 'Semua';
+class __FilterBottomSheetState extends State<_FilterBottomSheet> {
+  late String _tempSelectedFilter;
 
   @override
   void initState() {
@@ -433,7 +758,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.8,
+      height: MediaQuery.of(context).size.height * 0.6,
       decoration: const BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.only(
@@ -443,26 +768,17 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
       ),
       child: Column(
         children: [
-          // Header
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              border: Border(
-                bottom: BorderSide(
-                  color: Colors.grey[200]!,
-                  width: 1,
-                ),
-              ),
+              border: Border(bottom: BorderSide(color: Colors.grey.shade300)),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text(
                   'Filter Data',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 IconButton(
                   onPressed: () => Navigator.of(context).pop(),
@@ -471,7 +787,6 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
               ],
             ),
           ),
-
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(16),
@@ -479,61 +794,29 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    'Pilih Keluarga',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    'Pilih Status',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                   ),
                   const SizedBox(height: 16),
-
-                  // All Option
-                  _buildFilterOption('Semua', _tempSelectedFilter == 'Semua'),
-
-                  const SizedBox(height: 8),
-                  const Divider(),
-                  const SizedBox(height: 8),
-
-                  // Family Options
-                  ...widget.uniqueNames.map((name) => 
-                    _buildFilterOption(name, _tempSelectedFilter == name)
+                  ...widget.uniqueStatus.map((status) => 
+                    _buildFilterOption(status, _tempSelectedFilter == status)
                   ).toList(),
                 ],
               ),
             ),
           ),
-
-          // Action Buttons
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              border: Border(
-                top: BorderSide(
-                  color: Colors.grey[200]!,
-                  width: 1,
-                ),
-              ),
+              border: Border(top: BorderSide(color: Colors.grey.shade300)),
             ),
             child: Row(
               children: [
                 Expanded(
                   child: OutlinedButton(
-                    onPressed: () {
-                      widget.onReset();
-                      Navigator.of(context).pop();
-                    },
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: const Text(
-                      'RESET',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
+                    onPressed: () => Navigator.of(context).pop(),
+                    style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 12)),
+                    child: const Text('BATAL'),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -544,19 +827,10 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                       Navigator.of(context).pop();
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue[700],
+                      backgroundColor: const Color(0xFF6C63FF),
                       padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
                     ),
-                    child: const Text(
-                      'TERAPKAN',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
+                    child: const Text('TERAPKAN', style: TextStyle(color: Colors.white)),
                   ),
                 ),
               ],
@@ -567,50 +841,16 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
     );
   }
 
-  Widget _buildFilterOption(String name, bool isSelected) {
+  Widget _buildFilterOption(String status, bool isSelected) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () {
-            setState(() {
-              _tempSelectedFilter = name;
-            });
-          },
-          borderRadius: BorderRadius.circular(8),
-          child: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: isSelected ? Colors.blue[50] : Colors.transparent,
-              border: Border.all(
-                color: isSelected ? Colors.blue[700]! : Colors.grey[300]!,
-                width: 1,
-              ),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Row(
-              children: [
-                Icon(
-                  isSelected ? Icons.radio_button_checked : Icons.radio_button_off,
-                  color: isSelected ? Colors.blue[700] : Colors.grey[400],
-                  size: 20,
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    name,
-                    style: TextStyle(
-                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                      color: isSelected ? Colors.blue[700] : Colors.black87,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+      padding: const EdgeInsets.only(bottom: 8),
+      child: ListTile(
+        leading: Icon(
+          isSelected ? Icons.radio_button_checked : Icons.radio_button_off,
+          color: isSelected ? const Color(0xFF6C63FF) : Colors.grey,
         ),
+        title: Text(status),
+        onTap: () => setState(() => _tempSelectedFilter = status),
       ),
     );
   }
