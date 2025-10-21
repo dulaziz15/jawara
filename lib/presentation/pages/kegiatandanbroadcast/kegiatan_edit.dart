@@ -177,7 +177,7 @@ class _KegiatanEditPageState extends State<KegiatanEditPage> {
               children: [
                 Row(
                   children: [
-                    Icon(icon, color: Colors.deepPurple, size: 20),
+                    Icon(icon, color: Color(0xFF6C63FF), size: 20),
                     const SizedBox(width: 8),
                     Text(currentFile.isEmpty ? "Tidak ada file" : currentFile),
                   ],

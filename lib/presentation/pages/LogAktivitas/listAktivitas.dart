@@ -39,7 +39,7 @@ class _ListAktivitasState extends State<ListAktivitasPage> {
   //       Container(
   //         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
   //         decoration: BoxDecoration(
-  //           color: Colors.deepPurple,
+  //           color: Color(0xFF6C63FF),
   //           borderRadius: BorderRadius.circular(4.0),
   //         ),
   //         child: const Text(
@@ -142,7 +142,7 @@ class _ListAktivitasState extends State<ListAktivitasPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _openFilterDialog,
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: Color(0xFF6C63FF),
         child: const Icon(Icons.filter_list, color: Colors.white),
       ),
     );

@@ -356,7 +356,7 @@ class _DaftarMutasiPageState extends State<DaftarMutasiPage> {
           IconButton(
             onPressed: _currentPage > 1 ? _previousPage : null,
             icon: const Icon(Icons.chevron_left),
-            color: _currentPage > 1 ? const Color(0xFF4F6DF5) : Colors.grey,
+            color: _currentPage > 1 ? const Color(0xFF6C63FF) : Colors.grey,
           ),
           ...List.generate(_totalPages, (i) {
             final page = i + 1;
@@ -373,11 +373,11 @@ class _DaftarMutasiPageState extends State<DaftarMutasiPage> {
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: active ? const Color(0xFF4F6DF5) : Colors.transparent,
+                    color: active ? const Color(0xFF6C63FF) : Colors.transparent,
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
                       color: active
-                          ? const Color(0xFF4F6DF5)
+                          ? const Color(0xFF6C63FF)
                           : Colors.grey.shade300,
                     ),
                   ),
@@ -405,7 +405,7 @@ class _DaftarMutasiPageState extends State<DaftarMutasiPage> {
             onPressed: _currentPage < _totalPages ? _nextPage : null,
             icon: const Icon(Icons.chevron_right),
             color: _currentPage < _totalPages
-                ? const Color(0xFF4F6DF5)
+                ? const Color(0xFF6C63FF)
                 : Colors.grey,
           ),
         ],
@@ -422,7 +422,7 @@ class _DaftarMutasiPageState extends State<DaftarMutasiPage> {
       backgroundColor: Colors.white,
       floatingActionButton: FloatingActionButton(
         onPressed: _showFilterDialog,
-        backgroundColor: const Color(0xFF4F6DF5),
+        backgroundColor: const Color(0xFF6C63FF),
         child: const Icon(Icons.filter_list, color: Colors.white),
       ),
       body: Column(

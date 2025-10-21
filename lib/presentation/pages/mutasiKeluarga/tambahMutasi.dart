@@ -219,7 +219,7 @@ class _TambahMutasiPageState extends State<TambahMutasiPage> {
                           focusedBorder: const OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(8)),
                             borderSide: BorderSide(
-                              color: Color(0xFF4F6DF5),
+                              color: Color(0xFF6C63FF),
                               width: 1.5,
                             ),
                           ),
@@ -269,7 +269,7 @@ class _TambahMutasiPageState extends State<TambahMutasiPage> {
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(8)),
                             borderSide: BorderSide(
-                              color: Color(0xFF4F6DF5),
+                              color: Color(0xFF6C63FF),
                               width: 1.5,
                             ),
                           ),
@@ -314,7 +314,7 @@ class _TambahMutasiPageState extends State<TambahMutasiPage> {
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(8)),
                             borderSide: BorderSide(
-                              color: Color(0xFF4F6DF5),
+                              color: Color(0xFF6C63FF),
                               width: 1.5,
                             ),
                           ),
@@ -354,7 +354,7 @@ class _TambahMutasiPageState extends State<TambahMutasiPage> {
                           focusedBorder: const OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(8)),
                             borderSide: BorderSide(
-                              color: Color(0xFF4F6DF5),
+                              color: Color(0xFF6C63FF),
                               width: 1.5,
                             ),
                           ),
@@ -412,7 +412,7 @@ class _TambahMutasiPageState extends State<TambahMutasiPage> {
                           focusedBorder: const OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(8)),
                             borderSide: BorderSide(
-                              color: Color(0xFF4F6DF5),
+                              color: Color(0xFF6C63FF),
                               width: 1.5,
                             ),
                           ),
@@ -455,7 +455,7 @@ class _TambahMutasiPageState extends State<TambahMutasiPage> {
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(8)),
                             borderSide: BorderSide(
-                              color: Color(0xFF4F6DF5),
+                              color: Color(0xFF6C63FF),
                               width: 1.5,
                             ),
                           ),
@@ -505,7 +505,7 @@ class _TambahMutasiPageState extends State<TambahMutasiPage> {
                             child: ElevatedButton(
                               onPressed: _submitForm,
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF4F6DF5),
+                                backgroundColor: const Color(0xFF6C63FF),
                                 padding: const EdgeInsets.symmetric(
                                   vertical: 14,
                                 ),

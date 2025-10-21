@@ -44,7 +44,7 @@ class PenggunaDetailPage extends StatelessWidget {
               // === FOTO PROFIL ===
               const CircleAvatar(
                 radius: 55,
-                backgroundColor: Colors.deepPurple,
+                backgroundColor: Color(0xFF6C63FF),
                 child: Icon(Icons.person, size: 65, color: Colors.white),
               ),
 
@@ -115,7 +115,7 @@ class PenggunaDetailPage extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, color: Colors.deepPurple, size: 26),
+        Icon(icon, color: Color(0xFF6C63FF), size: 26),
         const SizedBox(width: 12),
         Expanded(
           child: Column(
