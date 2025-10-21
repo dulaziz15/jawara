@@ -1,29 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'filter_mutasi.dart';
-
-// -----------------------------------------------------------------------------
-// DATA MODEL
-// -----------------------------------------------------------------------------
-class MutasiData {
-  final int no;
-  final String keluarga;
-  final String alamatLama;
-  final String alamatBaru;
-  final String tanggalMutasi;
-  final String jenisMutasi;
-  final String alasan;
-
-  const MutasiData({
-    required this.no,
-    required this.keluarga,
-    required this.alamatLama,
-    required this.alamatBaru,
-    required this.tanggalMutasi,
-    required this.jenisMutasi,
-    required this.alasan,
-  });
-}
+import 'model_mutasi.dart'; // Import model baru
 
 // -----------------------------------------------------------------------------
 // PAGE: Daftar Mutasi Keluarga
@@ -37,102 +15,6 @@ class DaftarMutasiPage extends StatefulWidget {
 }
 
 class _DaftarMutasiPageState extends State<DaftarMutasiPage> {
-  // ---------------------------------------------------------------------------
-  // DATA DUMMY
-  // ---------------------------------------------------------------------------
-  final List<MutasiData> _allData = const [
-    MutasiData(
-      no: 1,
-      keluarga: 'Keluarga Rendha Putra Rahmadya',
-      alamatLama: 'Jl. Merdeka No. 123, Jakarta Pusat',
-      alamatBaru: 'Jl. Sudirman No. 456, Jakarta Selatan',
-      tanggalMutasi: '15-10-2025',
-      jenisMutasi: 'Pindah Domisili',
-      alasan: 'Pekerjaan',
-    ),
-    MutasiData(
-      no: 2,
-      keluarga: 'Keluarga Anti Micin',
-      alamatLama: 'Jl. Pahlawan No. 78, Bandung',
-      alamatBaru: 'Jl. Gatot Subroto No. 90, Surabaya',
-      tanggalMutasi: '20-10-2025',
-      jenisMutasi: 'Pindah Kota',
-      alasan: 'Pendidikan',
-    ),
-    MutasiData(
-      no: 3,
-      keluarga: 'Keluarga Varizky Naldiba Rimra',
-      alamatLama: 'Jl. Melati No. 11, Yogyakarta',
-      alamatBaru: 'Jl. Kenanga No. 22, Semarang',
-      tanggalMutasi: '25-10-2025',
-      jenisMutasi: 'Pindah Domisili',
-      alasan: 'Keluarga',
-    ),
-    MutasiData(
-      no: 4,
-      keluarga: 'Keluarga Ijat',
-      alamatLama: 'Jl. Mawar No. 33, Medan',
-      alamatBaru: 'Jl. Anggrek No. 44, Palembang',
-      tanggalMutasi: '30-10-2025',
-      jenisMutasi: 'Pindah Kota',
-      alasan: 'Bisnis',
-    ),
-    MutasiData(
-      no: 5,
-      keluarga: 'Keluarga Raudhli Firdaus Naufal',
-      alamatLama: 'Jl. Diponegoro No. 55, Semarang',
-      alamatBaru: 'Jl. Ahmad Yani No. 66, Jakarta',
-      tanggalMutasi: '05-11-2025',
-      jenisMutasi: 'Pindah Provinsi',
-      alasan: 'Pekerjaan',
-    ),
-    MutasiData(
-      no: 6,
-      keluarga: 'Keluarga Surya Dharma',
-      alamatLama: 'Jl. Gajah Mada No. 77, Denpasar',
-      alamatBaru: 'Jl. Thamrin No. 88, Medan',
-      tanggalMutasi: '10-11-2025',
-      jenisMutasi: 'Pindah Kota',
-      alasan: 'Bisnis',
-    ),
-    MutasiData(
-      no: 7,
-      keluarga: 'Keluarga Putri Maharani',
-      alamatLama: 'Jl. Merpati No. 99, Malang',
-      alamatBaru: 'Jl. Rajawali No. 111, Surabaya',
-      tanggalMutasi: '15-11-2025',
-      jenisMutasi: 'Pindah Domisili',
-      alasan: 'Pendidikan',
-    ),
-    MutasiData(
-      no: 8,
-      keluarga: 'Keluarga Ahmad Fauzi',
-      alamatLama: 'Jl. Cendrawasih No. 222, Bogor',
-      alamatBaru: 'Jl. Elang No. 333, Bandung',
-      tanggalMutasi: '20-11-2025',
-      jenisMutasi: 'Pindah Kota',
-      alasan: 'Keluarga',
-    ),
-    MutasiData(
-      no: 9,
-      keluarga: 'Keluarga Sari Indah',
-      alamatLama: 'Jl. Kenari No. 444, Yogyakarta',
-      alamatBaru: 'Jl. Merak No. 555, Solo',
-      tanggalMutasi: '25-11-2025',
-      jenisMutasi: 'Pindah Domisili',
-      alasan: 'Pekerjaan',
-    ),
-    MutasiData(
-      no: 10,
-      keluarga: 'Keluarga Budi Santoso',
-      alamatLama: 'Jl. Jalak No. 666, Surakarta',
-      alamatBaru: 'Jl. Kutilang No. 777, Semarang',
-      tanggalMutasi: '30-11-2025',
-      jenisMutasi: 'Pindah Kota',
-      alasan: 'Bisnis',
-    ),
-  ];
-
   // ---------------------------------------------------------------------------
   // STATE VARIABLES
   // ---------------------------------------------------------------------------
@@ -151,7 +33,7 @@ class _DaftarMutasiPageState extends State<DaftarMutasiPage> {
   @override
   void initState() {
     super.initState();
-    _filteredData = _allData;
+    _filteredData = MutasiDataProvider.dummyData;
     _updatePagination();
   }
 
@@ -207,8 +89,10 @@ class _DaftarMutasiPageState extends State<DaftarMutasiPage> {
 
         // Filter jenis mutasi
         List<MutasiData> filtered = jenisMutasi == 'Semua'
-            ? _allData
-            : _allData.where((d) => d.jenisMutasi == jenisMutasi).toList();
+            ? MutasiDataProvider.dummyData
+            : MutasiDataProvider.dummyData
+                .where((d) => d.jenisMutasi == jenisMutasi)
+                .toList();
 
         // Filter pencarian
         final query = _searchController.text.trim().toLowerCase();
@@ -225,7 +109,7 @@ class _DaftarMutasiPageState extends State<DaftarMutasiPage> {
     } catch (e) {
       debugPrint('Error applying filter: $e');
       setState(() {
-        _filteredData = _allData;
+        _filteredData = MutasiDataProvider.dummyData;
         _updatePagination();
       });
     }
@@ -238,8 +122,8 @@ class _DaftarMutasiPageState extends State<DaftarMutasiPage> {
         final query = value.trim().toLowerCase();
 
         List<MutasiData> searchResults = query.isEmpty
-            ? _allData
-            : _allData.where((d) {
+            ? MutasiDataProvider.dummyData
+            : MutasiDataProvider.dummyData.where((d) {
                 return d.keluarga.toLowerCase().contains(query) ||
                     d.jenisMutasi.toLowerCase().contains(query);
               }).toList();
@@ -255,7 +139,7 @@ class _DaftarMutasiPageState extends State<DaftarMutasiPage> {
     } catch (e) {
       debugPrint('Error in search: $e');
       setState(() {
-        _filteredData = _allData;
+        _filteredData = MutasiDataProvider.dummyData;
         _updatePagination();
       });
     }
@@ -332,7 +216,7 @@ class _DaftarMutasiPageState extends State<DaftarMutasiPage> {
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF4F6DF5),
+                        color: Color(0xFF6C63FF),
                       ),
                     ),
                     IconButton(
@@ -388,29 +272,7 @@ class _DaftarMutasiPageState extends State<DaftarMutasiPage> {
                 _detailRow('Alasan', item.alasan),
                 const SizedBox(height: 20),
 
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: ElevatedButton(
-                    onPressed: () => Navigator.of(ctx).pop(),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF4F6DF5),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 32,
-                        vertical: 12,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: const Text(
-                      'Tutup',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
+  
               ],
             ),
           ),

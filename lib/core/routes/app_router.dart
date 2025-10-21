@@ -27,6 +27,8 @@ import 'package:jawara/presentation/pages/mutasiKeluarga/daftarMutasi.dart';
 import 'package:jawara/presentation/pages/mutasiKeluarga/mutasiKeluarga.dart';
 import 'package:jawara/presentation/pages/mutasiKeluarga/tambahMutasi.dart';
 import 'package:jawara/presentation/pages/pemasukan/pemasukan.dart';
+import 'package:jawara/presentation/pages/pemasukan/pemasukan_tambah.dart';
+import 'package:jawara/presentation/pages/pemasukan/tagih_iuran.dart';
 import 'package:jawara/presentation/pages/penerimaanWarga/penerimaan.dart';
 import 'package:jawara/presentation/pages/penerimaanWarga/penerimaanWarga.dart';
 import 'package:jawara/presentation/pages/pengeluaran/laporan_pemasukan_detail.dart';
@@ -50,9 +52,10 @@ import 'package:jawara/presentation/pages/report/report_finance.dart';
 // import 'package:jawara/presentation/pages/rumah/rumah_daftar.dart';
 // import 'package:jawara/presentation/pages/rumah/rumah_tambah.dart';
 
-// import 'package:jawara/presentation/pages/pemasukan/pemasukan_kategori.dart';
-// import 'package:jawara/presentation/pages/pemasukan/pemasukan_tagih.dart';
-// import 'package:jawara/presentation/pages/pemasukan/pemasukan_tagihan.dart';
+import 'package:jawara/presentation/pages/pemasukan/kategori_iuran.dart';
+import 'package:jawara/presentation/pages/pemasukan/pemasukan_daftar.dart';
+import 'package:jawara/presentation/pages/pemasukan/tagihan_daftar.dart';
+import 'package:jawara/presentation/pages/pemasukan/tagihan_detail.dart';
 // import 'package:jawara/presentation/pages/pemasukan/pemasukan_lain_daftar.dart';
 // import 'package:jawara/presentation/pages/pemasukan/pemasukan_lain_tambah.dart';
 
@@ -67,12 +70,6 @@ import 'package:jawara/presentation/pages/kegiatandanbroadcast/kegiatan_daftar.d
 import 'package:jawara/presentation/pages/kegiatandanbroadcast/broadcast_daftar.dart';
 import 'package:jawara/presentation/pages/warga/daftar_rumah.dart';
 
-// import 'package:jawara/presentation/pages/pesan/pesan_informasi.dart';
-// import 'package:jawara/presentation/pages/penerimaan/penerimaan_daftar.dart';
-// import 'package:jawara/presentation/pages/mutasi/mutasi_daftar.dart';
-// import 'package:jawara/presentation/pages/mutasi/mutasi_tambah.dart';
-
-// import 'package:jawara/presentation/pages/warga/daftar_warga.dart';
 import 'package:jawara/presentation/pages/warga/keluarga.dart';
 import 'package:jawara/presentation/pages/warga/rumah.dart';
 import 'package:jawara/presentation/pages/warga/tambah_rumah.dart';
@@ -130,21 +127,17 @@ class AppRouter extends _$AppRouter {
       ],
     ),
 
-    // === PENGELUARAN ===
+    // === PEMASUKAN ===
     AutoRoute(
-      page: PengeluaranRoute.page,
-      path: '/pengeluaran',
+      page: PemasukanRoute.page,
+      path: '/pemasukan',
       children: [
-        AutoRoute(page: PengeluaranDaftarRoute.page, path: 'daftar'),
-        AutoRoute(page: PengeluaranTambahRoute.page, path: 'tambah'),
-      ],
-    ),
-    AutoRoute(
-      page: PengeluaranRoute.page,
-      path: '/pengeluaran',
-      children: [
-        AutoRoute(page: PengeluaranDaftarRoute.page, path: 'daftar'),
-        AutoRoute(page: PengeluaranTambahRoute.page, path: 'tambah'),
+        AutoRoute(page: TagihanDaftarRoute.page, path: 'tagihan_daftar'),
+        AutoRoute(page: TagihanDetailRoute.page, path: 'tagihan_detail/:id'),
+        AutoRoute(page: TagihIuranRoute.page, path: 'tagih_iuran'),
+        AutoRoute(page: KategoriIuranRoute.page, path: 'kategori_iuran'),
+        AutoRoute(page: PemasukanDaftarRoute.page, path: 'daftar'),
+        AutoRoute(page: PemasukanLainTambahRoute.page, path: 'tambah'),
       ],
     ),
 
@@ -179,7 +172,7 @@ class AppRouter extends _$AppRouter {
     AutoRoute(
       page: PesanWargaRoute.page,
       path: '/pesanWarga',
-      children: [AutoRoute(page: AspirasiRoute.page, path: 'aspirasi')],
+      children: [AutoRoute(page: AspirasiWargaRoute.page, path: 'aspirasi')],
     ),
     AutoRoute(
       page: PenerimaanWargaRoute.page,
@@ -199,7 +192,7 @@ class AppRouter extends _$AppRouter {
       page: LogAktivitasRoute.page,
       path: '/log',
       children: [
-        AutoRoute(page: LisAktivitasRoute.page, path: 'aktivitas'),
+        AutoRoute(page: ListAktivitasRoute.page, path: 'aktivitas'),
       ],
     ),
 
@@ -208,9 +201,9 @@ class AppRouter extends _$AppRouter {
       path: '/user',
       children: [
         AutoRoute(page: DaftarPenggunaRoute.page, path: 'daftar'),
-        AutoRoute(page: EditPenggunaRoute.page, path: 'edit/:id'),
-        AutoRoute(page: DetailPenggunaRoute.page, path: 'detail/:id'),
-        AutoRoute(page: TambahPenggunaRoute.page, path: 'tambah'),
+        AutoRoute(page: PenggunaEditRoute.page, path: 'edit/:id'),
+        AutoRoute(page: PenggunaDetailRoute.page, path: 'detail/:id'),
+        AutoRoute(page: PenggunaTambahRoute.page, path: 'tambah'),
       ],
     ),
 
@@ -219,7 +212,7 @@ class AppRouter extends _$AppRouter {
       path: '/channel',
       children: [
         AutoRoute(page: ChannelTambahRoute.page, path: 'tambah'),
-        AutoRoute(page: DetailChannelRoute.page, path: 'detail/:id'),
+        AutoRoute(page: ChannelDetailRoute.page, path: 'detail/:id'),
         AutoRoute(page: ChannelEditRoute.page, path: 'edit/:id'),
         AutoRoute(page: ChannelDaftarRoute.page, path: 'daftar'),
       ],
