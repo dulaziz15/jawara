@@ -279,7 +279,7 @@ class _EditAspirasiPageState extends State<EditAspirasiPage> {
                             child: ElevatedButton(
                               onPressed: _submitForm,
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF4F6DF5),
+                                backgroundColor: const Color(0xFF6C63FF),
                                 padding: const EdgeInsets.symmetric(
                                   vertical: 14,
                                 ),

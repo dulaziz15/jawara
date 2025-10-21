@@ -94,7 +94,7 @@ class _PenggunaEditPageState extends State<PenggunaEditPage> {
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: Colors.deepPurple,
+                    color: Color(0xFF6C63FF),
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -156,7 +156,7 @@ class _PenggunaEditPageState extends State<PenggunaEditPage> {
                 ElevatedButton(
                   onPressed: _simpanPerubahan,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.deepPurple,
+                    backgroundColor: Color(0xFF6C63FF),
                     padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                   ),
