@@ -77,7 +77,7 @@ class _ChannelDaftarPageState extends State<ChannelDaftarPage> {
         const PopupMenuItem(
           value: 'detail',
           child: Row(children: [
-            Icon(Icons.visibility, size: 18, color: Colors.blue),
+            // Icon(Icons.visibility, size: 18, color: Colors.blue),
             SizedBox(width: 8),
             Text('Detail'),
           ]),
@@ -85,7 +85,7 @@ class _ChannelDaftarPageState extends State<ChannelDaftarPage> {
         const PopupMenuItem(
           value: 'edit',
           child: Row(children: [
-            Icon(Icons.edit, size: 18, color: Colors.orange),
+            // Icon(Icons.edit, size: 18, color: Colors.orange),
             SizedBox(width: 8),
             Text('Edit'),
           ]),
@@ -93,7 +93,7 @@ class _ChannelDaftarPageState extends State<ChannelDaftarPage> {
         const PopupMenuItem(
           value: 'delete',
           child: Row(children: [
-            Icon(Icons.delete, size: 18, color: Colors.red),
+            // Icon(Icons.delete, size: 18, color: Colors.red),
             SizedBox(width: 8),
             Text('Hapus'),
           ]),
@@ -237,7 +237,7 @@ class _ChannelDaftarPageState extends State<ChannelDaftarPage> {
                 ),
                 Column(
                   children: [
-                    _buildStatusBadge(channel.tipe),
+                    // _buildStatusBadge(channel.tipe),
                     const SizedBox(height: 8),
                     _buildActionButton(channel),
                   ],
