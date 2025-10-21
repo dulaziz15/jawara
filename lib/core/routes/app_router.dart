@@ -141,6 +141,17 @@ class AppRouter extends _$AppRouter {
       ],
     ),
 
+    // === PENGELUARAN ===
+    AutoRoute(  
+      page: PengeluaranRoute.page,
+      path: '/pengeluaran',
+      children: [
+        AutoRoute(page: PengeluaranDaftarRoute.page, path: 'daftar'),
+        AutoRoute(page: PengeluaranTambahRoute.page, path: 'tambah'),
+        AutoRoute(page: PengeluaranDetailRoute.page, path: 'detail/:id'),
+      ],
+    ),  
+    
     // === LAPORAN KEUANGAN ===
     AutoRoute(
       page: LaporanRoute.page,
