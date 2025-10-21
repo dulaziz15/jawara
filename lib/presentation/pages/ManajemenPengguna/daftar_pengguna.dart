@@ -188,19 +188,6 @@ class _DaftarPenggunaPageState extends State<DaftarPenggunaPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: const Text(
-          'Data Pengguna',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-            color: Colors.white,
-          ),
-        ),
-        backgroundColor:  Colors.deepPurple,
-        centerTitle: true,
-        elevation: 0,
-      ),
       body: Column(
         children: [
           // Search Bar

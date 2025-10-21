@@ -1,41 +1,48 @@
-import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
-// Pastikan path import ini benar menunjuk ke file di mana KegiatanModel didefinisikan
-import 'package:jawara/core/models/kegiatan_models.dart';
+import 'package:flutter/material.dart';
+import 'package:jawara/core/models/pemasukan_model.dart'; // pastikan path sesuai struktur project-mu
 
 @RoutePage()
-class KegiatanDaftarPage extends StatefulWidget {
-  const KegiatanDaftarPage({super.key});
+class PemasukanDaftarPage extends StatefulWidget {
+  const PemasukanDaftarPage({super.key});
 
   @override
-  State<KegiatanDaftarPage> createState() => _KegiatanDaftarPageState();
+  State<PemasukanDaftarPage> createState() => _PemasukanDaftarPageState();
 }
 
-class _KegiatanDaftarPageState extends State<KegiatanDaftarPage> {
-  List<KegiatanModel> _filteredData = dummyPengeluaran;
+class _PemasukanDaftarPageState extends State<PemasukanDaftarPage> {
+  List<PemasukanModel> _filteredData = dummyPemasukan;
   final TextEditingController _searchController = TextEditingController();
   String _selectedFilter = 'Semua';
 
   @override
   void initState() {
     super.initState();
-    _filteredData = dummyPengeluaran;
+    _filteredData = dummyPemasukan;
   }
 
   void _applyFilter(String kategori) {
     setState(() {
       _selectedFilter = kategori;
-      List<KegiatanModel> kategoriFilteredData;
+      List<PemasukanModel> kategoriFilteredData;
       if (kategori == 'Semua') {
-        kategoriFilteredData = dummyPengeluaran;
+        kategoriFilteredData = dummyPemasukan;
       } else {
-        kategoriFilteredData = dummyPengeluaran.where((data) => data.kategoriKegiatan == kategori).toList();
+        kategoriFilteredData = dummyPemasukan
+            .where((data) => data.kategoriPemasukan == kategori)
+            .toList();
       }
       if (_searchController.text.isNotEmpty) {
         _filteredData = kategoriFilteredData
-            .where((data) =>
-                data.namaKegiatan.toLowerCase().contains(_searchController.text.toLowerCase()) ||
-                data.kategoriKegiatan.toLowerCase().contains(_searchController.text.toLowerCase()))
+            .where(
+              (data) =>
+                  data.namaPemasukan.toLowerCase().contains(
+                    _searchController.text.toLowerCase(),
+                  ) ||
+                  data.kategoriPemasukan.toLowerCase().contains(
+                    _searchController.text.toLowerCase(),
+                  ),
+            )
             .toList();
       } else {
         _filteredData = kategoriFilteredData;
@@ -45,18 +52,26 @@ class _KegiatanDaftarPageState extends State<KegiatanDaftarPage> {
 
   void _onSearchChanged(String value) {
     setState(() {
-      List<KegiatanModel> searchFilteredData;
+      List<PemasukanModel> searchFilteredData;
       if (value.isEmpty) {
-        searchFilteredData = dummyPengeluaran;
+        searchFilteredData = dummyPemasukan;
       } else {
-        searchFilteredData = dummyPengeluaran
-            .where((data) =>
-                data.namaKegiatan.toLowerCase().contains(value.toLowerCase()) ||
-                data.kategoriKegiatan.toLowerCase().contains(value.toLowerCase()))
+        searchFilteredData = dummyPemasukan
+            .where(
+              (data) =>
+                  data.namaPemasukan.toLowerCase().contains(
+                    value.toLowerCase(),
+                  ) ||
+                  data.kategoriPemasukan.toLowerCase().contains(
+                    value.toLowerCase(),
+                  ),
+            )
             .toList();
       }
       if (_selectedFilter != 'Semua') {
-        _filteredData = searchFilteredData.where((data) => data.kategoriKegiatan == _selectedFilter).toList();
+        _filteredData = searchFilteredData
+            .where((data) => data.kategoriPemasukan == _selectedFilter)
+            .toList();
       } else {
         _filteredData = searchFilteredData;
       }
@@ -64,10 +79,13 @@ class _KegiatanDaftarPageState extends State<KegiatanDaftarPage> {
   }
 
   void _showFilterDialog() {
-    final List<String> kategoriList = dummyPengeluaran.map((e) => e.kategoriKegiatan).toSet().toList();
+    final List<String> kategoriList = dummyPemasukan
+        .map((e) => e.kategoriPemasukan)
+        .toSet()
+        .toList();
     showDialog(
       context: context,
-      builder: (context) => FilterKegiatanDialog(
+      builder: (context) => FilterPemasukanDialog(
         initialKategori: _selectedFilter,
         kategoriList: kategoriList,
         onApplyFilter: _applyFilter,
@@ -75,44 +93,52 @@ class _KegiatanDaftarPageState extends State<KegiatanDaftarPage> {
     );
   }
 
+  // --- Widget untuk menampilkan badge status verifikasi ---
+  Widget _buildVerifikasiBadge(DateTime tanggalTerverifikasi) {
+    final now = DateTime.now();
+    final diff = now.difference(tanggalTerverifikasi).inDays;
+
+    String status;
+    Color backgroundColor;
+
+    if (diff < 2) {
+      status = 'Baru Diverifikasi';
+      backgroundColor = Colors.green.shade200;
+    } else {
+      status = 'Terverifikasi';
+      backgroundColor = Colors.blue.shade200;
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Text(
+        status,
+        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+      ),
+    );
+  }
+
   // --- Helper format bulan ---
   String _getBulan(int bulan) {
     const namaBulan = [
-      'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli',
-      'Agustus', 'September', 'Oktober', 'November', 'Desember',
+      'Januari',
+      'Februari',
+      'Maret',
+      'April',
+      'Mei',
+      'Juni',
+      'Juli',
+      'Agustus',
+      'September',
+      'Oktober',
+      'November',
+      'Desember',
     ];
     return namaBulan[bulan - 1];
-  }
-
-  // --- CONTOH DIALOG UNTUK AKSI HAPUS KEGIATAN ---
-  void _showDeleteConfirmationDialog(BuildContext context, KegiatanModel item) {
-    showDialog(
-      context: context,
-      builder: (BuildContext ctx) {
-        return AlertDialog(
-          title: const Text('Konfirmasi Hapus'),
-          content: Text(
-              'Apakah Anda yakin ingin menghapus kegiatan "${item.namaKegiatan}"?'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(ctx).pop(); // Tutup dialog
-              },
-              child: const Text('Batal'),
-            ),
-            TextButton(
-              onPressed: () {
-                // TODO: logika hapus data di sini
-                print('Menghapus item ${item.id}');
-                Navigator.of(ctx).pop(); // Tutup dialog
-              },
-              style: TextButton.styleFrom(foregroundColor: Colors.red),
-              child: const Text('Hapus'),
-            ),
-          ],
-        );
-      },
-    );
   }
 
   @override
@@ -194,7 +220,7 @@ class _KegiatanDaftarPageState extends State<KegiatanDaftarPage> {
     );
   }
 
-  Widget _buildDataCard(KegiatanModel item) {
+  Widget _buildDataCard(PemasukanModel item) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
@@ -222,7 +248,7 @@ class _KegiatanDaftarPageState extends State<KegiatanDaftarPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        item.namaKegiatan,
+                        item.namaPemasukan,
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
@@ -230,7 +256,7 @@ class _KegiatanDaftarPageState extends State<KegiatanDaftarPage> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'Kategori: ${item.kategoriKegiatan}',
+                        'Kategori: ${item.kategoriPemasukan}',
                         style: const TextStyle(
                           color: Colors.grey,
                           fontSize: 14,
@@ -238,7 +264,7 @@ class _KegiatanDaftarPageState extends State<KegiatanDaftarPage> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'Penanggung Jawab: ${item.penanggungJawab}',
+                        'Jumlah: Rp ${item.jumlahPemasukan.toStringAsFixed(0)}',
                         style: const TextStyle(
                           color: Colors.grey,
                           fontSize: 14,
@@ -246,7 +272,15 @@ class _KegiatanDaftarPageState extends State<KegiatanDaftarPage> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'Tanggal: ${item.tanggalPelaksanaan.day.toString().padLeft(2, '0')} ${_getBulan(item.tanggalPelaksanaan.month)} ${item.tanggalPelaksanaan.year}',
+                        'Verifikator: ${item.verifikator}',
+                        style: const TextStyle(
+                          color: Colors.grey,
+                          fontSize: 14,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Tanggal: ${item.tanggalPemasukan.day.toString().padLeft(2, '0')} ${_getBulan(item.tanggalPemasukan.month)} ${item.tanggalPemasukan.year}',
                         style: const TextStyle(
                           color: Colors.grey,
                           fontSize: 14,
@@ -255,54 +289,22 @@ class _KegiatanDaftarPageState extends State<KegiatanDaftarPage> {
                     ],
                   ),
                 ),
-                PopupMenuButton<String>(
-                  icon: const Icon(Icons.more_vert, color: Colors.black54),
-                  onSelected: (String value) {
-                    if (value == 'detail') {
-                      // 1. Aksi Lihat Detail
-                      context.router.pushNamed(
-                        '/kegiatandanbroadcast/kegiatan_detail/${item.id}',
-                      );
-                    } else if (value == 'edit') {
-                      // 2. Aksi Edit (TODO: Buat halaman edit)
-                      context.router.pushNamed(
-                        '/kegiatandanbroadcast/kegiatan_edit/${item.id}',
-                      );
-                    } else if (value == 'hapus') {
-                      // 3. Aksi Hapus (memanggil dialog)
-                      _showDeleteConfirmationDialog(context, item);
-                    }
-                  },
-                  itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-                    const PopupMenuItem<String>(
-                      value: 'detail',
-                      child: Row(
-                        children: [
-                          Icon(Icons.visibility_outlined, color: Colors.blue, size: 20),
-                          SizedBox(width: 10),
-                          Text('Lihat Detail'),
-                        ],
-                      ),
-                    ),
-                    const PopupMenuItem<String>(
-                      value: 'edit',
-                      child: Row(
-                        children: [
-                          Icon(Icons.edit_outlined, color: Colors.green, size: 20),
-                          SizedBox(width: 10),
-                          Text('Edit'),
-                        ],
-                      ),
-                    ),
-                    const PopupMenuItem<String>(
-                      value: 'hapus',
-                      child: Row(
-                        children: [
-                          Icon(Icons.delete_outline, color: Colors.red, size: 20),
-                          SizedBox(width: 10),
-                          Text('Hapus'),
-                        ],
-                      ),
+                Column(
+                  children: [
+                    _buildVerifikasiBadge(item.tanggalTerverifikasi),
+                    const SizedBox(height: 8),
+                    PopupMenuButton<String>(
+                      onSelected: (value) {
+                        if (value == 'detail') {
+                          context.router.pushNamed(
+                            '/pemasukan/detail/${item.id}',
+                          );
+                        }
+                      },
+                      itemBuilder: (context) => const [
+                        PopupMenuItem(value: 'detail', child: Text('Detail')),
+                      ],
+                      icon: const Icon(Icons.more_vert, color: Colors.grey),
                     ),
                   ],
                 ),
@@ -315,12 +317,12 @@ class _KegiatanDaftarPageState extends State<KegiatanDaftarPage> {
   }
 }
 
-class FilterKegiatanDialog extends StatefulWidget {
+class FilterPemasukanDialog extends StatefulWidget {
   final String initialKategori;
   final List<String> kategoriList;
   final Function(String) onApplyFilter;
 
-  const FilterKegiatanDialog({
+  const FilterPemasukanDialog({
     super.key,
     required this.initialKategori,
     required this.kategoriList,
@@ -328,10 +330,11 @@ class FilterKegiatanDialog extends StatefulWidget {
   });
 
   @override
-  State<FilterKegiatanDialog> createState() => _FilterKegiatanDialogState();
+  State<FilterPemasukanDialog> createState() =>
+      _FilterPemasukanDialogState();
 }
 
-class _FilterKegiatanDialogState extends State<FilterKegiatanDialog> {
+class _FilterPemasukanDialogState extends State<FilterPemasukanDialog> {
   late String _selectedKategori;
 
   @override
@@ -343,7 +346,7 @@ class _FilterKegiatanDialogState extends State<FilterKegiatanDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Filter Kegiatan'),
+      title: const Text('Filter Pemasukan'),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [

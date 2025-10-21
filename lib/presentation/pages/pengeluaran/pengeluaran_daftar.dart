@@ -28,13 +28,21 @@ class _PengeluaranDaftarPageState extends State<PengeluaranDaftarPage> {
       if (kategori == 'Semua') {
         kategoriFilteredData = dummyPengeluaran;
       } else {
-        kategoriFilteredData = dummyPengeluaran.where((data) => data.kategoriPengeluaran == kategori).toList();
+        kategoriFilteredData = dummyPengeluaran
+            .where((data) => data.kategoriPengeluaran == kategori)
+            .toList();
       }
       if (_searchController.text.isNotEmpty) {
         _filteredData = kategoriFilteredData
-            .where((data) =>
-                data.namaPengeluaran.toLowerCase().contains(_searchController.text.toLowerCase()) ||
-                data.kategoriPengeluaran.toLowerCase().contains(_searchController.text.toLowerCase()))
+            .where(
+              (data) =>
+                  data.namaPengeluaran.toLowerCase().contains(
+                    _searchController.text.toLowerCase(),
+                  ) ||
+                  data.kategoriPengeluaran.toLowerCase().contains(
+                    _searchController.text.toLowerCase(),
+                  ),
+            )
             .toList();
       } else {
         _filteredData = kategoriFilteredData;
@@ -49,13 +57,21 @@ class _PengeluaranDaftarPageState extends State<PengeluaranDaftarPage> {
         searchFilteredData = dummyPengeluaran;
       } else {
         searchFilteredData = dummyPengeluaran
-            .where((data) =>
-                data.namaPengeluaran.toLowerCase().contains(value.toLowerCase()) ||
-                data.kategoriPengeluaran.toLowerCase().contains(value.toLowerCase()))
+            .where(
+              (data) =>
+                  data.namaPengeluaran.toLowerCase().contains(
+                    value.toLowerCase(),
+                  ) ||
+                  data.kategoriPengeluaran.toLowerCase().contains(
+                    value.toLowerCase(),
+                  ),
+            )
             .toList();
       }
       if (_selectedFilter != 'Semua') {
-        _filteredData = searchFilteredData.where((data) => data.kategoriPengeluaran == _selectedFilter).toList();
+        _filteredData = searchFilteredData
+            .where((data) => data.kategoriPengeluaran == _selectedFilter)
+            .toList();
       } else {
         _filteredData = searchFilteredData;
       }
@@ -63,7 +79,10 @@ class _PengeluaranDaftarPageState extends State<PengeluaranDaftarPage> {
   }
 
   void _showFilterDialog() {
-    final List<String> kategoriList = dummyPengeluaran.map((e) => e.kategoriPengeluaran).toSet().toList();
+    final List<String> kategoriList = dummyPengeluaran
+        .map((e) => e.kategoriPengeluaran)
+        .toSet()
+        .toList();
     showDialog(
       context: context,
       builder: (context) => FilterPengeluaranDialog(
@@ -126,19 +145,6 @@ class _PengeluaranDaftarPageState extends State<PengeluaranDaftarPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: const Text(
-          'Data Pengeluaran',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-            color: Colors.white,
-          ),
-        ),
-        backgroundColor: const Color(0xFF4F6DF5),
-        centerTitle: true,
-        elevation: 0,
-      ),
       body: Column(
         children: [
           // Search Bar
@@ -290,7 +296,9 @@ class _PengeluaranDaftarPageState extends State<PengeluaranDaftarPage> {
                     PopupMenuButton<String>(
                       onSelected: (value) {
                         if (value == 'detail') {
-                          // Handle detail
+                          context.router.pushNamed(
+                            '/pengeluaran/detail/${item.id}',
+                          );
                         }
                       },
                       itemBuilder: (context) => const [
@@ -322,7 +330,8 @@ class FilterPengeluaranDialog extends StatefulWidget {
   });
 
   @override
-  State<FilterPengeluaranDialog> createState() => _FilterPengeluaranDialogState();
+  State<FilterPengeluaranDialog> createState() =>
+      _FilterPengeluaranDialogState();
 }
 
 class _FilterPengeluaranDialogState extends State<FilterPengeluaranDialog> {

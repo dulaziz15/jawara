@@ -310,19 +310,6 @@ class _MutasiKeluargaPageState extends State<DaftarMutasiPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: const Text(
-          'Data Mutasi Keluarga',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-            color: Colors.white,
-          ),
-        ),
-        backgroundColor: const Color(0xFF4F6DF5),
-        centerTitle: true,
-        elevation: 0,
-      ),
       body: Column(
         children: [
           // Search Bar
