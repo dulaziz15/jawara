@@ -27,8 +27,8 @@ const List<Channel> dummyChannels = [
     nama: 'Transfer via BCA',
     tipe: 'Bank',
     an: 'RT Jawara Karangploso',
-    thumbnail: 'Channel/assets/thumbnail/bri.png',
-    qr: '',
+    thumbnail: 'assets/channel/thumbnail/bri.png',
+    qr: 'assets/channel/qr/default_qr.jpg',
     catatan: 'Gunakan transfer BCA untuk iuran warga.',
   ),
   Channel(
@@ -37,8 +37,8 @@ const List<Channel> dummyChannels = [
     nama: 'Copay Ketua RT',
     tipe: 'E-Wallet',
     an: 'Budi Santoso',
-    thumbnail: 'Channel/assets/thumbnail/ovo.png',
-    qr: '',
+    thumbnail: 'assets/channel/thumbnail/ovo.png',
+    qr: 'assets/channel/qr/default_qr.jpg',
     catatan: 'Bayar langsung ke Ketua RT.',
   ),
   Channel(
@@ -47,8 +47,8 @@ const List<Channel> dummyChannels = [
     nama: 'QRIS Resmi RT 08',
     tipe: 'QRIS',
     an: 'RW 08 Karangploso',
-    thumbnail: 'Channel/assets/thumbnail/qris.png',
-    qr: '',
+    thumbnail: 'assets/channel/thumbnail/qris.png',
+    qr: 'assets/channel/qr/default_qr.jpg',
     catatan: 'Scan QR di bawah untuk membayar. Kirim bukti setelah pembayaran.',
   ),
 ];
