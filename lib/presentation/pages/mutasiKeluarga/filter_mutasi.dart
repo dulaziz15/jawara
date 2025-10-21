@@ -1,10 +1,10 @@
+// filter_mutasi.dart
 import 'package:flutter/material.dart';
-
-typedef ApplyFilterCallback = void Function(String newJenisMutasi);
+import 'model_mutasi.dart';
 
 class FilterMutasiKeluargaDialog extends StatefulWidget {
   final String initialJenisMutasi;
-  final ApplyFilterCallback onApplyFilter;
+  final Function(String) onApplyFilter;
 
   const FilterMutasiKeluargaDialog({
     super.key,
@@ -13,16 +13,18 @@ class FilterMutasiKeluargaDialog extends StatefulWidget {
   });
 
   @override
-  State<FilterMutasiKeluargaDialog> createState() => _FilterMutasiKeluargaDialogState();
+  State<FilterMutasiKeluargaDialog> createState() =>
+      _FilterMutasiKeluargaDialogState();
 }
 
-class _FilterMutasiKeluargaDialogState extends State<FilterMutasiKeluargaDialog> {
+class _FilterMutasiKeluargaDialogState
+    extends State<FilterMutasiKeluargaDialog> {
   String? _selectedJenisMutasi;
   final List<String> jenisMutasiOptions = const [
-    'Semua',
     'Pindah Domisili',
     'Pindah Kota',
     'Pindah Provinsi',
+    'Pindah Negara',
   ];
 
   @override
@@ -66,20 +68,17 @@ class _FilterMutasiKeluargaDialogState extends State<FilterMutasiKeluargaDialog>
             // Pilih Jenis Mutasi
             const Text(
               'Pilih Jenis Mutasi',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 12),
 
             // Daftar Jenis Mutasi
             Column(
-              children: jenisMutasiOptions.map((jenisMutasi) {
+              children: jenisMutasiOptions.map((jenis) {
                 return InkWell(
                   onTap: () {
                     setState(() {
-                      _selectedJenisMutasi = jenisMutasi;
+                      _selectedJenisMutasi = jenis;
                     });
                   },
                   child: Padding(
@@ -87,7 +86,7 @@ class _FilterMutasiKeluargaDialogState extends State<FilterMutasiKeluargaDialog>
                     child: Row(
                       children: [
                         Radio<String>(
-                          value: jenisMutasi,
+                          value: jenis,
                           groupValue: _selectedJenisMutasi,
                           onChanged: (String? value) {
                             setState(() {
@@ -99,7 +98,7 @@ class _FilterMutasiKeluargaDialogState extends State<FilterMutasiKeluargaDialog>
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
-                            jenisMutasi,
+                            jenis,
                             style: const TextStyle(fontSize: 14),
                           ),
                         ),
@@ -121,14 +120,22 @@ class _FilterMutasiKeluargaDialogState extends State<FilterMutasiKeluargaDialog>
                 // Reset Filter
                 TextButton(
                   onPressed: () {
-                    setState(() {
-                      _selectedJenisMutasi = 'Semua';
-                    });
+                    // Hanya terapkan filter 'Semua' tanpa mengubah state dialog
                     widget.onApplyFilter('Semua');
                     Navigator.of(context).pop();
                   },
+                  style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 12,
+                      ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    side: const BorderSide(color: Colors.grey),
+                  ),
                   child: const Text(
-                    'RESET',
+                    'Reset',
                     style: TextStyle(
                       color: Colors.grey,
                       fontWeight: FontWeight.bold,
@@ -149,11 +156,11 @@ class _FilterMutasiKeluargaDialogState extends State<FilterMutasiKeluargaDialog>
                     backgroundColor: const Color(0xFF6C63FF),
                     padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(20),
                     ),
                   ),
                   child: const Text(
-                    'TERAPKAN',
+                    'Terapkan',
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
