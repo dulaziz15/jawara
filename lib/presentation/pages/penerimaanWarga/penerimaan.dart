@@ -58,7 +58,7 @@ class _PenerimaanPageState extends State<PenerimaanPage> {
       email: 'sariIntan@gmail.com',
       jenisKelamin: 'P',
       fotoIdentitasAsset: 'assets/3.png',
-      statusRegistrasi: 'Diterima',
+      statusRegistrasi: 'Pending',
     ),
     RegistrationData(
       no: 4,
@@ -67,66 +67,197 @@ class _PenerimaanPageState extends State<PenerimaanPage> {
       email: 'dulaziz@gmail.com',
       jenisKelamin: 'L',
       fotoIdentitasAsset: 'assets/4.png',
+      statusRegistrasi: 'Pending',
+    ),
+      RegistrationData(
+      no: 5,
+      nama: 'Abdul Aziz',
+      nik: '3201122501050002',
+      email: 'dulaziz@gmail.com',
+      jenisKelamin: 'L',
+      fotoIdentitasAsset: 'assets/5.png',
+      statusRegistrasi: 'Diterima',
+    ),
+      RegistrationData(
+      no: 6,
+      nama: 'Abdul Aziz',
+      nik: '3201122501050002',
+      email: 'dulaziz@gmail.com',
+      jenisKelamin: 'L',
+      fotoIdentitasAsset: 'assets/6.png',
+      statusRegistrasi: 'Diterima',
+    ),
+      RegistrationData(
+      no: 7,
+      nama: 'Abdul Aziz',
+      nik: '3201122501050002',
+      email: 'dulaziz@gmail.com',
+      jenisKelamin: 'L',
+      fotoIdentitasAsset: 'assets/7.png',
+      statusRegistrasi: 'Diterima',
+    ),
+      RegistrationData(
+      no: 8,
+      nama: 'Abdul Aziz',
+      nik: '3201122501050002',
+      email: 'dulaziz@gmail.com',
+      jenisKelamin: 'L',
+      fotoIdentitasAsset: 'assets/8.png',
+      statusRegistrasi: 'Diterima',
+    ),
+      RegistrationData(
+      no: 9,
+      nama: 'Abdul Aziz',
+      nik: '3201122501050002',
+      email: 'dulaziz@gmail.com',
+      jenisKelamin: 'L',
+      fotoIdentitasAsset: 'assets/9.png',
       statusRegistrasi: 'Diterima',
     ),
   ];
 
   List<RegistrationData> _filteredData = [];
+  List<RegistrationData> _currentPageData = [];
   final TextEditingController _searchController = TextEditingController();
   String _selectedFilter = 'Semua';
+  
+  // Pagination variables
+  int _currentPage = 1;
+  final int _itemsPerPage = 5;
+  int _totalPages = 1;
 
   @override
   void initState() {
     super.initState();
     _filteredData = _allData;
+    _updatePagination();
+  }
+
+  void _updatePagination() {
+    try {
+      // Pastikan _filteredData tidak null
+      final safeFilteredData = _filteredData;
+      
+      setState(() {
+        _totalPages = (safeFilteredData.length / _itemsPerPage).ceil();
+        if (_totalPages == 0) _totalPages = 1;
+        
+        if (_currentPage > _totalPages) {
+          _currentPage = _totalPages;
+        }
+        
+        final startIndex = (_currentPage - 1) * _itemsPerPage;
+        var endIndex = startIndex + _itemsPerPage;
+        if (endIndex > safeFilteredData.length) {
+          endIndex = safeFilteredData.length;
+        }
+        
+        _currentPageData = safeFilteredData.sublist(startIndex, endIndex);
+      });
+    } catch (e) {
+      print('Error in pagination: $e');
+      setState(() {
+        _currentPageData = [];
+        _totalPages = 1;
+        _currentPage = 1;
+      });
+    }
+  }
+
+  void _goToPage(int page) {
+    if (page >= 1 && page <= _totalPages) {
+      setState(() {
+        _currentPage = page;
+        _updatePagination();
+      });
+    }
+  }
+
+  void _nextPage() {
+    if (_currentPage < _totalPages) {
+      _goToPage(_currentPage + 1);
+    }
+  }
+
+  void _previousPage() {
+    if (_currentPage > 1) {
+      _goToPage(_currentPage - 1);
+    }
   }
 
   void _applyFilter(String status) {
-    setState(() {
-      _selectedFilter = status;
-      
-      // Apply filter status terlebih dahulu
-      List<RegistrationData> statusFilteredData;
-      if (status == 'Semua') {
-        statusFilteredData = _allData;
-      } else {
-        statusFilteredData = _allData.where((data) => data.statusRegistrasi == status).toList();
-      }
-      
-      // Kemudian apply search filter jika ada
-      if (_searchController.text.isNotEmpty) {
-        _filteredData = statusFilteredData
-            .where((data) =>
-                data.nama.toLowerCase().contains(_searchController.text.toLowerCase()) ||
-                data.nik.toLowerCase().contains(_searchController.text.toLowerCase()))
-            .toList();
-      } else {
-        _filteredData = statusFilteredData;
-      }
-    });
+    try {
+      setState(() {
+        _selectedFilter = status;
+        _currentPage = 1;
+
+        // Apply filter status
+        List<RegistrationData> statusFilteredData;
+        if (status == 'Semua') {
+          statusFilteredData = _allData;
+        } else {
+          statusFilteredData = _allData.where((data) => data.statusRegistrasi == status).toList();
+        }
+        
+        // Apply search filter jika ada
+        final searchText = _searchController.text.trim();
+        if (searchText.isNotEmpty) {
+          _filteredData = statusFilteredData.where((data) {
+            final nama = data.nama.toLowerCase();
+            final nik = data.nik.toLowerCase();
+            final searchLower = searchText.toLowerCase();
+            return nama.contains(searchLower) || nik.contains(searchLower);
+          }).toList();
+        } else {
+          _filteredData = statusFilteredData;
+        }
+        
+        _updatePagination();
+      });
+    } catch (e) {
+      print('Error applying filter: $e');
+      setState(() {
+        _filteredData = _allData;
+        _updatePagination();
+      });
+    }
   }
 
   void _onSearchChanged(String value) {
-    setState(() {
-      // Apply search filter terlebih dahulu
-      List<RegistrationData> searchFilteredData;
-      if (value.isEmpty) {
-        searchFilteredData = _allData;
-      } else {
-        searchFilteredData = _allData
-            .where((data) =>
-                data.nama.toLowerCase().contains(value.toLowerCase()) ||
-                data.nik.toLowerCase().contains(value.toLowerCase()))
-            .toList();
-      }
-      
-      // Kemudian apply status filter jika bukan 'Semua'
-      if (_selectedFilter != 'Semua') {
-        _filteredData = searchFilteredData.where((data) => data.statusRegistrasi == _selectedFilter).toList();
-      } else {
-        _filteredData = searchFilteredData;
-      }
-    });
+    try {
+      setState(() {
+        _currentPage = 1;
+        
+        // Apply search filter
+        final searchText = value.trim();
+        List<RegistrationData> searchFilteredData;
+        if (searchText.isEmpty) {
+          searchFilteredData = _allData;
+        } else {
+          searchFilteredData = _allData.where((data) {
+            final nama = data.nama.toLowerCase();
+            final nik = data.nik.toLowerCase();
+            final searchLower = searchText.toLowerCase();
+            return nama.contains(searchLower) || nik.contains(searchLower);
+          }).toList();
+        }
+        
+        // Apply status filter
+        if (_selectedFilter != 'Semua') {
+          _filteredData = searchFilteredData.where((data) => data.statusRegistrasi == _selectedFilter).toList();
+        } else {
+          _filteredData = searchFilteredData;
+        }
+        
+        _updatePagination();
+      });
+    } catch (e) {
+      print('Error in search: $e');
+      setState(() {
+        _filteredData = _allData;
+        _updatePagination();
+      });
+    }
   }
 
   void _showFilterDialog() {
@@ -175,7 +306,7 @@ class _PenerimaanPageState extends State<PenerimaanPage> {
                 const Divider(thickness: 1.2),
                 const SizedBox(height: 16),
 
-                // Nama (besar dan bold di kiri)
+                // Nama
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
@@ -203,7 +334,7 @@ class _PenerimaanPageState extends State<PenerimaanPage> {
                 ),
                 const SizedBox(height: 12),
 
-                // Status Pendaftaran dengan label warna
+                // Status Pendaftaran
                 Row(
                   children: [
                     const SizedBox(
@@ -264,9 +395,9 @@ class _PenerimaanPageState extends State<PenerimaanPage> {
                 ),
                 const SizedBox(height: 20),
 
-                // Tombol Tutup (sebelah kiri)
+                // Tombol Tutup
                 Align(
-                  alignment: Alignment.centerLeft,
+                  alignment: Alignment.centerRight,
                   child: ElevatedButton(
                     onPressed: () => Navigator.of(dialogContext).pop(),
                     style: ElevatedButton.styleFrom(
@@ -343,6 +474,87 @@ class _PenerimaanPageState extends State<PenerimaanPage> {
     );
   }
 
+  Widget _buildPaginationControls() {
+    // Pastikan _totalPages valid
+    final totalPages = _totalPages;
+    final currentPage = _currentPage;
+    
+    if (totalPages <= 1) return const SizedBox.shrink();
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border(top: BorderSide(color: Colors.grey.shade300)),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          // Previous Button
+          IconButton(
+            onPressed: currentPage > 1 ? _previousPage : null,
+            icon: const Icon(Icons.chevron_left),
+            color: currentPage > 1 ? const Color(0xFF6C63FF) : Colors.grey,
+          ),
+
+          // Page Numbers
+          ...List.generate(totalPages, (index) {
+            final pageNumber = index + 1;
+            final isCurrentPage = pageNumber == currentPage;
+            
+            // Tampilkan nomor halaman dengan logika yang aman
+            if (totalPages <= 7 || 
+                pageNumber == 1 || 
+                pageNumber == totalPages ||
+                (pageNumber >= currentPage - 1 && pageNumber <= currentPage + 1)) {
+              
+              return Container(
+                margin: const EdgeInsets.symmetric(horizontal: 4),
+                child: InkWell(
+                  onTap: () => _goToPage(pageNumber),
+                  child: Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: isCurrentPage ? const Color(0xFF6C63FF) : Colors.transparent,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: isCurrentPage ? const Color(0xFF6C63FF) : Colors.grey.shade300,
+                      ),
+                    ),
+                    child: Center(
+                      child: Text(
+                        '$pageNumber',
+                        style: TextStyle(
+                          color: isCurrentPage ? Colors.white : Colors.grey.shade700,
+                          fontWeight: isCurrentPage ? FontWeight.bold : FontWeight.normal,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            } else if (pageNumber == currentPage - 2 || pageNumber == currentPage + 2) {
+              return const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 4),
+                child: Text('...', style: TextStyle(color: Colors.grey)),
+              );
+            } else {
+              return const SizedBox.shrink();
+            }
+          }),
+
+          // Next Button
+          IconButton(
+            onPressed: currentPage < totalPages ? _nextPage : null,
+            icon: const Icon(Icons.chevron_right),
+            color: currentPage < totalPages ? const Color(0xFF6C63FF) : Colors.grey,
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -384,19 +596,29 @@ class _PenerimaanPageState extends State<PenerimaanPage> {
             ),
           ),
 
-          // Jumlah data ditemukan
+          // Jumlah data ditemukan dan info pagination
           Container(
             width: double.infinity,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Text(
-              '${_filteredData.length} data ditemukan',
-              style: const TextStyle(color: Colors.grey, fontSize: 14),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  '${_filteredData.length} data ditemukan',
+                  style: const TextStyle(color: Colors.grey, fontSize: 14),
+                ),
+                if (_totalPages > 1)
+                  Text(
+                    'Halaman $_currentPage dari $_totalPages',
+                    style: const TextStyle(color: Colors.grey, fontSize: 14),
+                  ),
+              ],
             ),
           ),
 
           // List Data
           Expanded(
-            child: _filteredData.isEmpty
+            child: _currentPageData.isEmpty
                 ? Center(
                     child: Text(
                       'Data tidak ditemukan',
@@ -405,13 +627,16 @@ class _PenerimaanPageState extends State<PenerimaanPage> {
                   )
                 : ListView.builder(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
-                    itemCount: _filteredData.length,
+                    itemCount: _currentPageData.length,
                     itemBuilder: (context, index) {
-                      final item = _filteredData[index];
+                      final item = _currentPageData[index];
                       return _buildDataCard(item);
                     },
                   ),
           ),
+
+          // Pagination Controls
+          _buildPaginationControls(),
         ],
       ),
       floatingActionButton: FloatingActionButton(
