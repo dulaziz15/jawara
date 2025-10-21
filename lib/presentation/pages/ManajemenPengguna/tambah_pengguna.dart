@@ -20,7 +20,6 @@ class UserModel {
 }
 
 // ==================== CONTROLLER ====================
-@RoutePage()
 class UserController {
   final UserModel user = UserModel();
 
@@ -81,6 +80,7 @@ class UserController {
   }
 }
 
+@RoutePage()
 // ==================== VIEW ====================
 class PenggunaTambahPage extends StatefulWidget {
   const PenggunaTambahPage({super.key});

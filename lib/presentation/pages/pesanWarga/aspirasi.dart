@@ -1,8 +1,11 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'model_aspirasi.dart';
 import 'filter.dart';
 import 'edit_aspirasi.dart';
 
+
+@RoutePage()
 class AspirasiPage extends StatefulWidget {
   const AspirasiPage({super.key});
 
