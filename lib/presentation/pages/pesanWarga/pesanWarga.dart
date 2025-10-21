@@ -10,7 +10,19 @@ class PesanWargaPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: const Sidebar(),
-      appBar: AppBar(title: const Text("Pesan Warga")),
+      appBar: AppBar(
+        title: const Text(
+          'Data Aspirasi Warga',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: const Color(0xFF6C63FF),
+        centerTitle: false,
+        elevation: 0,
+      ),
       body: const AutoRouter(), // Nested route
     );
   }

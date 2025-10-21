@@ -15,87 +15,238 @@ class AspirasiPage extends StatefulWidget {
 class _AspirasiPageState extends State<AspirasiPage> {
   final List<AspirationData> _allAspirasi = [
     AspirationData(
-        judul: 'Lampu jalan di persimpangan padam', 
-        deskripsi: 'Pada hari minggu malam saya cek lampu nya berkedip kemudian keesokan hari nya lampu sudah mati total', 
-        status: 'Pending', 
-        pengirim: 'Tono', 
-        tanggal: '10-10-2025'),
+      judul: 'Lampu jalan di persimpangan padam',
+      deskripsi:
+          'Pada hari minggu malam saya cek lampu nya berkedip kemudian keesokan hari nya lampu sudah mati total',
+      status: 'Pending',
+      pengirim: 'Tono',
+      tanggal: '10-10-2025',
+    ),
     AspirationData(
-        judul: 'Tempat sampah kurang', 
-        deskripsi: 'aku hanya ingin pergi ke wisata kota yang ada di malang', 
-        status: 'Diproses', 
-        pengirim: 'Budi Doremi', 
-        tanggal: '12-10-2025'),
+      judul: 'Tempat sampah kurang',
+      deskripsi: 'aku hanya ingin pergi ke wisata kota yang ada di malang',
+      status: 'Diproses',
+      pengirim: 'Budi Doremi',
+      tanggal: '12-10-2025',
+    ),
     AspirationData(
-        judul: 'Pipa bocor', 
-        deskripsi: 'pipa bocor karena tidak sengaja saat penggalian tanah', 
-        status: 'Diproses', 
-        pengirim: 'Ehsan', 
-        tanggal: '13-10-2025'),
+      judul: 'Pipa bocor',
+      deskripsi: 'pipa bocor karena tidak sengaja saat penggalian tanah',
+      status: 'Diproses',
+      pengirim: 'Ehsan',
+      tanggal: '13-10-2025',
+    ),
     AspirationData(
-        judul: 'Jalan rusak', 
-        deskripsi: 'Jalan rusak akibat ada truk tronton lewat dini hari', 
-        status: 'Selesai', 
-        pengirim: 'Darmini', 
-        tanggal: '1-09-2025'),
+      judul: 'Jalan rusak',
+      deskripsi: 'Jalan rusak akibat ada truk tronton lewat dini hari',
+      status: 'Selesai',
+      pengirim: 'Darmini',
+      tanggal: '1-09-2025',
+    ),
+    AspirationData(
+      judul: 'Jalan rusak 2',
+      deskripsi: 'Jalan rusak akibat ada truk tronton lewat dini hari',
+      status: 'Selesai',
+      pengirim: 'Darmini',
+      tanggal: '1-09-2025',
+    ),
+    AspirationData(
+      judul: 'Jalan rusak 3',
+      deskripsi: 'Jalan rusak akibat ada truk tronton lewat dini hari',
+      status: 'Selesai',
+      pengirim: 'Darmini',
+      tanggal: '1-09-2025',
+    ),
+    AspirationData(
+      judul: 'Jalan rusak 4',
+      deskripsi: 'Jalan rusak akibat ada truk tronton lewat dini hari',
+      status: 'Selesai',
+      pengirim: 'Darmini',
+      tanggal: '1-09-2025',
+    ),
+    AspirationData(
+      judul: 'Jalan rusak 5',
+      deskripsi: 'Jalan rusak akibat ada truk tronton lewat dini hari',
+      status: 'Selesai',
+      pengirim: 'Darmini',
+      tanggal: '1-09-2025',
+    ),
+    AspirationData(
+      judul: 'Jalan rusak 6',
+      deskripsi: 'Jalan rusak akibat ada truk tronton lewat dini hari',
+      status: 'Selesai',
+      pengirim: 'Darmini',
+      tanggal: '1-09-2025',
+    ),
+    AspirationData(
+      judul: 'Jalan rusak 7',
+      deskripsi: 'Jalan rusak akibat ada truk tronton lewat dini hari',
+      status: 'Selesai',
+      pengirim: 'Darmini',
+      tanggal: '1-09-2025',
+    ),
+    AspirationData(
+      judul: 'Jalan rusak 8',
+      deskripsi: 'Jalan rusak akibat ada truk tronton lewat dini hari',
+      status: 'Selesai',
+      pengirim: 'Darmini',
+      tanggal: '1-09-2025',
+    ),
+    AspirationData(
+      judul: 'Jalan rusak 9',
+      deskripsi: 'Jalan rusak akibat ada truk tronton lewat dini hari',
+      status: 'Selesai',
+      pengirim: 'Darmini',
+      tanggal: '1-09-2025',
+    ),
   ];
 
   List<AspirationData> _filteredAspirasi = [];
+  List<AspirationData> _currentPageData = [];
   final TextEditingController _searchController = TextEditingController();
   String _selectedFilter = 'Semua';
+  
+  // Pagination variables
+  int _currentPage = 1;
+  final int _itemsPerPage = 5;
+  int _totalPages = 1;
 
   @override
   void initState() {
     super.initState();
-    _filteredAspirasi = _allAspirasi;
+    _filteredAspirasi = List.from(_allAspirasi);
+    _updatePagination();
+  }
+
+  void _updatePagination() {
+    try {
+      setState(() {
+        // Pastikan _filteredAspirasi tidak null
+        final filteredList = _filteredAspirasi ?? [];
+        
+        _totalPages = (filteredList.length / _itemsPerPage).ceil();
+        if (_totalPages == 0) _totalPages = 1;
+        
+        if (_currentPage > _totalPages) {
+          _currentPage = _totalPages;
+        }
+        
+        final startIndex = (_currentPage - 1) * _itemsPerPage;
+        final endIndex = startIndex + _itemsPerPage;
+        
+        _currentPageData = filteredList.sublist(
+          startIndex,
+          endIndex > filteredList.length ? filteredList.length : endIndex,
+        );
+      });
+    } catch (e) {
+      print('Error in pagination: $e');
+      setState(() {
+        _currentPageData = [];
+        _totalPages = 1;
+        _currentPage = 1;
+      });
+    }
+  }
+
+  void _goToPage(int page) {
+    if (page >= 1 && page <= _totalPages) {
+      setState(() {
+        _currentPage = page;
+        _updatePagination();
+      });
+    }
+  }
+
+  void _nextPage() {
+    if (_currentPage < _totalPages) {
+      _goToPage(_currentPage + 1);
+    }
+  }
+
+  void _previousPage() {
+    if (_currentPage > 1) {
+      _goToPage(_currentPage - 1);
+    }
   }
 
   void _applyFilter(String status) {
-    setState(() {
-      _selectedFilter = status;
-      
-      // Apply filter status terlebih dahulu
-      List<AspirationData> statusFilteredData;
-      if (status == 'Semua') {
-        statusFilteredData = _allAspirasi;
-      } else {
-        statusFilteredData = _allAspirasi.where((a) => a.status == status).toList();
-      }
-      
-      // Kemudian apply search filter jika ada
-      if (_searchController.text.isNotEmpty) {
-        _filteredAspirasi = statusFilteredData
-            .where((a) =>
-                a.judul.toLowerCase().contains(_searchController.text.toLowerCase()) ||
-                a.pengirim.toLowerCase().contains(_searchController.text.toLowerCase()))
-            .toList();
-      } else {
-        _filteredAspirasi = statusFilteredData;
-      }
-    });
+    try {
+      setState(() {
+        _selectedFilter = status;
+        _currentPage = 1;
+
+        // Pastikan _allAspirasi tidak null
+        final allData = _allAspirasi ?? [];
+        
+        List<AspirationData> statusFilteredData;
+        if (status == 'Semua') {
+          statusFilteredData = List.from(allData);
+        } else {
+          statusFilteredData = allData
+              .where((a) => a.status == status)
+              .toList();
+        }
+
+        // Handle search text dengan null safety
+        final searchText = _searchController.text;
+        if (searchText.isNotEmpty) {
+          _filteredAspirasi = statusFilteredData
+              .where((a) =>
+                  (a.judul ?? '').toLowerCase().contains(searchText.toLowerCase()) ||
+                  (a.pengirim ?? '').toLowerCase().contains(searchText.toLowerCase()))
+              .toList();
+        } else {
+          _filteredAspirasi = List.from(statusFilteredData);
+        }
+        
+        _updatePagination();
+      });
+    } catch (e) {
+      print('Error applying filter: $e');
+      setState(() {
+        _filteredAspirasi = List.from(_allAspirasi);
+        _updatePagination();
+      });
+    }
   }
 
   void _onSearchChanged(String value) {
-    setState(() {
-      // Apply search filter terlebih dahulu
-      List<AspirationData> searchFilteredData;
-      if (value.isEmpty) {
-        searchFilteredData = _allAspirasi;
-      } else {
-        searchFilteredData = _allAspirasi
-            .where((a) =>
-                a.judul.toLowerCase().contains(value.toLowerCase()) ||
-                a.pengirim.toLowerCase().contains(value.toLowerCase()))
-            .toList();
-      }
-      
-      // Kemudian apply status filter jika bukan 'Semua'
-      if (_selectedFilter != 'Semua') {
-        _filteredAspirasi = searchFilteredData.where((a) => a.status == _selectedFilter).toList();
-      } else {
-        _filteredAspirasi = searchFilteredData;
-      }
-    });
+    try {
+      setState(() {
+        _currentPage = 1;
+        
+        // Pastikan _allAspirasi tidak null
+        final allData = _allAspirasi ?? [];
+        
+        List<AspirationData> searchFilteredData;
+        if (value.isEmpty) {
+          searchFilteredData = List.from(allData);
+        } else {
+          searchFilteredData = allData
+              .where((a) =>
+                  (a.judul ?? '').toLowerCase().contains(value.toLowerCase()) ||
+                  (a.pengirim ?? '').toLowerCase().contains(value.toLowerCase()))
+              .toList();
+        }
+
+        if (_selectedFilter != 'Semua') {
+          _filteredAspirasi = searchFilteredData
+              .where((a) => a.status == _selectedFilter)
+              .toList();
+        } else {
+          _filteredAspirasi = List.from(searchFilteredData);
+        }
+        
+        _updatePagination();
+      });
+    } catch (e) {
+      print('Error in search: $e');
+      setState(() {
+        _filteredAspirasi = List.from(_allAspirasi);
+        _updatePagination();
+      });
+    }
   }
 
   void _showFilterDialog() {
@@ -112,19 +263,6 @@ class _AspirasiPageState extends State<AspirasiPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: const Text(
-          'Data Aspirasi Warga',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-            color: Colors.white,
-          ),
-        ),
-        backgroundColor: const Color(0xFF4F6DF5),
-        centerTitle: true,
-        elevation: 0,
-      ),
       body: Column(
         children: [
           // Search Bar
@@ -162,22 +300,29 @@ class _AspirasiPageState extends State<AspirasiPage> {
             ),
           ),
 
-          // Jumlah data ditemukan
+          // Jumlah data ditemukan dan info pagination
           Container(
             width: double.infinity,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Text(
-              '${_filteredAspirasi.length} data ditemukan',
-              style: const TextStyle(
-                color: Colors.grey,
-                fontSize: 14,
-              ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  '${_filteredAspirasi.length} data ditemukan',
+                  style: const TextStyle(color: Colors.grey, fontSize: 14),
+                ),
+                if (_totalPages > 1)
+                  Text(
+                    'Halaman $_currentPage dari $_totalPages',
+                    style: const TextStyle(color: Colors.grey, fontSize: 14),
+                  ),
+              ],
             ),
           ),
 
           // List Aspirasi
           Expanded(
-            child: _filteredAspirasi.isEmpty
+            child: _currentPageData.isEmpty
                 ? Center(
                     child: Text(
                       'Data tidak ditemukan',
@@ -186,19 +331,98 @@ class _AspirasiPageState extends State<AspirasiPage> {
                   )
                 : ListView.builder(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
-                    itemCount: _filteredAspirasi.length,
+                    itemCount: _currentPageData.length,
                     itemBuilder: (context, index) {
-                      final item = _filteredAspirasi[index];
+                      final item = _currentPageData[index];
                       return _buildAspirasiCard(item);
                     },
                   ),
           ),
+
+          // Pagination Controls
+          if (_totalPages > 1) _buildPaginationControls(),
         ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _showFilterDialog,
-        backgroundColor: const Color(0xFF4F6DF5),
+        backgroundColor: const Color(0xFF6C63FF),
         child: const Icon(Icons.filter_list, color: Colors.white),
+      ),
+    );
+  }
+
+  Widget _buildPaginationControls() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border(top: BorderSide(color: Colors.grey.shade300)),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          // Previous Button
+          IconButton(
+            onPressed: _currentPage > 1 ? _previousPage : null,
+            icon: const Icon(Icons.chevron_left),
+            color: _currentPage > 1 ? const Color(0xFF6C63FF) : Colors.grey,
+          ),
+
+          // Page Numbers
+          ...List.generate(_totalPages, (index) {
+            final pageNumber = index + 1;
+            final isCurrentPage = pageNumber == _currentPage;
+            
+            // Show limited page numbers for better UX
+            if (_totalPages <= 7 || 
+                pageNumber == 1 || 
+                pageNumber == _totalPages ||
+                (pageNumber >= _currentPage - 1 && pageNumber <= _currentPage + 1)) {
+              
+              return Container(
+                margin: const EdgeInsets.symmetric(horizontal: 4),
+                child: InkWell(
+                  onTap: () => _goToPage(pageNumber),
+                  child: Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: isCurrentPage ? const Color(0xFF6C63FF) : Colors.transparent,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: isCurrentPage ? const Color(0xFF6C63FF) : Colors.grey.shade300,
+                      ),
+                    ),
+                    child: Center(
+                      child: Text(
+                        '$pageNumber',
+                        style: TextStyle(
+                          color: isCurrentPage ? Colors.white : Colors.grey.shade700,
+                          fontWeight: isCurrentPage ? FontWeight.bold : FontWeight.normal,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            } else if (pageNumber == _currentPage - 2 || pageNumber == _currentPage + 2) {
+              // Show ellipsis for skipped pages
+              return const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 4),
+                child: Text('...', style: TextStyle(color: Colors.grey)),
+              );
+            } else {
+              return const SizedBox.shrink();
+            }
+          }),
+
+          // Next Button
+          IconButton(
+            onPressed: _currentPage < _totalPages ? _nextPage : null,
+            icon: const Icon(Icons.chevron_right),
+            color: _currentPage < _totalPages ? const Color(0xFF6C63FF) : Colors.grey,
+          ),
+        ],
       ),
     );
   }
@@ -220,86 +444,97 @@ class _AspirasiPageState extends State<AspirasiPage> {
       ),
       child: Padding(
         padding: const EdgeInsets.all(16),
-        child: Column(
+        child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Text(
-                    item.judul,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    item.judul ?? 'Judul tidak tersedia',
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
                     ),
-                    maxLines: 1,
+                    maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
-                ),
-                PopupMenuButton<String>(
-                  onSelected: (value) {
-                    switch (value) {
-                      case 'edit':
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => EditAspirasiPage(item: item),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Dikirim oleh: ${item.pengirim ?? 'Tidak diketahui'}',
+                              style: const TextStyle(
+                                color: Colors.grey,
+                                fontSize: 14,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Tanggal: ${item.tanggal ?? 'Tidak diketahui'}',
+                              style: const TextStyle(
+                                color: Colors.grey,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: _getStatusColor(item.status),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              item.status ?? 'Unknown',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
                           ),
-                        );
-                        break;
-                      case 'delete':
-                        showDeleteConfirmation(context, item);
-                        break;
-                      case 'detail':
-                        showDetailModal(context, item);
-                        break;
-                    }
-                  },
-                  itemBuilder: (context) => const [
-                    PopupMenuItem(value: 'detail', child: Text('Detail')),
-                    PopupMenuItem(value: 'edit', child: Text('Edit')),
-                    PopupMenuItem(value: 'delete', child: Text('Hapus')),
-                  ],
-                  icon: const Icon(Icons.more_vert, color: Colors.grey),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Dikirim oleh: ${item.pengirim}',
-              style: const TextStyle(
-                color: Colors.grey,
-                fontSize: 14,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              'Tanggal: ${item.tanggal}',
-              style: const TextStyle(
-                color: Colors.grey,
-                fontSize: 14,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: _getStatusColor(item.status),
-                    borderRadius: BorderRadius.circular(20),
+                          const SizedBox(width: 8),
+                          PopupMenuButton<String>(
+                            onSelected: (value) {
+                              switch (value) {
+                                case 'edit':
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => EditAspirasiPage(item: item),
+                                    ),
+                                  );
+                                  break;
+                                case 'delete':
+                                  // showDeleteConfirmation(context, item);
+                                  break;
+                                case 'detail':
+                                  // showDetailModal(context, item);
+                                  break;
+                              }
+                            },
+                            itemBuilder: (context) => const [
+                              PopupMenuItem(value: 'detail', child: Text('Detail')),
+                              PopupMenuItem(value: 'edit', child: Text('Edit')),
+                              PopupMenuItem(value: 'delete', child: Text('Hapus')),
+                            ],
+                            icon: const Icon(Icons.more_vert, color: Colors.grey),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                  child: Text(
-                    item.status,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           ],
         ),
@@ -307,8 +542,9 @@ class _AspirasiPageState extends State<AspirasiPage> {
     );
   }
 
-  Color _getStatusColor(String status) {
-    switch (status.toLowerCase()) {
+  Color _getStatusColor(String? status) {
+    final statusValue = status?.toLowerCase() ?? '';
+    switch (statusValue) {
       case 'pending':
         return Colors.orange;
       case 'diproses':
