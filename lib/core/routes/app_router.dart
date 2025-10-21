@@ -27,7 +27,6 @@ import 'package:jawara/presentation/pages/mutasiKeluarga/daftarMutasi.dart';
 import 'package:jawara/presentation/pages/mutasiKeluarga/mutasiKeluarga.dart';
 import 'package:jawara/presentation/pages/mutasiKeluarga/tambahMutasi.dart';
 import 'package:jawara/presentation/pages/pemasukan/pemasukan.dart';
-import 'package:jawara/presentation/pages/pemasukan/pemasukan_daftar.dart';
 import 'package:jawara/presentation/pages/pemasukan/pemasukan_tambah.dart';
 import 'package:jawara/presentation/pages/pemasukan/tagih_iuran.dart';
 import 'package:jawara/presentation/pages/penerimaanWarga/penerimaan.dart';
@@ -71,12 +70,6 @@ import 'package:jawara/presentation/pages/kegiatandanbroadcast/kegiatan_daftar.d
 import 'package:jawara/presentation/pages/kegiatandanbroadcast/broadcast_daftar.dart';
 import 'package:jawara/presentation/pages/warga/daftar_rumah.dart';
 
-// import 'package:jawara/presentation/pages/pesan/pesan_informasi.dart';
-// import 'package:jawara/presentation/pages/penerimaan/penerimaan_daftar.dart';
-// import 'package:jawara/presentation/pages/mutasi/mutasi_daftar.dart';
-// import 'package:jawara/presentation/pages/mutasi/mutasi_tambah.dart';
-
-// import 'package:jawara/presentation/pages/warga/daftar_warga.dart';
 import 'package:jawara/presentation/pages/warga/keluarga.dart';
 import 'package:jawara/presentation/pages/warga/rumah.dart';
 import 'package:jawara/presentation/pages/warga/tambah_rumah.dart';
@@ -143,6 +136,8 @@ class AppRouter extends _$AppRouter {
         AutoRoute(page: TagihanDetailRoute.page, path: 'tagihan_detail/:id'),
         AutoRoute(page: TagihIuranRoute.page, path: 'tagih_iuran'),
         AutoRoute(page: KategoriIuranRoute.page, path: 'kategori_iuran'),
+        AutoRoute(page: PemasukanDaftarRoute.page, path: 'daftar'),
+        AutoRoute(page: PemasukanLainTambahRoute.page, path: 'tambah'),
       ],
     ),
 
@@ -174,24 +169,10 @@ class AppRouter extends _$AppRouter {
       ],
     ),
 
-
-    //pemasukan
-    AutoRoute(
-      page: PemasukanRoute.page,
-      path: '/pemasukan',
-      children: [
-        AutoRoute(page: PemasukanLainDaftarRoute.page, path: 'daftar'),
-        AutoRoute(page: PemasukanLainDetailRoute.page, path: 'detail/:id'),
-        AutoRoute(page: PemasukanLainTambahRoute.page, path: 'tambah'),
-      ],
-    ),
-
-
-
     AutoRoute(
       page: PesanWargaRoute.page,
       path: '/pesanWarga',
-      children: [AutoRoute(page: AspirasiRoute.page, path: 'aspirasi')],
+      children: [AutoRoute(page: AspirasiWargaRoute.page, path: 'aspirasi')],
     ),
     AutoRoute(
       page: PenerimaanWargaRoute.page,
