@@ -262,14 +262,12 @@ class _KegiatanEditPageState extends State<KegiatanEditPage> {
     return Scaffold(
       backgroundColor: Colors.grey.shade200,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF6C63FF),
-        elevation: 4,
-        iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor: Colors.grey.shade100,
+        elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
+          icon: const Icon(Icons.arrow_back, color: Colors.black87),
+          onPressed: () => context.router.pop(),
         ),
-
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
