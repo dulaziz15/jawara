@@ -54,7 +54,7 @@ class _FilterPesanWargaDialogState extends State<FilterPesanWargaDialog> {
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF4F6DF5),
+                    color: Color(0xFF6C63FF),
                   ),
                 ),
                 IconButton(
@@ -97,7 +97,7 @@ class _FilterPesanWargaDialogState extends State<FilterPesanWargaDialog> {
                               _selectedStatus = value;
                             });
                           },
-                          activeColor: const Color(0xFF4F6DF5),
+                          activeColor: const Color(0xFF6C63FF),
                         ),
                         const SizedBox(width: 8),
                         Expanded(
@@ -149,7 +149,7 @@ class _FilterPesanWargaDialogState extends State<FilterPesanWargaDialog> {
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF4F6DF5),
+                    backgroundColor: const Color(0xFF6C63FF),
                     padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),

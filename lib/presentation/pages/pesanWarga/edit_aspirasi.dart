@@ -11,6 +11,7 @@ class EditAspirasiPage extends StatefulWidget {
 }
 
 class _EditAspirasiPageState extends State<EditAspirasiPage> {
+  final _formKey = GlobalKey<FormState>();
   late TextEditingController _judulController;
   late TextEditingController _deskripsiController;
   String _status = '';
@@ -32,94 +33,260 @@ class _EditAspirasiPageState extends State<EditAspirasiPage> {
     super.dispose();
   }
 
-  void _saveChanges() {
+  void _cancelForm() {
+    // Kembali ke halaman utama tanpa menyimpan perubahan
     Navigator.pop(context);
   }
 
-  InputDecoration _inputDecoration(String label) {
+  void _submitForm() {
+    if (_formKey.currentState!.validate()) {
+      // Proses update data
+      print('Judul: ${_judulController.text}');
+      print('Deskripsi: ${_deskripsiController.text}');
+      print('Status: $_status');
+      
+      // Tampilkan snackbar sukses
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Data aspirasi berhasil diupdate'),
+          backgroundColor: Colors.green,
+        ),
+      );
+      
+      // Kembali ke halaman sebelumnya
+      Navigator.pop(context);
+    }
+  }
+
+  InputDecoration _inputDecoration(String label, {bool enabled = true}) {
     return InputDecoration(
       labelText: label,
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      enabledBorder: const OutlineInputBorder(
+        borderRadius: BorderRadius.all(Radius.circular(8)),
+        borderSide: BorderSide(
+          color: Color.fromARGB(255, 216, 216, 216),
+          width: 1,
+        ),
+      ),
+      focusedBorder: const OutlineInputBorder(
+        borderRadius: BorderRadius.all(Radius.circular(8)),
+        borderSide: BorderSide(
+          color: Color(0xFF6C63FF),
+          width: 1.5,
+        ),
+      ),
+      disabledBorder: const OutlineInputBorder(
+        borderRadius: BorderRadius.all(Radius.circular(8)),
+        borderSide: BorderSide(
+          color: Color.fromARGB(255, 216, 216, 216),
+          width: 1,
+        ),
+      ),
+      filled: !enabled,
+      fillColor: !enabled ? Colors.grey.shade100 : null,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey.shade200,
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF4F6DF5),
-        elevation: 4,
-        iconTheme: const IconThemeData(color: Colors.white),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: const Text(
-          'Edit Aspirasi Warga',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),
-        ),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Container(
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.shade300,
-                blurRadius: 8,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
+      backgroundColor: Colors.grey.shade50,
+      body: Center(
+        child: SingleChildScrollView(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Judul Pesan
-              TextField(
-                controller: _judulController,
-                decoration: _inputDecoration('Judul Pesan'),
-              ),
-              const SizedBox(height: 16),
-
-              // Deskripsi Pesan
-              TextField(
-                controller: _deskripsiController,
-                maxLines: 4,
-                minLines: 2,
-                decoration: _inputDecoration('Deskripsi Pesan'),
-              ),
-              const SizedBox(height: 16),
-
-              // Status Dropdown
-              DropdownButtonFormField<String>(
-                value: _status,
-                decoration: _inputDecoration('Status'),
-                items: _statusOptions
-                    .map((s) => DropdownMenuItem(value: s, child: Text(s)))
-                    .toList(),
-                onChanged: (val) => setState(() => _status = val ?? _status),
-              ),
-              const SizedBox(height: 24),
-
-              // Tombol Update
-              ElevatedButton(
-                onPressed: _saveChanges,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF4F6DF5),
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                  elevation: 4,
+              const SizedBox(height: 20),
+              Container(
+                margin: const EdgeInsets.all(15),
+                padding: const EdgeInsets.all(20),
+                width: 550,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 10,
+                      offset: Offset(0, 4),
+                    ),
+                  ],
                 ),
-                child: const Text(
-                  'Update',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Center(
+                        child: Text(
+                          "Edit Aspirasi Warga",
+                          style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      const Center(
+                        child: Text(
+                          "Perbarui data aspirasi warga sesuai dengan informasi terbaru",
+                          style: TextStyle(color: Colors.grey, fontSize: 14),
+                        ),
+                      ),
+                      const SizedBox(height: 30),
+
+                      // Judul Aspirasi (Disabled)
+                      // const Text(
+                      //   "Judul Aspirasi",
+                      //   style: TextStyle(
+                      //     fontSize: 14,
+                      //   ),
+                      // ),
+                      const SizedBox(height: 8),
+                      TextFormField(
+                        controller: _judulController,
+                        enabled: false, // Field tidak bisa diedit
+                        decoration: _inputDecoration("Judul Aspirasi", enabled: false),
+                      ),
+                      const SizedBox(height: 20),
+
+                      // Deskripsi Aspirasi (Disabled)
+                      // const Text(
+                      //   "Deskripsi Aspirasi",
+                      //   style: TextStyle(
+                      //     fontSize: 14,
+                      //   ),
+                      // ),
+                      const SizedBox(height: 8),
+                      TextFormField(
+                        controller: _deskripsiController,
+                        enabled: false, // Field tidak bisa diedit
+                        maxLines: 4,
+                        minLines: 3,
+                        decoration: _inputDecoration("Deskripsi Aspirasi", enabled: false),
+                      ),
+                      const SizedBox(height: 20),
+
+                      // Status Aspirasi (Dropdown) - Hanya ini yang bisa diedit
+                      // const Text(
+                      //   "Status Aspirasi",
+                      //   style: TextStyle(
+                      //     fontSize: 14,
+                      //   ),
+                      // ),
+                      const SizedBox(height: 8),
+                      DropdownButtonFormField<String>(
+                        decoration: _inputDecoration("Pilih status"),
+                        value: _status,
+                        items: _statusOptions.map((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            _status = newValue!;
+                          });
+                        },
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Pilih status aspirasi';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 30),
+
+                      // Informasi Pengirim (Read-only)
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade100,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Colors.grey.shade300),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Informasi Pengirim",
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              "Dikirim oleh: ${widget.item.pengirim}",
+                              style: const TextStyle(fontSize: 14),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              "Tanggal: ${widget.item.tanggal}",
+                              style: const TextStyle(fontSize: 14),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 30),
+
+                      // Tombol Update dan Cancel
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: _submitForm,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF6C63FF),
+                                padding: const EdgeInsets.symmetric(vertical: 14),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                              ),
+                              child: const Text(
+                                "Update",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: OutlinedButton(
+                              onPressed: _cancelForm,
+                              style: OutlinedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(vertical: 14),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                                side: const BorderSide(color: Colors.grey),
+                              ),
+                              child: const Text(
+                                "Cancel", // Diubah dari Reset menjadi Cancel
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                    ],
+                  ),
                 ),
               ),
+              const SizedBox(height: 20),
             ],
           ),
         ),
