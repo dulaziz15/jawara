@@ -278,9 +278,9 @@ class _KegiatanDaftarPageState extends State<KegiatanDaftarPage> {
                       value: 'detail',
                       child: Row(
                         children: [
-                          Icon(Icons.visibility_outlined, color: Colors.blue, size: 20),
+                          // Icon(Icons.visibility_outlined, color: Colors.blue, size: 20),
                           SizedBox(width: 10),
-                          Text('Lihat Detail'),
+                          Text('Detail'),
                         ],
                       ),
                     ),
@@ -288,7 +288,7 @@ class _KegiatanDaftarPageState extends State<KegiatanDaftarPage> {
                       value: 'edit',
                       child: Row(
                         children: [
-                          Icon(Icons.edit_outlined, color: Colors.green, size: 20),
+                          // Icon(Icons.edit_outlined, color: Colors.green, size: 20),
                           SizedBox(width: 10),
                           Text('Edit'),
                         ],
@@ -298,7 +298,7 @@ class _KegiatanDaftarPageState extends State<KegiatanDaftarPage> {
                       value: 'hapus',
                       child: Row(
                         children: [
-                          Icon(Icons.delete_outline, color: Colors.red, size: 20),
+                          // Icon(Icons.delete_outline, color: Colors.red, size: 20),
                           SizedBox(width: 10),
                           Text('Hapus'),
                         ],

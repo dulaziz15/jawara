@@ -5,14 +5,14 @@ import 'package:intl/intl.dart';
 import 'package:jawara/presentation/pages/pemasukan/widgets/image_picker.dart';
 
 @RoutePage()
-class PemasukanTambahPage extends StatefulWidget {
-  const PemasukanTambahPage({super.key});
+class PemasukanLainTambahPage extends StatefulWidget {
+  const PemasukanLainTambahPage({super.key});
 
   @override
-  State<PemasukanTambahPage> createState() => _PemasukanTambahPageState();
+  State<PemasukanLainTambahPage> createState() => _PemasukanLainTambahPageState();
 }
 
-class _PemasukanTambahPageState extends State<PemasukanTambahPage> {
+class _PemasukanLainTambahPageState extends State<PemasukanLainTambahPage> {
   final TextEditingController namaController = TextEditingController();
   final TextEditingController tanggalController = TextEditingController();
   final TextEditingController nominalController = TextEditingController();
@@ -228,6 +228,25 @@ class _PemasukanTambahPageState extends State<PemasukanTambahPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Expanded(
+                          child: OutlinedButton(
+                            onPressed: () {},
+                            style: OutlinedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                            ),
+                            child: const Text(
+                              "Reset",
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
                           child: ElevatedButton(
                             onPressed: () {},
                             style: ElevatedButton.styleFrom(
@@ -242,25 +261,6 @@ class _PemasukanTambahPageState extends State<PemasukanTambahPage> {
                               style: TextStyle(
                                 fontSize: 16,
                                 color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: OutlinedButton(
-                            onPressed: () {},
-                            style: OutlinedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(vertical: 14),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0),
-                              ),
-                            ),
-                            child: const Text(
-                              "Reset",
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.black,
                               ),
                             ),
                           ),

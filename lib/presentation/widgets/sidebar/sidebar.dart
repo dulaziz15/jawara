@@ -113,11 +113,11 @@ class _SidebarState extends State<Sidebar> {
               ),
               ListTile(
                 title: const Text("Pemasukan Lain - Daftar"),
-                onTap: () => context.router.pushNamed('/pemasukan/lain/daftar'),
+                onTap: () => context.router.pushNamed('/pemasukan/daftar'),
               ),
               ListTile(
                 title: const Text("Pemasukan Lain - Tambah"),
-                onTap: () => context.router.pushNamed('/pemasukan/lain/tambah'),
+                onTap: () => context.router.pushNamed('/pemasukan/tambah'),
               ),
             ],
           ),
