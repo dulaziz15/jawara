@@ -10,7 +10,19 @@ class ChannelPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: const Sidebar(),
-      appBar: AppBar(title: const Text("Channel Transfer")),
+      appBar: AppBar(
+        title: const Text(
+          'Channel Transfer',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: const Color(0xFF4F6DF5),
+        centerTitle: true,
+        elevation: 0,
+      ),
       body: const AutoRouter(), // Nested route
     );
   }

@@ -40,10 +40,6 @@ class _KegiatanTambahPageState extends State<KegiatanTambahPage> {
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Tambah Kegiatan',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),
-        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),

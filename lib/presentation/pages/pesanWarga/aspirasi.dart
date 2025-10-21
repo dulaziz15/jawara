@@ -112,19 +112,6 @@ class _AspirasiPageState extends State<AspirasiPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: const Text(
-          'Data Aspirasi Warga',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-            color: Colors.white,
-          ),
-        ),
-        backgroundColor: const Color(0xFF4F6DF5),
-        centerTitle: true,
-        elevation: 0,
-      ),
       body: Column(
         children: [
           // Search Bar

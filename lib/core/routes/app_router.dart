@@ -136,14 +136,7 @@ class AppRouter extends _$AppRouter {
       path: '/pengeluaran',
       children: [
         AutoRoute(page: PengeluaranDaftarRoute.page, path: 'daftar'),
-        AutoRoute(page: PengeluaranTambahRoute.page, path: 'tambah'),
-      ],
-    ),
-    AutoRoute(
-      page: PengeluaranRoute.page,
-      path: '/pengeluaran',
-      children: [
-        AutoRoute(page: PengeluaranDaftarRoute.page, path: 'daftar'),
+        AutoRoute(page: PengeluaranDetailRoute.page, path: 'detail/:id'),
         AutoRoute(page: PengeluaranTambahRoute.page, path: 'tambah'),
       ],
     ),

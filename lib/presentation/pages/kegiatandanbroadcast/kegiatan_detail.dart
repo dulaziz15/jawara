@@ -71,13 +71,20 @@ class KegiatanDetailPage extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
+      appBar: AppBar(
+        backgroundColor: Colors.grey.shade100,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black87),
+          onPressed: () => context.router.pop(),
+        ),
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         // ### PERUBAHAN: Tambahkan Column untuk menampung tombol dan Card ###
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 16), // Jarak antara tombol dan card
             // ### Card Detail Kegiatan ###
             Card(
               color: Colors.white,
@@ -91,27 +98,6 @@ class KegiatanDetailPage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // ### Tombol Kembali ###
-                    ElevatedButton.icon(
-                      onPressed: () {
-                        // Menggunakan pop() untuk kembali ke layar sebelumnya di stack navigasi.
-                        // Ini adalah cara standar dan lebih fleksibel.
-                        AutoRouter.of(context).pop();
-                      },
-                      icon: const Icon(Icons.arrow_back_ios_new, size: 16),
-                      label: const Text('Kembali ke Daftar'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: Colors.deepPurple,
-                        elevation: 1,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                          side: BorderSide(color: Colors.grey.shade300),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16), // Jarak antara tombol dan card
-
                     _buildDetailRow("Nama Kegiatan:", kegiatan.namaKegiatan),
                     _buildDetailRow("Kategori:", kegiatan.kategoriKegiatan),
                     _buildDetailRow("Deskripsi:", kegiatan.deskripsi),

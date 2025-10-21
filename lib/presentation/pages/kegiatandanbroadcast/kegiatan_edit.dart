@@ -269,10 +269,7 @@ class _KegiatanEditPageState extends State<KegiatanEditPage> {
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Edit Kegiatan',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),
-        ),
+
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
