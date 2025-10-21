@@ -85,6 +85,19 @@ class _TambahMutasiPageState extends State<TambahMutasiPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
+      // appBar: AppBar(
+      //   title: const Text(
+      //     'Tambah Mutasi Keluarga',
+      //     style: TextStyle(
+      //       fontWeight: FontWeight.bold,
+      //       fontSize: 20,
+      //       color: Colors.white,
+      //     ),
+      //   ),
+      //   backgroundColor: const Color(0xFF4F6DF5),
+      //   centerTitle: true,
+      //   elevation: 0,
+      // ),
       body: Center(
         child: SingleChildScrollView(
           child: Column(
