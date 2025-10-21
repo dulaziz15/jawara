@@ -4,10 +4,10 @@ import 'package:jawara/core/models/pemasukan_model.dart';
 import 'package:jawara/core/utils/formatter_util.dart';
 
 @RoutePage()
-class LaporanPemasukanDetailPage extends StatelessWidget {
+class LaporanPemasukanLainDetailPage extends StatelessWidget {
   final int laporanPemasukanId;
 
-  const LaporanPemasukanDetailPage({
+  const LaporanPemasukanLainDetailPage({
     super.key,
     @PathParam('id') required this.laporanPemasukanId,
   });

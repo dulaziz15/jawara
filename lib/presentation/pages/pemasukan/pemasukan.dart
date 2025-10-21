@@ -19,8 +19,8 @@ class PemasukanPage extends StatelessWidget {
             color: Colors.white,
           ),
         ),
-        backgroundColor: const Color(0xFF6C63FF),
-        centerTitle: true,
+        backgroundColor: const Color(0xFF4F6DF5),
+        centerTitle: false,
         elevation: 0,
       ),
       body: const AutoRouter(), // Nested route

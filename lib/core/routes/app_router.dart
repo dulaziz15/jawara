@@ -27,6 +27,8 @@ import 'package:jawara/presentation/pages/mutasiKeluarga/daftarMutasi.dart';
 import 'package:jawara/presentation/pages/mutasiKeluarga/mutasiKeluarga.dart';
 import 'package:jawara/presentation/pages/mutasiKeluarga/tambahMutasi.dart';
 import 'package:jawara/presentation/pages/pemasukan/pemasukan.dart';
+import 'package:jawara/presentation/pages/pemasukan/pemasukan_daftar.dart';
+import 'package:jawara/presentation/pages/pemasukan/pemasukan_tambah.dart';
 import 'package:jawara/presentation/pages/pemasukan/tagih_iuran.dart';
 import 'package:jawara/presentation/pages/penerimaanWarga/penerimaan.dart';
 import 'package:jawara/presentation/pages/penerimaanWarga/penerimaanWarga.dart';
@@ -172,6 +174,20 @@ class AppRouter extends _$AppRouter {
       ],
     ),
 
+
+    //pemasukan
+    AutoRoute(
+      page: PemasukanRoute.page,
+      path: '/pemasukan',
+      children: [
+        AutoRoute(page: PemasukanLainDaftarRoute.page, path: 'daftar'),
+        AutoRoute(page: PemasukanLainDetailRoute.page, path: 'detail/:id'),
+        AutoRoute(page: PemasukanLainTambahRoute.page, path: 'tambah'),
+      ],
+    ),
+
+
+
     AutoRoute(
       page: PesanWargaRoute.page,
       path: '/pesanWarga',
@@ -195,7 +211,7 @@ class AppRouter extends _$AppRouter {
       page: LogAktivitasRoute.page,
       path: '/log',
       children: [
-        AutoRoute(page: LisAktivitasRoute.page, path: 'aktivitas'),
+        AutoRoute(page: ListAktivitasRoute.page, path: 'aktivitas'),
       ],
     ),
 
@@ -204,9 +220,9 @@ class AppRouter extends _$AppRouter {
       path: '/user',
       children: [
         AutoRoute(page: DaftarPenggunaRoute.page, path: 'daftar'),
-        AutoRoute(page: EditPenggunaRoute.page, path: 'edit/:id'),
-        AutoRoute(page: DetailPenggunaRoute.page, path: 'detail/:id'),
-        AutoRoute(page: TambahPenggunaRoute.page, path: 'tambah'),
+        AutoRoute(page: PenggunaEditRoute.page, path: 'edit/:id'),
+        AutoRoute(page: PenggunaDetailRoute.page, path: 'detail/:id'),
+        AutoRoute(page: PenggunaTambahRoute.page, path: 'tambah'),
       ],
     ),
 
@@ -215,7 +231,7 @@ class AppRouter extends _$AppRouter {
       path: '/channel',
       children: [
         AutoRoute(page: ChannelTambahRoute.page, path: 'tambah'),
-        AutoRoute(page: DetailChannelRoute.page, path: 'detail/:id'),
+        AutoRoute(page: ChannelDetailRoute.page, path: 'detail/:id'),
         AutoRoute(page: ChannelEditRoute.page, path: 'edit/:id'),
         AutoRoute(page: ChannelDaftarRoute.page, path: 'daftar'),
       ],
