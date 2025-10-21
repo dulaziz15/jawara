@@ -163,7 +163,7 @@ class _DaftarPenggunaPageState extends State<DaftarPenggunaPage> {
           value: 'detail',
           child: Row(
             children: [
-              Icon(Icons.visibility, size: 18, color: Colors.blue),
+              // Icon(Icons.visibility, size: 18, color: Colors.blue),
               SizedBox(width: 8),
               Text('Detail'),
             ],
@@ -173,7 +173,7 @@ class _DaftarPenggunaPageState extends State<DaftarPenggunaPage> {
           value: 'edit',
           child: Row(
             children: [
-              Icon(Icons.edit, size: 18, color: Colors.orange),
+              // Icon(Icons.edit, size: 18, color: Colors.orange),
               SizedBox(width: 8),
               Text('Edit'),
             ],
