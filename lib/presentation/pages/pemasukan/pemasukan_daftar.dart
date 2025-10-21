@@ -287,14 +287,14 @@ class _PemasukanDaftarPageState extends State<PemasukanDaftarPage> {
                     const SizedBox(height: 8),
                     PopupMenuButton<String>(
                       onSelected: (value) {
-                        if (value == 'detail') {
+                        if (value == 'pemasukan_detail') {
                           context.router.pushNamed(
-                            '/pemasukan/detail/${item.id}',
+                            '/pemasukan/pemasukan_detail/${item.id}',
                           );
                         }
                       },
                       itemBuilder: (context) => const [
-                        PopupMenuItem(value: 'detail', child: Text('Detail')),
+                        PopupMenuItem(value: 'pemasukan_detail', child: Text('Detail')),
                       ],
                       icon: const Icon(Icons.more_vert, color: Colors.grey),
                     ),

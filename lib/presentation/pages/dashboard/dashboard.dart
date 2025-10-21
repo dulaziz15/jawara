@@ -20,7 +20,7 @@ class DashboardPage extends StatelessWidget {
           ),
         ),
         backgroundColor: const Color(0xFF6C63FF),
-        centerTitle: true,
+        centerTitle: false,
         elevation: 0,
       ),
       body: const AutoRouter(), // Nested route
