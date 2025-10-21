@@ -19,7 +19,7 @@ class ChannelPage extends StatelessWidget {
             color: Colors.white,
           ),
         ),
-        backgroundColor: const Color(0xFF4F6DF5),
+        backgroundColor: const Color(0xFF6C63FF),
         centerTitle: false,
         elevation: 0,
       ),

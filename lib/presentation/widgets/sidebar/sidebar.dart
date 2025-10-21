@@ -30,11 +30,39 @@ class _SidebarState extends State<Sidebar> {
         padding: const EdgeInsets.all(8),
         children: [
           const DrawerHeader(
-            child: Center(
-              child: Text("Jawara Pintar",
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-            ),
+  decoration: BoxDecoration(
+    color: Color(0xFF6C63FF),
+    borderRadius: BorderRadius.only(
+      // bottomLeft: Radius.circular(20),
+      // bottomRight: Radius.circular(20),
+      // topLeft: Radius.circular(20),
+      topRight: Radius.circular(20),
+    ),
+  ),
+  child: Center(
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(
+          Icons.menu_book_rounded,
+          color: Colors.white,
+          size: 48,
+        ),
+        SizedBox(height: 10),
+        Text(
+          "Jawara Pintar",
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
           ),
+        ),
+      ],
+    ),
+  ),
+),
+
+
 
           // DASHBOARD
           ExpansionTile(

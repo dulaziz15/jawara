@@ -69,7 +69,7 @@ class FilterAktivitas extends StatelessWidget {
                 ElevatedButton(
                   onPressed: () => Navigator.pop(context),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.deepPurple,
+                    backgroundColor: Color(0xFF6C63FF),
                   ),
                   child: const Text('Terapkan', style: TextStyle(color: Colors.white)),
                 ),

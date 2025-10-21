@@ -49,7 +49,7 @@ class _FilterPenggunaState extends State<FilterPengguna> {
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: Colors.deepPurple,
+                    color: Color(0xFF6C63FF),
                   ),
                 ),
                 IconButton(
@@ -76,7 +76,7 @@ class _FilterPenggunaState extends State<FilterPengguna> {
                 title: Text(status, style: const TextStyle(fontSize: 15)),
                 value: status,
                 groupValue: _selectedStatus,
-                activeColor: Colors.deepPurple,
+                activeColor: Color(0xFF6C63FF),
                 contentPadding: EdgeInsets.zero,
                 onChanged: (value) {
                   setState(() => _selectedStatus = value!);
@@ -112,7 +112,7 @@ class _FilterPenggunaState extends State<FilterPengguna> {
                     Navigator.pop(context);
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.deepPurple,
+                    backgroundColor: Color(0xFF6C63FF),
                     padding: const EdgeInsets.symmetric(
                         horizontal: 28, vertical: 12),
                     shape: RoundedRectangleBorder(
