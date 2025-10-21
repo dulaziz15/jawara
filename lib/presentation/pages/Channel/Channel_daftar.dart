@@ -66,7 +66,7 @@ class _ChannelDaftarPageState extends State<ChannelDaftarPage> {
       icon: const Icon(Icons.more_vert, color: Colors.black54),
       onSelected: (value) {
         if (value == 'detail') {
-          context.router.push(DetailChannelRoute(channelId: channel.id));
+          context.router.push(ChannelDetailRoute(channelId: channel.id));
         } else if (value == 'edit') {
           context.router.push(ChannelEditRoute(channelId: channel.id));
         } else if (value == 'delete') {
