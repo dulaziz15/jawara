@@ -4,6 +4,7 @@ import 'package:jawara/core/models/finance_model.dart';
 import 'package:jawara/core/models/population_model.dart';
 import 'package:jawara/presentation/pages/dashboard/dashboard_kegiatan.dart';
 import 'package:jawara/presentation/pages/dashboard/widgets/stat_card.dart';
+import 'package:jawara/presentation/widgets/sidebar/sidebar.dart';
 
 @RoutePage()
 class MainDashboardPage extends StatefulWidget {
@@ -82,6 +83,21 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
     final crossAxisCount = isTablet ? 4 : 2;
 
     return Scaffold(
+      drawer: Sidebar(),
+      appBar: AppBar(
+        title: const Text(
+          'Main Dashboard',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: const Color(0xFF6C63FF),
+        foregroundColor: Colors.white,
+        centerTitle: false,
+        elevation: 0,
+      ),
       backgroundColor: Colors.grey.shade50,
       body: _isLoading
           ? _buildLoadingState()

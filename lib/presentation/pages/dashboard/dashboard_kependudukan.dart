@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:jawara/core/models/population_model.dart';
 import 'package:jawara/presentation/pages/dashboard/widgets/stat_card.dart';
 import 'package:jawara/presentation/pages/dashboard/widgets/pie_chart.dart';
+import 'package:jawara/presentation/widgets/sidebar/sidebar.dart';
 
 @RoutePage()
 class DashboardKependudukanPage extends StatelessWidget {
@@ -13,6 +14,21 @@ class DashboardKependudukanPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: Sidebar(),
+      appBar: AppBar(
+        title: const Text(
+          'Dashboard Kependudukan',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: const Color(0xFF6C63FF),
+        foregroundColor: Colors.white,
+        centerTitle: false,
+        elevation: 0,
+      ),
       backgroundColor: Colors.grey[50],
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
