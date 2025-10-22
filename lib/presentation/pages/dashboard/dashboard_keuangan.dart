@@ -4,6 +4,7 @@ import 'package:jawara/core/models/finance_model.dart';
 import 'package:jawara/presentation/pages/dashboard/widgets/bar_chart.dart';
 import 'package:jawara/presentation/pages/dashboard/widgets/pie_chart.dart';
 import 'package:jawara/presentation/pages/dashboard/widgets/stat_card.dart';
+import 'package:jawara/presentation/widgets/sidebar/sidebar.dart';
 
 @RoutePage()
 class DashboardKeuanganPage extends StatelessWidget {
@@ -14,6 +15,21 @@ class DashboardKeuanganPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: Sidebar(),
+      appBar: AppBar(
+        title: const Text(
+          'Dashboard Keuangan',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: const Color(0xFF6C63FF),
+        foregroundColor: Colors.white,
+        centerTitle: false,
+        elevation: 0,
+      ),
       backgroundColor: Colors.grey[50],
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
