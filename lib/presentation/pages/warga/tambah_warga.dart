@@ -387,39 +387,55 @@ class _WargaTambahPageState extends State<WargaTambahPage> {
   }
 
   Widget _buildActionButtons() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        ElevatedButton(
-          onPressed: _resetForm,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color.fromARGB(255, 255, 22, 22),
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 15),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      // Reset Button
+      TextButton(
+        onPressed: _resetForm,
+        style: OutlinedButton.styleFrom(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 24,
+            vertical: 12,
           ),
-          child: const Text(
-            'Reset',
-            style: TextStyle(fontSize: 16, color: Colors.white),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          side: const BorderSide(color: Colors.grey),
+        ),
+        child: const Text(
+          'Reset',
+          style: TextStyle(
+            color: Colors.grey,
+            fontWeight: FontWeight.bold,
+            fontSize: 14,
           ),
         ),
-        const SizedBox(width: 16),
-        ElevatedButton(
-          onPressed: _submitForm,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF6C63FF),
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 15),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
+      ),
+
+      // Submit Button
+      ElevatedButton(
+        onPressed: _submitForm,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xFF6C63FF),
+          padding: const EdgeInsets.symmetric(
+            horizontal: 24,
+            vertical: 12,
           ),
-          child: const Text(
-            'Submit',
-            style: TextStyle(fontSize: 16, color: Colors.white),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
           ),
         ),
-      ],
-    );
-  }
+        child: const Text(
+          'Submit',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 14,
+          ),
+        ),
+      ),
+    ],
+  );
+}
 }
