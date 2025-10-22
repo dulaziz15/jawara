@@ -94,41 +94,6 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
                   return CustomScrollView(
                     slivers: [
                       // Header Section
-                      SliverAppBar(
-                        expandedHeight: 120,
-                        flexibleSpace: FlexibleSpaceBar(
-                          title: Text(
-                            'Main Dashboard',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              shadows: [
-                                Shadow(
-                                  blurRadius: 4,
-                                  color: Colors.black.withOpacity(0.3),
-                                ),
-                              ],
-                            ),
-                          ),
-                          background: Container(
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF6C63FF),
-                            ),
-                          ),
-                        ),
-                        pinned: true,
-                        actions: [
-                          IconButton(
-                            icon: const Icon(
-                              Icons.refresh,
-                              color: Colors.white,
-                            ),
-                            onPressed: _refreshData,
-                            tooltip: 'Refresh Data',
-                          ),
-                        ],
-                      ),
                       
                       // Content Section
                       SliverPadding(
