@@ -20,6 +20,8 @@ class PengeluaranPage extends StatelessWidget {
           ),
         ),
         backgroundColor: const Color(0xFF6C63FF),
+        foregroundColor: Colors.white,
+
         centerTitle: true,
         elevation: 0,
       ),
