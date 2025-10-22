@@ -20,6 +20,8 @@ class KegiatanDanBroadcastPage extends StatelessWidget {
           ),
         ),
         backgroundColor: const Color(0xFF6C63FF),
+        foregroundColor: Colors.white,
+
         centerTitle: false,
         elevation: 0,
       ),
