@@ -30,7 +30,7 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
   void _initializeData() async {
     // Simulate data loading delay
     await Future.delayed(const Duration(milliseconds: 500));
-    
+
     setState(() {
       financeData = FinanceData.dummy();
       populationData = PopulationData.dummy();
@@ -49,9 +49,9 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
     setState(() {
       _isLoading = true;
     });
-    
+
     await Future.delayed(const Duration(seconds: 1));
-    
+
     setState(() {
       financeData = FinanceData.dummy();
       populationData = PopulationData.dummy();
@@ -64,7 +64,7 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
       );
       _isLoading = false;
     });
-    
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: const Text('Data berhasil diperbarui'),
@@ -89,71 +89,74 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
               onRefresh: () async => _refreshData(),
               color: const Color(0xFF6C63FF),
               backgroundColor: Colors.white,
-              child: CustomScrollView(
-                slivers: [
-                  // Header Section
-                  SliverAppBar(
-                    expandedHeight: 120,
-                    flexibleSpace: FlexibleSpaceBar(
-                      title: Text(
-                        'Main Dashboard',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          shadows: [
-                            Shadow(
-                              blurRadius: 4,
-                              color: Colors.black.withOpacity(0.3),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  return CustomScrollView(
+                    slivers: [
+                      // Header Section
+                      SliverAppBar(
+                        expandedHeight: 120,
+                        flexibleSpace: FlexibleSpaceBar(
+                          title: Text(
+                            'Main Dashboard',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              shadows: [
+                                Shadow(
+                                  blurRadius: 4,
+                                  color: Colors.black.withOpacity(0.3),
+                                ),
+                              ],
                             ),
-                          ],
+                          ),
+                          background: Container(
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF6C63FF),
+                            ),
+                          ),
                         ),
+                        pinned: true,
+                        actions: [
+                          IconButton(
+                            icon: const Icon(
+                              Icons.refresh,
+                              color: Colors.white,
+                            ),
+                            onPressed: _refreshData,
+                            tooltip: 'Refresh Data',
+                          ),
+                        ],
                       ),
-                      background: Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [
-                              const Color(0xFF6C63FF),
-                              Colors.purple.shade400,
+                      
+                      // Content Section
+                      SliverPadding(
+                        padding: const EdgeInsets.all(16),
+                        sliver: SliverToBoxAdapter(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Welcome Section
+                              _buildWelcomeSection(),
+                              const SizedBox(height: 24),
+
+                              // Quick Stats Grid
+                              _buildStatsGrid(crossAxisCount, constraints),
+                              const SizedBox(height: 24),
+
+                              // Recent Activity Section
+                              _buildRecentActivitySection(),
+                              const SizedBox(
+                                height: 24,
+                              ), // Extra bottom padding
                             ],
                           ),
                         ),
                       ),
-                    ),
-                    pinned: true,
-                    actions: [
-                      IconButton(
-                        icon: const Icon(Icons.refresh, color: Colors.white),
-                        onPressed: _refreshData,
-                        tooltip: 'Refresh Data',
-                      ),
                     ],
-                  ),
-
-                  // Content Section
-                  SliverPadding(
-                    padding: const EdgeInsets.all(16),
-                    sliver: SliverToBoxAdapter(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Welcome Section
-                          _buildWelcomeSection(),
-                          const SizedBox(height: 24),
-
-                          // Quick Stats Grid
-                          _buildStatsGrid(crossAxisCount, size),
-                          const SizedBox(height: 24),
-
-                          // Recent Activity Section
-                          _buildRecentActivitySection(),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
+                  );
+                },
               ),
             ),
     );
@@ -170,10 +173,7 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
           SizedBox(height: 16),
           Text(
             'Memuat Dashboard...',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.grey,
-            ),
+            style: TextStyle(fontSize: 16, color: Colors.grey),
           ),
         ],
       ),
@@ -181,48 +181,50 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
   }
 
   Widget _buildWelcomeSection() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            const Color(0xFF6C63FF).withOpacity(0.1),
-            Colors.purple.shade50,
+    return ConstrainedBox(
+      constraints: const BoxConstraints(minHeight: 80),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: const Color(
+            0xFF6C63FF,
+          ).withOpacity(0.1), // Ganti dengan satu warna
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: const Color(0xFF6C63FF).withOpacity(0.3)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Selamat Datang! 👋',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey.shade800,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Berikut ringkasan data terkini wilayah Anda',
+              style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
+            ),
           ],
         ),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.purple.shade100),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Selamat Datang! 👋',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.grey.shade800,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Berikut ringkasan data terkini wilayah Anda',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey.shade600,
-            ),
-          ),
-        ],
       ),
     );
   }
 
-  Widget _buildStatsGrid(int crossAxisCount, Size size) {
+  Widget _buildStatsGrid(int crossAxisCount, BoxConstraints constraints) {
+    final gridHeight = _calculateGridHeight(
+      crossAxisCount,
+      constraints.maxWidth,
+    );
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
       children: [
         Text(
           'Ringkasan Statistik',
@@ -233,65 +235,89 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
           ),
         ),
         const SizedBox(height: 16),
-        GridView.count(
-          crossAxisCount: crossAxisCount,
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          crossAxisSpacing: 16,
-          mainAxisSpacing: 16,
-          childAspectRatio: size.width > 400 ? 1.1 : 1.3,
-          children: [
-            // === Keuangan ===
-            StatCard(
-              title: 'Saldo Bersih',
-              value: financeData.totalIncome - financeData.totalExpense,
-              valueColor: const Color(0xFF6C63FF),
-              icon: Icons.account_balance_wallet_rounded,
-            ),
-            StatCard(
-              title: 'Pendapatan',
-              value: financeData.totalIncome,
-              valueColor: Colors.green,
-              icon: Icons.trending_up_rounded,
-            ),
-
-            // === Kependudukan ===
-            StatCard(
-              title: 'Total Penduduk',
-              value: populationData.totalPeople.toDouble(),
-              valueColor: Colors.blue,
-              icon: Icons.people_alt_rounded,
-              isCurrency: false,
-            ),
-            StatCard(
-              title: 'Total Keluarga',
-              value: populationData.totalFamilies.toDouble(),
-              valueColor: Colors.orange,
-              icon: Icons.home_work_rounded,
-              isCurrency: false,
-            ),
-
-            // === Kegiatan ===
-            if (crossAxisCount > 2) ...[
+        ConstrainedBox(
+          constraints: BoxConstraints(
+            minHeight: gridHeight,
+            maxHeight: gridHeight + 200, // Memberikan ruang ekstra
+          ),
+          child: GridView.count(
+            crossAxisCount: crossAxisCount,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            crossAxisSpacing: 16,
+            mainAxisSpacing: 16,
+            childAspectRatio: 1.2,
+            children: [
+              // === Keuangan ===
               StatCard(
-                title: 'Total Kegiatan',
-                value: eventData.totalKegiatan.toDouble(),
-                valueColor: Colors.teal,
-                icon: Icons.event_available_rounded,
+                title: 'Saldo Bersih',
+                value: financeData.totalIncome - financeData.totalExpense,
+                valueColor: const Color(0xFF6C63FF),
+                icon: Icons.account_balance_wallet_rounded,
+              ),
+              StatCard(
+                title: 'Pendapatan',
+                value: financeData.totalIncome,
+                valueColor: Colors.green,
+                icon: Icons.trending_up_rounded,
+              ),
+
+              // === Kependudukan ===
+              StatCard(
+                title: 'Total Penduduk',
+                value: populationData.totalPeople.toDouble(),
+                valueColor: Colors.blue,
+                icon: Icons.people_alt_rounded,
                 isCurrency: false,
               ),
               StatCard(
-                title: 'Kegiatan Aktif',
-                value: 3,
-                valueColor: Colors.pink,
-                icon: Icons.today_rounded,
+                title: 'Total Keluarga',
+                value: populationData.totalFamilies.toDouble(),
+                valueColor: Colors.orange,
+                icon: Icons.home_work_rounded,
                 isCurrency: false,
               ),
+
+              // === Kegiatan === (hanya untuk tablet)
+              if (crossAxisCount > 2) ...[
+                StatCard(
+                  title: 'Total Kegiatan',
+                  value: eventData.totalKegiatan.toDouble(),
+                  valueColor: Colors.teal,
+                  icon: Icons.event_available_rounded,
+                  isCurrency: false,
+                ),
+                StatCard(
+                  title: 'Kegiatan Aktif',
+                  value: 3,
+                  valueColor: Colors.pink,
+                  icon: Icons.today_rounded,
+                  isCurrency: false,
+                ),
+              ],
             ],
-          ],
+          ),
         ),
       ],
     );
+  }
+
+  double _calculateGridHeight(int crossAxisCount, double screenWidth) {
+    final rows = (crossAxisCount > 2) ? 2.0 : 2.0; // 2 rows untuk semua ukuran
+    final itemHeight =
+        screenWidth / crossAxisCount / _calculateChildAspectRatio(screenWidth);
+    return (itemHeight * rows) +
+        (16 * (rows - 1)); // itemHeight * rows + spacing
+  }
+
+  double _calculateChildAspectRatio(double screenWidth) {
+    if (screenWidth > 600) {
+      return 1.3; // Tablet
+    } else if (screenWidth > 400) {
+      return 1.4; // Medium phone
+    } else {
+      return 1.6; // Small phone - lebih tinggi untuk mencegah overflow
+    }
   }
 
   Widget _buildRecentActivitySection() {
@@ -311,6 +337,7 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -354,7 +381,11 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
   }
 
   Widget _buildActivityItem(
-      String title, String subtitle, IconData icon, Color color) {
+    String title,
+    String subtitle,
+    IconData icon,
+    Color color,
+  ) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
@@ -377,6 +408,7 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
                   title,
@@ -386,20 +418,15 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
                     fontSize: 14,
                   ),
                 ),
+                const SizedBox(height: 4),
                 Text(
                   subtitle,
-                  style: TextStyle(
-                    color: Colors.grey.shade600,
-                    fontSize: 12,
-                  ),
+                  style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
                 ),
               ],
             ),
           ),
-          Icon(
-            Icons.chevron_right_rounded,
-            color: Colors.grey.shade400,
-          ),
+          Icon(Icons.chevron_right_rounded, color: Colors.grey.shade400),
         ],
       ),
     );
