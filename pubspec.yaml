@@ -42,6 +42,8 @@ dependencies:
   flutter_animate: ^4.5.0
   expandable: ^5.0.1
   flutter_lints: any
+  firebase_core: ^2.24.2 
+  firebase_auth: ^4.16.0
 
 flutter_icons:
   android: true
