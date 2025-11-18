@@ -9,6 +9,12 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // 1. TAMBAHKAN CONTROLLER DI SINI
+    // (Catatan: di StatelessWidget, ini akan di-reset tiap build, 
+    // tapi untuk if/else sederhana ini tidak masalah)
+    final _emailController = TextEditingController();
+    final _passwordController = TextEditingController();
+
     return Scaffold(
       backgroundColor: const Color(0xFFFFFFFF),
       body: Center(
@@ -50,58 +56,76 @@ class LoginPage extends StatelessWidget {
                     const Text("Email"),
                     const SizedBox(height: 5),
                     TextField(
+                      controller: _emailController, // <-- 2. HUBUNGKAN CONTROLLER
                       decoration: InputDecoration(
                         hintText: "Masukan Email",
                         enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all( Radius.circular(8)
-                        ),
-                          borderSide: BorderSide(color: const Color.fromARGB(255, 216, 216, 216), width: 0)
-                        ),
+                            borderRadius: BorderRadius.all(Radius.circular(8)),
+                            borderSide: BorderSide(
+                                color: const Color.fromARGB(255, 216, 216, 216),
+                                width: 0)),
                         focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all( Radius.circular(8)
-                        ),
-                          borderSide: BorderSide(color: Color(0xFF6C63FF), width: 0)
-                        ),
+                            borderRadius: BorderRadius.all(Radius.circular(8)),
+                            borderSide:
+                                BorderSide(color: Color(0xFF6C63FF), width: 0)),
                       ),
                     ),
                     const SizedBox(height: 15),
                     const Text("Password"),
                     const SizedBox(height: 5),
                     TextField(
+                      controller: _passwordController, // <-- 2. HUBUNGKAN CONTROLLER
                       obscureText: true,
                       decoration: InputDecoration(
                         hintText: "Masukan Password",
                         enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all( Radius.circular(8)
-                        ),
-                          borderSide: BorderSide(color: const Color.fromARGB(255, 216, 216, 216), width: 0)
-                        ),
+                            borderRadius: BorderRadius.all(Radius.circular(8)),
+                            borderSide: BorderSide(
+                                color: const Color.fromARGB(255, 216, 216, 216),
+                                width: 0)),
                         focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all( Radius.circular(8)
-                        ),
-                          borderSide: BorderSide(color: Color(0xFF6C63FF), width: 0)
-                        ),
+                            borderRadius: BorderRadius.all(Radius.circular(8)),
+                            borderSide:
+                                BorderSide(color: Color(0xFF6C63FF), width: 0)),
                       ),
                     ),
                     const SizedBox(height: 20),
                     SizedBox(
                       width: double.infinity,
-                      child: ElevatedButton(onPressed: () {
-                        context.router.replaceNamed('/dashboard/main');
-                      }, 
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF6C63FF),
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0),
+                      child: ElevatedButton(
+                        // 3. UBAH BAGIAN ONPRESSED INI
+                        onPressed: () {
+                          // Ambil nilai dari textfield
+                          String email = _emailController.text;
+                          String password = _passwordController.text;
+
+                          // Lakukan pengecekan if/else (HARDCODED)
+                          if (email == 'admin@gmail.com' && password == 'rahasia123') {
+                            // Jika benar, navigasi
+                            context.router.replaceNamed('/dashboard/main');
+                          } else {
+                            // Jika salah, tampilkan pesan error
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Email atau Password salah!'),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF6C63FF),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
                         ),
-                      ),
-                      child: const Text("Login", style: TextStyle(fontSize: 16, color: Colors.white)),
+                        child: const Text("Login",
+                            style:
+                                TextStyle(fontSize: 16, color: Colors.white)),
                       ),
                     ),
-
                     const SizedBox(height: 10),
-
                     Center(
                       child: RichText(
                         text: TextSpan(
