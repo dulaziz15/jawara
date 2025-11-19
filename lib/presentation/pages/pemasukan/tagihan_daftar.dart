@@ -42,7 +42,7 @@ class _TagihanDaftarPageState extends State<TagihanDaftarPage> {
                   data.kategori.toLowerCase().contains(
                     _searchController.text.toLowerCase(),
                   ) ||
-                  data.namaKK.toLowerCase().contains(
+                  data.nikKK.toLowerCase().contains(
                     _searchController.text.toLowerCase(),
                   ),
             )
@@ -68,7 +68,7 @@ class _TagihanDaftarPageState extends State<TagihanDaftarPage> {
                   data.kategori.toLowerCase().contains(
                     value.toLowerCase(),
                   ) ||
-                  data.namaKK.toLowerCase().contains(
+                  data.nikKK.toLowerCase().contains(
                     value.toLowerCase(),
                   ),
             )
@@ -286,7 +286,7 @@ class _TagihanDaftarPageState extends State<TagihanDaftarPage> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'Nama KK: ${item.namaKK}',
+                        'Nama KK: ${item.nikKK}',
                         style: const TextStyle(
                           color: Colors.grey,
                           fontSize: 14,

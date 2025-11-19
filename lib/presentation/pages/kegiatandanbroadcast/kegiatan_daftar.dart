@@ -12,14 +12,14 @@ class KegiatanDaftarPage extends StatefulWidget {
 }
 
 class _KegiatanDaftarPageState extends State<KegiatanDaftarPage> {
-  List<KegiatanModel> _filteredData = dummyPengeluaran;
+  List<KegiatanModel> _filteredData = dummyKegiatan;
   final TextEditingController _searchController = TextEditingController();
   String _selectedFilter = 'Semua';
 
   @override
   void initState() {
     super.initState();
-    _filteredData = dummyPengeluaran;
+    _filteredData = dummyKegiatan;
   }
 
   void _applyFilter(String kategori) {
@@ -27,9 +27,9 @@ class _KegiatanDaftarPageState extends State<KegiatanDaftarPage> {
       _selectedFilter = kategori;
       List<KegiatanModel> kategoriFilteredData;
       if (kategori == 'Semua') {
-        kategoriFilteredData = dummyPengeluaran;
+        kategoriFilteredData = dummyKegiatan;
       } else {
-        kategoriFilteredData = dummyPengeluaran.where((data) => data.kategoriKegiatan == kategori).toList();
+        kategoriFilteredData = dummyKegiatan.where((data) => data.kategoriKegiatan == kategori).toList();
       }
       if (_searchController.text.isNotEmpty) {
         _filteredData = kategoriFilteredData
@@ -47,9 +47,9 @@ class _KegiatanDaftarPageState extends State<KegiatanDaftarPage> {
     setState(() {
       List<KegiatanModel> searchFilteredData;
       if (value.isEmpty) {
-        searchFilteredData = dummyPengeluaran;
+        searchFilteredData = dummyKegiatan;
       } else {
-        searchFilteredData = dummyPengeluaran
+        searchFilteredData = dummyKegiatan
             .where((data) =>
                 data.namaKegiatan.toLowerCase().contains(value.toLowerCase()) ||
                 data.kategoriKegiatan.toLowerCase().contains(value.toLowerCase()))
@@ -64,7 +64,7 @@ class _KegiatanDaftarPageState extends State<KegiatanDaftarPage> {
   }
 
   void _showFilterDialog() {
-    final List<String> kategoriList = dummyPengeluaran.map((e) => e.kategoriKegiatan).toSet().toList();
+    final List<String> kategoriList = dummyKegiatan.map((e) => e.kategoriKegiatan).toSet().toList();
     showDialog(
       context: context,
       builder: (context) => FilterKegiatanDialog(
@@ -238,7 +238,7 @@ class _KegiatanDaftarPageState extends State<KegiatanDaftarPage> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'Penanggung Jawab: ${item.penanggungJawab}',
+                        'Penanggung Jawab: ${item.penanggungJawabId}',
                         style: const TextStyle(
                           color: Colors.grey,
                           fontSize: 14,

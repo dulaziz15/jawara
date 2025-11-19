@@ -272,7 +272,7 @@ class _PengeluaranDaftarPageState extends State<PengeluaranDaftarPage> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'Verifikator: ${item.verifikator}',
+                        'Verifikator: ${item.verifikatorId}',
                         style: const TextStyle(
                           color: Colors.grey,
                           fontSize: 14,

@@ -1,11 +1,23 @@
 class Family {
-  final String nik;
+  final String nik; // Relasi ke UserModel.nik
   final String name;
 
   Family({
     required this.nik,
     required this.name,
   });
+
+  // Contoh data dummy Family yang berelasi dengan UserModel
+  static final List<Family> dummyFamilies = [
+    Family(nik: '1111111111111111', name: 'Ahmad Surya'),
+    Family(nik: '2222222222222222', name: 'Budi Santoso'),
+    Family(nik: '3333333333333333', name: 'Citra Dewi'), 
+    Family(nik: '4444444444444444', name: 'Dedi Rahman'), 
+    Family(nik: '5555555555555555', name: 'Eka Putri'), 
+    Family(nik: '1234567890123451', name: 'Admin Jawara'),
+    Family(nik: '9000000000000001', name: 'Andi Wijaya'),
+    Family(nik: '8000000000000001', name: 'John Doe'),
+  ];
 
   @override
   String toString() {

@@ -59,7 +59,7 @@ class KegiatanDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Ambil data kegiatan berdasarkan ID
-    final kegiatan = dummyPengeluaran.firstWhere(
+    final kegiatan = dummyKegiatan.firstWhere(
       (item) => item.id == kegiatanId,
     );
 
@@ -105,9 +105,9 @@ class KegiatanDetailPage extends StatelessWidget {
                     _buildDetailRow("Lokasi:", kegiatan.lokasi),
                     _buildDetailRow(
                       "Penanggung Jawab:",
-                      kegiatan.penanggungJawab,
+                      kegiatan.penanggungJawabId.toString(),
                     ),
-                    _buildDetailRow("Dibuat oleh:", kegiatan.dibuatOleh),
+                    _buildDetailRow("Dibuat oleh:", kegiatan.dibuatOlehId.toString()),
                     _buildDetailRow(
                       "Dokumentasi:",
                       (kegiatan.dokumentasi.isEmpty)

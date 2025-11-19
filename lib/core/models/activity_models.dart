@@ -1,7 +1,7 @@
 class ActivityModel {
   final int no;
   final String description;
-  final String actor;
+  final String actor; // Relasi ke UserModel.nama
   final String date;
 
   const ActivityModel({
