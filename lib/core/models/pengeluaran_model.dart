@@ -1,7 +1,8 @@
 // model untuk pengeluaran
 class PengeluaranModel {
   int? id;
-  String namaPengeluaran, kategoriPengeluaran, verifikator, bukti;
+  String namaPengeluaran, kategoriPengeluaran, bukti;
+  int verifikatorId; // **DIREVISI:** Relasi ke UserModel.id
   double jumlahPengeluaran;
   DateTime tanggalPengeluaran, tanggalTerverifikasi;
 
@@ -9,7 +10,7 @@ class PengeluaranModel {
     this.id,
     required this.namaPengeluaran,
     required this.kategoriPengeluaran,
-    required this.verifikator,
+    required this.verifikatorId, // **DIREVISI**
     required this.bukti,
     required this.jumlahPengeluaran,
     required this.tanggalPengeluaran,
@@ -21,10 +22,10 @@ class PengeluaranModel {
     return PengeluaranModel(
       id: map['id'],
       namaPengeluaran: map['nama_pengeluaran'],
-      jumlahPengeluaran: map['jumlah_pengeluaran'],
+      jumlahPengeluaran: map['jumlah_pengeluaran'] is int ? (map['jumlah_pengeluaran'] as int).toDouble() : map['jumlah_pengeluaran'],
       tanggalPengeluaran: DateTime.parse(map['tanggal_pengeluaran']),
       kategoriPengeluaran: map['kategori_pengeluaran'],
-      verifikator: map['verifikator'],
+      verifikatorId: map['verifikator_id'], // Menggunakan verifikator_id
       bukti: map['bukti'],
       tanggalTerverifikasi: DateTime.parse(map['tanggal_terverifikasi']),
     );
@@ -36,7 +37,7 @@ class PengeluaranModel {
       'id': id,
       'nama_pengeluaran': namaPengeluaran,
       'kategori_pengeluaran': kategoriPengeluaran,
-      'verifikator': verifikator,
+      'verifikator_id': verifikatorId, // Menggunakan verifikator_id
       'bukti': bukti,
       'jumlah_pengeluaran': jumlahPengeluaran,
       'tanggal_pengeluaran': tanggalPengeluaran.toIso8601String(),
@@ -50,7 +51,7 @@ List<PengeluaranModel> dummyPengeluaran = [
     id: 1,
     namaPengeluaran: 'Pembelian ATK Kantor',
     kategoriPengeluaran: 'Operasional',
-    verifikator: 'Andi Wijaya',
+    verifikatorId: 201, // ID Andi Wijaya
     bukti: 'bukti_atk.jpg',
     jumlahPengeluaran: 350000.0,
     tanggalPengeluaran: DateTime(2025, 1, 12),
@@ -60,7 +61,7 @@ List<PengeluaranModel> dummyPengeluaran = [
     id: 2,
     namaPengeluaran: 'Listrik Bulanan',
     kategoriPengeluaran: 'Tagihan',
-    verifikator: 'Sinta Dewi',
+    verifikatorId: 202, // ID Sinta Dewi
     bukti: 'bukti_listrik.pdf',
     jumlahPengeluaran: 1250000.0,
     tanggalPengeluaran: DateTime(2025, 1, 15),
@@ -70,7 +71,7 @@ List<PengeluaranModel> dummyPengeluaran = [
     id: 3,
     namaPengeluaran: 'Pembelian Bahan Konsumsi',
     kategoriPengeluaran: 'Konsumsi',
-    verifikator: 'Budi Santoso',
+    verifikatorId: 103, // ID Budi Santoso
     bukti: 'bukti_konsumsi.jpg',
     jumlahPengeluaran: 785000.0,
     tanggalPengeluaran: DateTime(2025, 2, 1),
@@ -80,7 +81,7 @@ List<PengeluaranModel> dummyPengeluaran = [
     id: 4,
     namaPengeluaran: 'Maintenance Server',
     kategoriPengeluaran: 'Teknologi',
-    verifikator: 'Rizky Maulana',
+    verifikatorId: 203, // ID Rizky Maulana
     bukti: 'bukti_server.pdf',
     jumlahPengeluaran: 2500000.0,
     tanggalPengeluaran: DateTime(2025, 2, 10),
@@ -90,7 +91,7 @@ List<PengeluaranModel> dummyPengeluaran = [
     id: 5,
     namaPengeluaran: 'Perjalanan Dinas Bandung',
     kategoriPengeluaran: 'Perjalanan Dinas',
-    verifikator: 'Dina Kartika',
+    verifikatorId: 204, // ID Dina Kartika
     bukti: 'bukti_perjalanan.jpg',
     jumlahPengeluaran: 3100000.0,
     tanggalPengeluaran: DateTime(2025, 3, 5),
@@ -100,7 +101,7 @@ List<PengeluaranModel> dummyPengeluaran = [
     id: 6,
     namaPengeluaran: 'Sewa Gedung Acara',
     kategoriPengeluaran: 'Event',
-    verifikator: 'Agus Prasetyo',
+    verifikatorId: 205, // ID Agus Prasetyo
     bukti: 'bukti_sewa.pdf',
     jumlahPengeluaran: 5200000.0,
     tanggalPengeluaran: DateTime(2025, 4, 8),
@@ -110,7 +111,7 @@ List<PengeluaranModel> dummyPengeluaran = [
     id: 7,
     namaPengeluaran: 'Honor Narasumber',
     kategoriPengeluaran: 'Kegiatan',
-    verifikator: 'Maya Putri',
+    verifikatorId: 206, // ID Maya Putri
     bukti: 'bukti_honor.jpg',
     jumlahPengeluaran: 1500000.0,
     tanggalPengeluaran: DateTime(2025, 4, 20),
@@ -120,7 +121,7 @@ List<PengeluaranModel> dummyPengeluaran = [
     id: 8,
     namaPengeluaran: 'Pembelian Software Lisensi',
     kategoriPengeluaran: 'Teknologi',
-    verifikator: 'Andri Setiawan',
+    verifikatorId: 207, // ID Andri Setiawan
     bukti: 'bukti_lisensi.pdf',
     jumlahPengeluaran: 4600000.0,
     tanggalPengeluaran: DateTime(2025, 5, 3),
@@ -130,7 +131,7 @@ List<PengeluaranModel> dummyPengeluaran = [
     id: 9,
     namaPengeluaran: 'Cetak Brosur Promosi',
     kategoriPengeluaran: 'Marketing',
-    verifikator: 'Tasya Amelia',
+    verifikatorId: 208, // ID Tasya Amelia
     bukti: 'bukti_brosur.jpg',
     jumlahPengeluaran: 875000.0,
     tanggalPengeluaran: DateTime(2025, 5, 15),
@@ -140,7 +141,7 @@ List<PengeluaranModel> dummyPengeluaran = [
     id: 10,
     namaPengeluaran: 'Perawatan Kendaraan Operasional',
     kategoriPengeluaran: 'Operasional',
-    verifikator: 'Fajar Ramadhan',
+    verifikatorId: 209, // ID Fajar Ramadhan
     bukti: 'bukti_kendaraan.pdf',
     jumlahPengeluaran: 1900000.0,
     tanggalPengeluaran: DateTime(2025, 6, 1),

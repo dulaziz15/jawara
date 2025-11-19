@@ -40,7 +40,7 @@ class _BroadcastEditPageState extends State<BroadcastEditPage> {
 
     _judulController = TextEditingController(text: _broadcast.judulBroadcast);
     _isiPesanController = TextEditingController(text: _broadcast.isiPesan);
-    _dibuatOlehController = TextEditingController(text: _broadcast.dibuatOleh);
+    _dibuatOlehController = TextEditingController(text: _broadcast.dibuatOlehId.toString());
     _selectedDate = _broadcast.tanggalPublikasi;
     _currentGambar = _broadcast.lampiranGambar;
     _currentDokumen = _broadcast.lampiranDokumen;

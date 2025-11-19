@@ -42,7 +42,7 @@ class _TambahIuranDialogState extends State<TambahIuranDialog> {
         id: (dummyIuran.map((e) => e.id ?? 0).reduce((a, b) => a > b ? a : b)) + 1,
         namaIuran: _namaController.text,
         kategoriIuran: _selectedKategori,
-        verifikator: 'Admin', // Default
+        verifikatorId: 1, // Default
         bukti: 'default_bukti.jpg', // Default
         jumlah: double.tryParse(_jumlahController.text) ?? 0.0,
         tanggalIuran: DateTime.now(),
@@ -137,7 +137,7 @@ class _EditIuranDialogState extends State<EditIuranDialog> {
         id: widget.item.id,
         namaIuran: _namaController.text,
         kategoriIuran: _kategori, // Tidak bisa diedit
-        verifikator: widget.item.verifikator,
+        verifikatorId: widget.item.verifikatorId,
         bukti: widget.item.bukti,
         jumlah: double.tryParse(_jumlahController.text) ?? 0.0,
         tanggalIuran: widget.item.tanggalIuran,

@@ -128,7 +128,7 @@ class BroadcastDetailPage extends StatelessWidget {
                     _buildDetailRow("Judul Broadcast:", broadcast.judulBroadcast),
                     _buildDetailRow("Isi Pesan:", broadcast.isiPesan),
                     _buildDetailRow("Tanggal Publikasi:", tanggalFormatted),
-                    _buildDetailRow("Dibuat oleh:", broadcast.dibuatOleh),
+                    _buildDetailRow("Dibuat oleh:", broadcast.dibuatOlehId.toString()),
                     const Divider(height: 24),
                     _buildAttachmentRow(
                         "Lampiran Gambar:", broadcast.lampiranGambar, Icons.image_outlined),

@@ -162,7 +162,7 @@ class TagihanDetailPage extends StatelessWidget {
                     _buildDetailRow("Kategori:", tagihan.kategori),
                     _buildDetailRow("Periode:", tagihan.periode),
                     _buildDetailRow("Nominal:", 'Rp $nominalFormatted'),
-                    _buildDetailRow("Nama KK:", tagihan.namaKK),
+                    _buildDetailRow("Nama KK:", tagihan.nikKK),
                     _buildDetailRow("Alamat:", tagihan.alamat),
                     _buildDetailRow("Metode Pembayaran:", tagihan.metodePembayaran.isEmpty ? '-' : tagihan.metodePembayaran),
                     const Divider(height: 24),

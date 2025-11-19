@@ -1,7 +1,8 @@
 // model untuk pemasukan
 class PemasukanModel {
   int? id;
-  String namaPemasukan, kategoriPemasukan, verifikator, bukti;
+  String namaPemasukan, kategoriPemasukan, bukti; 
+  int verifikatorId; // **DIREVISI:** Relasi ke UserModel.id
   double jumlahPemasukan;
   DateTime tanggalPemasukan, tanggalTerverifikasi;
 
@@ -9,7 +10,7 @@ class PemasukanModel {
     this.id,
     required this.namaPemasukan,
     required this.kategoriPemasukan,
-    required this.verifikator,
+    required this.verifikatorId, // **DIREVISI**
     required this.bukti,
     required this.jumlahPemasukan,
     required this.tanggalPemasukan,
@@ -21,10 +22,10 @@ class PemasukanModel {
     return PemasukanModel(
       id: map['id'],
       namaPemasukan: map['nama_pemasukan'],
-      jumlahPemasukan: map['jumlah_pemasukan'],
+      jumlahPemasukan: map['jumlah_pemasukan'] is int ? (map['jumlah_pemasukan'] as int).toDouble() : map['jumlah_pemasukan'],
       tanggalPemasukan: DateTime.parse(map['tanggal_pemasukan']),
       kategoriPemasukan: map['kategori_pemasukan'],
-      verifikator: map['verifikator'],
+      verifikatorId: map['verifikator_id'], // Menggunakan verifikator_id
       bukti: map['bukti'],
       tanggalTerverifikasi: DateTime.parse(map['tanggal_terverifikasi']),
     );
@@ -36,7 +37,7 @@ class PemasukanModel {
       'id': id,
       'nama_pemasukan': namaPemasukan,
       'kategori_pemasukan': kategoriPemasukan,
-      'verifikator': verifikator,
+      'verifikator_id': verifikatorId, // Menggunakan verifikator_id
       'bukti': bukti,
       'jumlah_pemasukan': jumlahPemasukan,
       'tanggal_pemasukan': tanggalPemasukan.toIso8601String(),
@@ -50,7 +51,7 @@ List<PemasukanModel> dummyPemasukan = [
     id: 1,
     namaPemasukan: 'Iuran Warga Bulan Januari',
     kategoriPemasukan: 'Iuran',
-    verifikator: 'Andi Wijaya',
+    verifikatorId: 201, // ID Andi Wijaya
     bukti: 'bukti_iuran_januari.jpg',
     jumlahPemasukan: 5000000.0,
     tanggalPemasukan: DateTime(2025, 1, 15),
@@ -60,7 +61,7 @@ List<PemasukanModel> dummyPemasukan = [
     id: 2,
     namaPemasukan: 'Penjualan Produk UMKM',
     kategoriPemasukan: 'Penjualan',
-    verifikator: 'Sinta Dewi',
+    verifikatorId: 202, // ID Sinta Dewi
     bukti: 'bukti_penjualan.pdf',
     jumlahPemasukan: 2500000.0,
     tanggalPemasukan: DateTime(2025, 1, 20),
@@ -70,7 +71,7 @@ List<PemasukanModel> dummyPemasukan = [
     id: 3,
     namaPemasukan: 'Donasi Sosial',
     kategoriPemasukan: 'Donasi',
-    verifikator: 'Budi Santoso',
+    verifikatorId: 103, // ID Budi Santoso
     bukti: 'bukti_donasi.jpg',
     jumlahPemasukan: 1500000.0,
     tanggalPemasukan: DateTime(2025, 2, 5),
@@ -80,7 +81,7 @@ List<PemasukanModel> dummyPemasukan = [
     id: 4,
     namaPemasukan: 'Pendapatan Sewa Gedung',
     kategoriPemasukan: 'Sewa',
-    verifikator: 'Rizky Maulana',
+    verifikatorId: 203, // ID Rizky Maulana
     bukti: 'bukti_sewa.pdf',
     jumlahPemasukan: 3000000.0,
     tanggalPemasukan: DateTime(2025, 2, 10),
@@ -90,7 +91,7 @@ List<PemasukanModel> dummyPemasukan = [
     id: 5,
     namaPemasukan: 'Bantuan Pemerintah',
     kategoriPemasukan: 'Bantuan',
-    verifikator: 'Dina Kartika',
+    verifikatorId: 204, // ID Dina Kartika
     bukti: 'bukti_bantuan.jpg',
     jumlahPemasukan: 10000000.0,
     tanggalPemasukan: DateTime(2025, 3, 1),
@@ -100,7 +101,7 @@ List<PemasukanModel> dummyPemasukan = [
     id: 6,
     namaPemasukan: 'Pendapatan Jasa Konsultasi',
     kategoriPemasukan: 'Jasa',
-    verifikator: 'Agus Prasetyo',
+    verifikatorId: 205, // ID Agus Prasetyo
     bukti: 'bukti_konsultasi.pdf',
     jumlahPemasukan: 4000000.0,
     tanggalPemasukan: DateTime(2025, 3, 15),
@@ -110,7 +111,7 @@ List<PemasukanModel> dummyPemasukan = [
     id: 7,
     namaPemasukan: 'Iuran Warga Bulan Februari',
     kategoriPemasukan: 'Iuran',
-    verifikator: 'Maya Putri',
+    verifikatorId: 206, // ID Maya Putri
     bukti: 'bukti_iuran_februari.jpg',
     jumlahPemasukan: 5200000.0,
     tanggalPemasukan: DateTime(2025, 4, 1),
@@ -120,7 +121,7 @@ List<PemasukanModel> dummyPemasukan = [
     id: 8,
     namaPemasukan: 'Pendapatan Investasi',
     kategoriPemasukan: 'Investasi',
-    verifikator: 'Andri Setiawan',
+    verifikatorId: 207, // ID Andri Setiawan
     bukti: 'bukti_investasi.pdf',
     jumlahPemasukan: 8000000.0,
     tanggalPemasukan: DateTime(2025, 4, 10),
@@ -130,7 +131,7 @@ List<PemasukanModel> dummyPemasukan = [
     id: 9,
     namaPemasukan: 'Sumbangan Masyarakat',
     kategoriPemasukan: 'Sumbangan',
-    verifikator: 'Tasya Amelia',
+    verifikatorId: 208, // ID Tasya Amelia
     bukti: 'bukti_sumbangan.jpg',
     jumlahPemasukan: 2000000.0,
     tanggalPemasukan: DateTime(2025, 5, 5),
@@ -140,7 +141,7 @@ List<PemasukanModel> dummyPemasukan = [
     id: 10,
     namaPemasukan: 'Pendapatan Event',
     kategoriPemasukan: 'Event',
-    verifikator: 'Fajar Ramadhan',
+    verifikatorId: 209, // ID Fajar Ramadhan
     bukti: 'bukti_event.pdf',
     jumlahPemasukan: 3500000.0,
     tanggalPemasukan: DateTime(2025, 5, 20),

@@ -145,7 +145,7 @@ class PengeluaranDetailPage extends StatelessWidget {
                     _buildDetailRow("Kategori Pengeluaran:", pengeluaran.kategoriPengeluaran),
                     _buildDetailRow("Jumlah Pengeluaran:", 'Rp $jumlahFormatted'),
                     _buildDetailRow("Tanggal Pengeluaran:", tanggalPengeluaranFormatted),
-                    _buildDetailRow("Verifikator:", pengeluaran.verifikator),
+                    _buildDetailRow("Verifikator:", pengeluaran.verifikatorId.toString()),
                     _buildDetailRow("Tanggal Terverifikasi:", tanggalTerverifikasiFormatted),
                     const Divider(height: 24),
                     _buildAttachmentRow("Bukti:", pengeluaran.bukti),
