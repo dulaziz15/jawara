@@ -18,6 +18,39 @@ class Channel {
     required this.qr,
     required this.catatan,
   });
+
+  // ===============================================
+  // 📥 Konversi dari Map (Firestore/JSON) ke Object
+  // ===============================================
+  factory Channel.fromMap(Map<String, dynamic> map) {
+    return Channel(
+      // ID bisa berupa String dari Firestore doc.id, jadi kita konversi ke int jika perlu
+      id: map['id'] is String ? int.tryParse(map['id']!) ?? 0 : map['id'] as int,
+      no: map['no'] as int,
+      nama: map['nama'] as String,
+      tipe: map['tipe'] as String,
+      an: map['an'] as String,
+      thumbnail: map['thumbnail'] as String,
+      qr: map['qr'] as String,
+      catatan: map['catatan'] as String,
+    );
+  }
+
+  // ===============================================
+  // 📤 Konversi dari Object ke Map (Untuk Firestore Write)
+  // ===============================================
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'no': no,
+      'nama': nama,
+      'tipe': tipe,
+      'an': an,
+      'thumbnail': thumbnail,
+      'qr': qr,
+      'catatan': catatan,
+    };
+  }
 }
 
 const List<Channel> dummyChannels = [

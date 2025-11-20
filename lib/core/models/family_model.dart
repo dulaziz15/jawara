@@ -7,6 +7,28 @@ class Family {
     required this.name,
   });
 
+  // ===============================================
+  // 📥 Konversi dari Map (Firestore/JSON) ke Object
+  // ===============================================
+  factory Family.fromMap(Map<String, dynamic> map) {
+    return Family(
+      nik: map['nik'] as String,
+      name: map['name'] as String,
+    );
+  }
+
+  // ===============================================
+  // 📤 Konversi dari Object ke Map (Untuk Firestore Write)
+  // ===============================================
+  Map<String, dynamic> toMap() {
+    // Hanya menyimpan field inti. 
+    // Field 'nik' juga akan menjadi ID Dokumen di Firestore.
+    return {
+      'nik': nik,
+      'name': name,
+    };
+  }
+
   // Contoh data dummy Family yang berelasi dengan UserModel
   static final List<Family> dummyFamilies = [
     Family(nik: '1111111111111111', name: 'Ahmad Surya'),
