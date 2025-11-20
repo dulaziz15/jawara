@@ -1,8 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class ActivityModel {
   final int no;
   final String description;
-  final String actor; // Relasi ke UserModel.nama
-  final String date;
+  final String actor; 
+  // 💡 PERUBAHAN: Menggunakan DateTime untuk mempermudah sorting dan filtering
+  final DateTime date; 
 
   const ActivityModel({
     required this.no,
@@ -10,68 +13,99 @@ class ActivityModel {
     required this.actor,
     required this.date,
   });
-}
 
-/// === DATA DUMMY ===
-final List<ActivityModel> daftarAktivitas = const [
+  // Konversi dari Object ke Map (Untuk Firestore Write/Simpan)
+  Map<String, dynamic> toMap() {
+    return {
+      'no': no,
+      'description': description,
+      'actor': actor,
+      // 🔑 Mengubah DateTime menjadi Timestamp (Tipe data ideal di Firestore)
+      'date': Timestamp.fromDate(date), 
+    };
+  }
+
+  // Konversi dari Map ke Object (Untuk Firestore Read/Ambil)
+  factory ActivityModel.fromMap(Map<String, dynamic> map) {
+    return ActivityModel(
+      no: map['no'] as int,
+      description: map['description'] as String,
+      actor: map['actor'] as String,
+      // 🔑 Mengubah Timestamp dari Firestore menjadi DateTime di Dart
+      date: (map['date'] as Timestamp).toDate(), 
+    );
+  }
+}
+/// === DATA DUMMY (Setelah Konversi ke DateTime) ===
+final List<ActivityModel> daftarAktivitas = [
   ActivityModel(
     no: 1,
     description: 'Menambahkan rumah baru dengan alamat: fasda',
     actor: 'Admin Jawara',
-    date: '10 Oktober 2025',
+    // 10 Oktober 2025
+    date: DateTime(2025, 10, 10), 
   ),
   ActivityModel(
     no: 2,
     description: 'Menyetujui pesan warga: tes',
     actor: 'Admin Jawara',
-    date: '11 Oktober 2025',
+    // 11 Oktober 2025
+    date: DateTime(2025, 10, 11), 
   ),
   ActivityModel(
     no: 3,
     description: 'Menghapus event: Lomba 17agustus pada ate 16 Agustus 2025',
     actor: 'Admin Jawara',
-    date: '14 Oktober 2025',
+    // 14 Oktober 2025
+    date: DateTime(2025, 10, 14), 
   ),
   ActivityModel(
     no: 4,
     description: 'Menambahkan pengguna baru: John Doe',
     actor: 'Admin Jawara',
-    date: '15 Oktober 2025',
+    // 15 Oktober 2025
+    date: DateTime(2025, 10, 15), 
   ),
   ActivityModel(
     no: 5,
     description: 'Mengedit data warga: Jane Smith',
     actor: 'Admin Jawara',
-    date: '16 Oktober 2025',
+    // 16 Oktober 2025
+    date: DateTime(2025, 10, 16), 
   ),
   ActivityModel(
     no: 6,
     description: 'Menolak permintaan: Pembangunan jalan',
     actor: 'Admin Jawara',
-    date: '17 Oktober 2025',
+    // 17 Oktober 2025
+    date: DateTime(2025, 10, 17), 
   ),
   ActivityModel(
     no: 7,
     description: 'Menyetujui laporan keuangan bulan Oktober',
     actor: 'Admin Jawara',
-    date: '18 Oktober 2025',
+    // 18 Oktober 2025
+    date: DateTime(2025, 10, 18), 
   ),
   ActivityModel(
     no: 8,
     description: 'Menghapus broadcast: Pengumuman RT',
     actor: 'Admin Jawara',
-    date: '19 Oktober 2025',
+    // 19 Oktober 2025
+    date: DateTime(2025, 10, 19), 
   ),
   ActivityModel(
     no: 9,
     description: 'Menambahkan kegiatan: Gotong Royong',
     actor: 'Admin Jawara',
-    date: '20 Oktober 2025',
+    // 20 Oktober 2025
+    date: DateTime(2025, 10, 20), 
   ),
   ActivityModel(
     no: 10,
     description: 'Mengupdate status pengguna: Aktif',
     actor: 'Admin Jawara',
-    date: '21 Oktober 2025',
+    // 21 Oktober 2025
+    date: DateTime(2025, 10, 21), 
   ),
 ];

@@ -18,9 +18,43 @@ class UserModel {
     required this.noHp,
     required this.jenisKelamin,
   });
+
+  // ===============================================
+  // 📥 Konversi dari Map (Firestore/JSON) ke Object
+  // ===============================================
+  factory UserModel.fromMap(Map<String, dynamic> map) {
+    return UserModel(
+      // ID sering kali disimpan sebagai string di Firestore, 
+      // jadi kita pastikan konversi ke int aman:
+      id: map['id'] is String ? int.tryParse(map['id']) ?? 0 : map['id'] as int,
+      nama: map['nama'] as String,
+      email: map['email'] as String,
+      status: map['status'] as String,
+      role: map['role'] as String,
+      nik: map['nik'] as String,
+      noHp: map['noHp'] as String,
+      jenisKelamin: map['jenisKelamin'] as String,
+    );
+  }
+
+  // ===============================================
+  // 📤 Konversi dari Object ke Map (Untuk Firestore Write)
+  // ===============================================
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'nama': nama,
+      'email': email,
+      'status': status,
+      'role': role,
+      'nik': nik,
+      'noHp': noHp,
+      'jenisKelamin': jenisKelamin,
+    };
+  }
 }
 
-// Data Dummy Aktor/Pengguna
+// Data Dummy Aktor/Pengguna (Tidak berubah)
 final List<UserModel> daftarPengguna = const [
   UserModel(
     id: 101, // Admin Jawara

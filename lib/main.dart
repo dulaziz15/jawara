@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:jawara/core/routes/app_router.dart';
 import 'package:firebase_core/firebase_core.dart'; 
 import 'firebase_options.dart'; 
+import 'package:jawara/core/services/data_migrator.dart';
 final _appRouter = AppRouter();
 
 void main() async { 
@@ -10,7 +11,10 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  
+  // **********************************************
+  // !!! PENTING: JALANKAN INI HANYA SEKALI SAJA !!!
+  // HAPUS ATAU KOMENTARI BARIS DI BAWAH INI SETELAH BERHASIL MIGRASI PERTAMA.
+  await migrateDummyDataToFirestore();
   runApp(MyApp());
 }
 
