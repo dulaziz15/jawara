@@ -1,20 +1,19 @@
-// model untuk kegiatan
 class KegiatanModel {
   int? id;
   String namaKegiatan, kategoriKegiatan, deskripsi, lokasi, dokumentasi;
-  int penanggungJawabId; // **DIREVISI:** Relasi ke UserModel.id
-  int dibuatOlehId; // **DIREVISI:** Relasi ke UserModel.id
+  int penanggungJawabId; 
+  int dibuatOlehId; 
   DateTime tanggalPelaksanaan;
 
   KegiatanModel({
     this.id,
     required this.namaKegiatan,
     required this.kategoriKegiatan,
-    required this.penanggungJawabId, // **DIREVISI**
+    required this.penanggungJawabId, 
     required this.deskripsi,
     required this.tanggalPelaksanaan,
     required this.lokasi,
-    required this.dibuatOlehId, // **DIREVISI**
+    required this.dibuatOlehId, 
     required this.dokumentasi,
   });
 

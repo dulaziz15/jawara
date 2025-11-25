@@ -6,9 +6,8 @@ class TagihanModel {
   String kategori; 
   String periode;
   double nominal;
-  String status; // unpaid/paid
-  String nikKK; // **DIREVISI:** Relasi ke Family/UserModel.nik
-  String alamat;
+  String status;
+  String nik; 
   String metodePembayaran;
   String bukti;
   String alasanPenolakan;
@@ -21,8 +20,7 @@ class TagihanModel {
     required this.periode,
     required this.nominal,
     required this.status,
-    required this.nikKK, 
-    required this.alamat,
+    required this.nik, 
     required this.metodePembayaran,
     required this.bukti,
     required this.alasanPenolakan,
@@ -38,8 +36,7 @@ class TagihanModel {
       periode: map['periode'],
       nominal: map['nominal'] is int ? (map['nominal'] as int).toDouble() : map['nominal'],
       status: map['status'],
-      nikKK: map['nik_kk'], // Menggunakan nik_kk
-      alamat: map['alamat'],
+      nik: map['nik'], // Menggunakan nik
       metodePembayaran: map['metode_pembayaran'],
       bukti: map['bukti'],
       alasanPenolakan: map['alasan_penolakan'],
@@ -56,8 +53,7 @@ class TagihanModel {
       'periode': periode,
       'nominal': nominal,
       'status': status,
-      'nik_kk': nikKK, // Menggunakan nik_kk
-      'alamat': alamat,
+      'nik': nik, // Menggunakan nik
       'metode_pembayaran': metodePembayaran,
       'bukti': bukti,
       'alasan_penolakan': alasanPenolakan,
@@ -74,8 +70,7 @@ List<TagihanModel> dummyTagihan = [
     periode: 'Januari 2025',
     nominal: 50000.0,
     status: 'paid',
-    nikKK: '1111111111111111', // NIK Ahmad Surya
-    alamat: 'Jl. Merdeka No. 1',
+    nik: '1111111111111111', // NIK Ahmad Surya
     metodePembayaran: 'Transfer Bank',
     bukti: 'bukti_transfer_kebersihan.jpg',
     alasanPenolakan: '',
@@ -88,8 +83,7 @@ List<TagihanModel> dummyTagihan = [
     periode: 'Februari 2025',
     nominal: 75000.0,
     status: 'unpaid',
-    nikKK: '2222222222222222', // NIK Budi Santoso
-    alamat: 'Jl. Sudirman No. 15',
+    nik: '2222222222222222', // NIK Budi Santoso
     metodePembayaran: '',
     bukti: '',
     alasanPenolakan: '',
@@ -102,8 +96,7 @@ List<TagihanModel> dummyTagihan = [
     periode: 'Maret 2025',
     nominal: 30000.0,
     status: 'paid',
-    nikKK: '3333333333333333', // NIK Citra Dewi
-    alamat: 'Jl. Diponegoro No. 8',
+    nik: '3333333333333333', // NIK Citra Dewi
     metodePembayaran: 'Cash',
     bukti: 'bukti_cash_sosial.jpg',
     alasanPenolakan: '',
@@ -116,8 +109,7 @@ List<TagihanModel> dummyTagihan = [
     periode: 'April 2025',
     nominal: 100000.0,
     status: 'unpaid',
-    nikKK: '4444444444444444', // NIK Dedi Rahman
-    alamat: 'Jl. Veteran No. 22',
+    nik: '4444444444444444', // NIK Dedi Rahman
     metodePembayaran: '',
     bukti: '',
     alasanPenolakan: '',
@@ -130,8 +122,7 @@ List<TagihanModel> dummyTagihan = [
     periode: 'Mei 2025',
     nominal: 60000.0,
     status: 'paid',
-    nikKK: '5555555555555555', // NIK Eka Putri
-    alamat: 'Jl. Asia Afrika No. 5',
+    nik: '5555555555555555', // NIK Eka Putri
     metodePembayaran: 'E-Wallet',
     bukti: 'bukti_ewallet_pendidikan.jpg',
     alasanPenolakan: '',

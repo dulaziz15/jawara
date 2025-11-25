@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
-import 'model_mutasi.dart'; // Import model baru
+import '../../../core/models/model_mutasi.dart'; // Import model baru
 
 @RoutePage()
 class TambahMutasiPage extends StatefulWidget {

@@ -1,8 +1,7 @@
-// model untuk iuran
 class IuranModel {
   int? id;
   String namaIuran, kategoriIuran;
-  int verifikatorId; // **DIREVISI:** Relasi ke UserModel.id
+  int verifikatorId; 
   String bukti;
   double jumlah;
   DateTime tanggalIuran, tanggalTerverifikasi;

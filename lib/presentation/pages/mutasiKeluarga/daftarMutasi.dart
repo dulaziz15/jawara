@@ -1,7 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'filter_mutasi.dart';
-import 'model_mutasi.dart'; // Import model baru
+import '../../../core/models/model_mutasi.dart'; // Import model baru
 
 // -----------------------------------------------------------------------------
 // PAGE: Daftar Mutasi Keluarga

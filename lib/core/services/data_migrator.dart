@@ -38,7 +38,7 @@ Future<void> migrateDummyDataToFirestore() async {
     final familyCollection = _db.collection('families');
     print('Migrating families...');
     for (var family in Family.dummyFamilies) {
-      await familyCollection.doc(family.nik).set(family.toMap()); 
+      await familyCollection.doc(family.noKk).set(family.toMap()); 
     }
     print('✅ Families migration complete.');
 
