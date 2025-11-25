@@ -29,7 +29,7 @@ class _AspirasiPageState extends State<AspirasiPage> {
   @override
   void initState() {
     super.initState();
-    _filteredAspirasi = List.from(_allAspirasi);
+    _filteredAspirasi = List.from(allAspirasi);
     _updatePagination();
   }
 
@@ -92,7 +92,7 @@ class _AspirasiPageState extends State<AspirasiPage> {
         _currentPage = 1;
 
         // Pastikan _allAspirasi tidak null
-        final allData = _allAspirasi;
+        final allData = allAspirasi;
         
         List<AspirationData> statusFilteredData;
         if (status == 'Semua') {
@@ -120,7 +120,7 @@ class _AspirasiPageState extends State<AspirasiPage> {
     } catch (e) {
       print('Error applying filter: $e');
       setState(() {
-        _filteredAspirasi = List.from(_allAspirasi);
+        _filteredAspirasi = List.from(allAspirasi);
         _updatePagination();
       });
     }
@@ -131,8 +131,8 @@ class _AspirasiPageState extends State<AspirasiPage> {
       setState(() {
         _currentPage = 1;
         
-        // Pastikan _allAspirasi tidak null
-        final allData = _allAspirasi;
+        // Pastikan allAspirasi tidak null
+        final allData = allAspirasi;
         
         List<AspirationData> searchFilteredData;
         if (value.isEmpty) {
@@ -158,7 +158,7 @@ class _AspirasiPageState extends State<AspirasiPage> {
     } catch (e) {
       print('Error in search: $e');
       setState(() {
-        _filteredAspirasi = List.from(_allAspirasi);
+        _filteredAspirasi = List.from(allAspirasi);
         _updatePagination();
       });
     }
@@ -206,7 +206,7 @@ class _AspirasiPageState extends State<AspirasiPage> {
   // FUNGSI DELETE ASPIRASI
   void _deleteAspirasi(AspirationData item) {
     setState(() {
-      _allAspirasi.removeWhere((a) => a.judul == item.judul);
+      allAspirasi.removeWhere((a) => a.judul == item.judul);
       _applyFilter(_selectedFilter); // Re-apply filter to update the list
     });
     

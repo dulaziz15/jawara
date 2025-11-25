@@ -238,7 +238,8 @@ class _TagihanDaftarPageState extends State<TagihanDaftarPage> {
   }
 
   Widget _buildDataCard(TagihanModel item) {
-    final namaKK = _getNamaKeluarga(item.nikKepalaKeluarga);
+    final namaKK = _getNamaKeluarga(item.nik);
+
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
@@ -298,7 +299,7 @@ class _TagihanDaftarPageState extends State<TagihanDaftarPage> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'Nama KK: ${item.nmaKeluarga}',
+                        'Nama KK: ${namaKK}',
                         style: const TextStyle(
                           color: Colors.grey,
                           fontSize: 14,

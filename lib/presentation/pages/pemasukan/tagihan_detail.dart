@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:jawara/core/models/tagihan_model.dart';
 import 'package:jawara/core/utils/formatter_util.dart';
+import 'package:jawara/core/models/family_model.dart';
 
 @RoutePage()
 class TagihanDetailPage extends StatelessWidget {
@@ -85,6 +86,21 @@ class TagihanDetailPage extends StatelessWidget {
     );
   }
 
+  String _getNamaKeluarga(String nikKepalaKeluarga) {
+    final family = Family.dummyFamilies.firstWhere(
+      (f) => f.nikKepalaKeluarga == nikKepalaKeluarga,
+      orElse: () => Family.dummyFamilies.first,
+    );
+    return family.namaKeluarga;
+  }
+
+  String _getAlamat(String nikKepalaKeluarga) {
+    final family = Family.dummyFamilies.firstWhere(
+      (f) => f.nikKepalaKeluarga == nikKepalaKeluarga,
+      orElse: () => Family.dummyFamilies.first,
+    );
+    return family.alamatRumah;
+  }
   // Helper widget untuk status dengan badge
   Widget _buildStatusBadge(String status) {
     Color statusColor;
@@ -126,6 +142,8 @@ class TagihanDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     // Ambil data tagihan yang sesuai berdasarkan ID
     final tagihan = dummyTagihan.firstWhere((item) => item.id == tagihanId);
+    final namaKeluarga = _getNamaKeluarga(tagihan.nik);
+    final alamat = _getAlamat(tagihan.nik);
 
     // Format nominal
     final String nominalFormatted = FormatterUtil.formatCurrency(tagihan.nominal);
@@ -162,8 +180,8 @@ class TagihanDetailPage extends StatelessWidget {
                     _buildDetailRow("Kategori:", tagihan.kategori),
                     _buildDetailRow("Periode:", tagihan.periode),
                     _buildDetailRow("Nominal:", 'Rp $nominalFormatted'),
-                    _buildDetailRow("Nama KK:", tagihan.nikKK),
-                    _buildDetailRow("Alamat:", tagihan.alamat),
+                    _buildDetailRow("Nama KK:", namaKeluarga),
+                    _buildDetailRow("Alamat:", alamat),
                     _buildDetailRow("Metode Pembayaran:", tagihan.metodePembayaran.isEmpty ? '-' : tagihan.metodePembayaran),
                     const Divider(height: 24),
                     _buildAttachmentRow("Bukti Pembayaran:", tagihan.bukti),
