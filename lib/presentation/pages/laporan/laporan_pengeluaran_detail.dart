@@ -148,7 +148,7 @@ class LaporanPengeluaranDetailPage extends StatelessWidget {
                     _buildDetailRow("Verifikator:", pengeluaran.verifikatorId.toString()),
                     _buildDetailRow("Tanggal Terverifikasi:", tanggalTerverifikasiFormatted),
                     const Divider(height: 24),
-                    _buildAttachmentRow("Bukti:", pengeluaran.bukti),
+                    _buildAttachmentRow("Bukti:", pengeluaran.buktiPengeluaran),
                   ],
                 ),
               ),

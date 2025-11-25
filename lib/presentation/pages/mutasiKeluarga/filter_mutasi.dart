@@ -1,6 +1,6 @@
 // filter_mutasi.dart
 import 'package:flutter/material.dart';
-import 'model_mutasi.dart';
+import '../../../core/models/model_mutasi.dart';
 
 class FilterMutasiKeluargaDialog extends StatefulWidget {
   final String initialJenisMutasi;

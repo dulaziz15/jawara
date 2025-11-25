@@ -1,6 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'model_aspirasi.dart';
+import '../../../core/models/model_aspirasi.dart';
 import 'filter.dart';
 import 'edit_aspirasi.dart';
 
@@ -14,93 +14,7 @@ class AspirasiPage extends StatefulWidget {
 }
 
 class _AspirasiPageState extends State<AspirasiPage> {
-  final List<AspirationData> _allAspirasi = [
-    AspirationData(
-      judul: 'Lampu jalan di persimpangan padam',
-      deskripsi:
-          'Pada hari minggu malam saya cek lampu nya berkedip kemudian keesokan hari nya lampu sudah mati total',
-      status: 'Pending',
-      pengirim: 'Tono',
-      tanggal: '10-10-2025',
-    ),
-    AspirationData(
-      judul: 'Tempat sampah kurang',
-      deskripsi: 'aku hanya ingin pergi ke wisata kota yang ada di malang',
-      status: 'Diproses',
-      pengirim: 'Budi Doremi',
-      tanggal: '12-10-2025',
-    ),
-    AspirationData(
-      judul: 'Pipa bocor',
-      deskripsi: 'pipa bocor karena tidak sengaja saat penggalian tanah',
-      status: 'Diproses',
-      pengirim: 'Ehsan',
-      tanggal: '13-10-2025',
-    ),
-    AspirationData(
-      judul: 'Jalan rusak',
-      deskripsi: 'Jalan rusak akibat ada truk tronton lewat dini hari',
-      status: 'Selesai',
-      pengirim: 'Darmini',
-      tanggal: '1-09-2025',
-    ),
-    AspirationData(
-      judul: 'Jalan rusak 2',
-      deskripsi: 'Jalan rusak akibat ada truk tronton lewat dini hari',
-      status: 'Selesai',
-      pengirim: 'Darmini',
-      tanggal: '1-09-2025',
-    ),
-    AspirationData(
-      judul: 'Jalan rusak 3',
-      deskripsi: 'Jalan rusak akibat ada truk tronton lewat dini hari',
-      status: 'Selesai',
-      pengirim: 'Darmini',
-      tanggal: '1-09-2025',
-    ),
-    AspirationData(
-      judul: 'Jalan rusak 4',
-      deskripsi: 'Jalan rusak akibat ada truk tronton lewat dini hari',
-      status: 'Selesai',
-      pengirim: 'Darmini',
-      tanggal: '1-09-2025',
-    ),
-    AspirationData(
-      judul: 'Jalan rusak 5',
-      deskripsi: 'Jalan rusak akibat ada truk tronton lewat dini hari',
-      status: 'Selesai',
-      pengirim: 'Darmini',
-      tanggal: '1-09-2025',
-    ),
-    AspirationData(
-      judul: 'Jalan rusak 6',
-      deskripsi: 'Jalan rusak akibat ada truk tronton lewat dini hari',
-      status: 'Selesai',
-      pengirim: 'Darmini',
-      tanggal: '1-09-2025',
-    ),
-    AspirationData(
-      judul: 'Jalan rusak 7',
-      deskripsi: 'Jalan rusak akibat ada truk tronton lewat dini hari',
-      status: 'Selesai',
-      pengirim: 'Darmini',
-      tanggal: '1-09-2025',
-    ),
-    AspirationData(
-      judul: 'Jalan rusak 8',
-      deskripsi: 'Jalan rusak akibat ada truk tronton lewat dini hari',
-      status: 'Selesai',
-      pengirim: 'Darmini',
-      tanggal: '1-09-2025',
-    ),
-    AspirationData(
-      judul: 'Jalan rusak 9',
-      deskripsi: 'Jalan rusak akibat ada truk tronton lewat dini hari',
-      status: 'Selesai',
-      pengirim: 'Darmini',
-      tanggal: '1-09-2025',
-    ),
-  ];
+  
 
   List<AspirationData> _filteredAspirasi = [];
   List<AspirationData> _currentPageData = [];

@@ -1,10 +1,18 @@
 class Family {
-  final String nik; // Relasi ke UserModel.nik
-  final String name;
+  final String noKk; // Nomor Kartu Keluarga
+  final String namaKeluarga; // Nama Keluarga
+  final String nikKepalaKeluarga; // NIK Kepala Keluarga (Nama Warga dapat diambil via relasi)
+  final String alamatRumah; // Alamat Rumah
+  final String statusKepemilikanRumah; // Status Kepemilikan Rumah
+  final String statusDomisiliKeluarga; // Status Domisili Keluarga (Aktif/Nonaktif)
 
   Family({
-    required this.nik,
-    required this.name,
+    required this.noKk,
+    required this.namaKeluarga,
+    required this.nikKepalaKeluarga,
+    required this.alamatRumah,
+    required this.statusKepemilikanRumah,
+    required this.statusDomisiliKeluarga,
   });
 
   // ===============================================
@@ -12,8 +20,12 @@ class Family {
   // ===============================================
   factory Family.fromMap(Map<String, dynamic> map) {
     return Family(
-      nik: map['nik'] as String,
-      name: map['name'] as String,
+      noKk: map['noKk'] as String,
+      namaKeluarga: map['namaKeluarga'] as String,
+      nikKepalaKeluarga: map['nikKepalaKeluarga'] as String,
+      alamatRumah: map['alamatRumah'] as String,
+      statusKepemilikanRumah: map['statusKepemilikanRumah'] as String,
+      statusDomisiliKeluarga: map['statusDomisiliKeluarga'] as String,
     );
   }
 
@@ -21,28 +33,56 @@ class Family {
   // 📤 Konversi dari Object ke Map (Untuk Firestore Write)
   // ===============================================
   Map<String, dynamic> toMap() {
-    // Hanya menyimpan field inti. 
-    // Field 'nik' juga akan menjadi ID Dokumen di Firestore.
     return {
-      'nik': nik,
-      'name': name,
+      'noKk': noKk,
+      'namaKeluarga': namaKeluarga,
+      'nikKepalaKeluarga': nikKepalaKeluarga,
+      'alamatRumah': alamatRumah,
+      'statusKepemilikanRumah': statusKepemilikanRumah,
+      'statusDomisiliKeluarga': statusDomisiliKeluarga,
     };
   }
 
-  // Contoh data dummy Family yang berelasi dengan UserModel
+  // ===============================================
+  // 📌 Dummy Families
+  // ===============================================
   static final List<Family> dummyFamilies = [
-    Family(nik: '1111111111111111', name: 'Ahmad Surya'),
-    Family(nik: '2222222222222222', name: 'Budi Santoso'),
-    Family(nik: '3333333333333333', name: 'Citra Dewi'), 
-    Family(nik: '4444444444444444', name: 'Dedi Rahman'), 
-    Family(nik: '5555555555555555', name: 'Eka Putri'), 
-    Family(nik: '1234567890123451', name: 'Admin Jawara'),
-    Family(nik: '9000000000000001', name: 'Andi Wijaya'),
-    Family(nik: '8000000000000001', name: 'John Doe'),
+    Family(
+      noKk: '3501010101010001',
+      namaKeluarga: 'Keluarga Surya',
+      nikKepalaKeluarga: '1111111111111111',
+      alamatRumah: 'Jl. Mawar No. 10, Malang',
+      statusKepemilikanRumah: 'Milik Sendiri',
+      statusDomisiliKeluarga: 'Aktif',
+    ),
+    Family(
+      noKk: '3501010101010002',
+      namaKeluarga: 'Keluarga Santoso',
+      nikKepalaKeluarga: '2222222222222222',
+      alamatRumah: 'Jl. Kenanga No. 21, Malang',
+      statusKepemilikanRumah: 'Kontrak',
+      statusDomisiliKeluarga: 'Aktif',
+    ),
+    Family(
+      noKk: '3501010101010003',
+      namaKeluarga: 'Keluarga Dewi',
+      nikKepalaKeluarga: '3333333333333333',
+      alamatRumah: 'Jl. Melati No. 33, Malang',
+      statusKepemilikanRumah: 'Kontrak',
+      statusDomisiliKeluarga: 'Nonaktif',
+    ),
+    Family(
+      noKk: '3501010101010004',
+      namaKeluarga: 'Keluarga Rahman',
+      nikKepalaKeluarga: '4444444444444444',
+      alamatRumah: 'Jl. Anggrek No. 18, Malang',
+      statusKepemilikanRumah: 'Milik Sendiri',
+      statusDomisiliKeluarga: 'Aktif',
+    ),
   ];
 
   @override
   String toString() {
-    return 'Family{nik: $nik, name: $name}';
+    return 'Family{noKk: $noKk, namaKeluarga: $namaKeluarga, nikKepalaKeluarga: $nikKepalaKeluarga, alamatRumah: $alamatRumah, statusKepemilikanRumah: $statusKepemilikanRumah, statusDomisiliKeluarga: $statusDomisiliKeluarga}';
   }
 }

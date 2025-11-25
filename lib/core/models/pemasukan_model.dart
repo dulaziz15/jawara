@@ -1,8 +1,8 @@
 // model untuk pemasukan
 class PemasukanModel {
   int? id;
-  String namaPemasukan, kategoriPemasukan, bukti; 
-  int verifikatorId; // **DIREVISI:** Relasi ke UserModel.id
+  String namaPemasukan, kategoriPemasukan, buktiPemasukan; 
+  int verifikatorId;
   double jumlahPemasukan;
   DateTime tanggalPemasukan, tanggalTerverifikasi;
 
@@ -10,8 +10,8 @@ class PemasukanModel {
     this.id,
     required this.namaPemasukan,
     required this.kategoriPemasukan,
-    required this.verifikatorId, // **DIREVISI**
-    required this.bukti,
+    required this.verifikatorId, 
+    required this.buktiPemasukan,
     required this.jumlahPemasukan,
     required this.tanggalPemasukan,
     required this.tanggalTerverifikasi,
@@ -26,7 +26,7 @@ class PemasukanModel {
       tanggalPemasukan: DateTime.parse(map['tanggal_pemasukan']),
       kategoriPemasukan: map['kategori_pemasukan'],
       verifikatorId: map['verifikator_id'], // Menggunakan verifikator_id
-      bukti: map['bukti'],
+      buktiPemasukan: map['buktiPemasukan'],
       tanggalTerverifikasi: DateTime.parse(map['tanggal_terverifikasi']),
     );
   }
@@ -38,7 +38,7 @@ class PemasukanModel {
       'nama_pemasukan': namaPemasukan,
       'kategori_pemasukan': kategoriPemasukan,
       'verifikator_id': verifikatorId, // Menggunakan verifikator_id
-      'bukti': bukti,
+      'buktiPemasukan': buktiPemasukan,
       'jumlah_pemasukan': jumlahPemasukan,
       'tanggal_pemasukan': tanggalPemasukan.toIso8601String(),
       'tanggal_terverifikasi': tanggalTerverifikasi.toIso8601String(),
@@ -52,7 +52,7 @@ List<PemasukanModel> dummyPemasukan = [
     namaPemasukan: 'Iuran Warga Bulan Januari',
     kategoriPemasukan: 'Iuran',
     verifikatorId: 201, // ID Andi Wijaya
-    bukti: 'bukti_iuran_januari.jpg',
+    buktiPemasukan: 'bukti_iuran_januari.jpg',
     jumlahPemasukan: 5000000.0,
     tanggalPemasukan: DateTime(2025, 1, 15),
     tanggalTerverifikasi: DateTime(2025, 1, 16),
@@ -62,7 +62,7 @@ List<PemasukanModel> dummyPemasukan = [
     namaPemasukan: 'Penjualan Produk UMKM',
     kategoriPemasukan: 'Penjualan',
     verifikatorId: 202, // ID Sinta Dewi
-    bukti: 'bukti_penjualan.pdf',
+    buktiPemasukan: 'bukti_penjualan.pdf',
     jumlahPemasukan: 2500000.0,
     tanggalPemasukan: DateTime(2025, 1, 20),
     tanggalTerverifikasi: DateTime(2025, 1, 21),
@@ -72,7 +72,7 @@ List<PemasukanModel> dummyPemasukan = [
     namaPemasukan: 'Donasi Sosial',
     kategoriPemasukan: 'Donasi',
     verifikatorId: 103, // ID Budi Santoso
-    bukti: 'bukti_donasi.jpg',
+    buktiPemasukan: 'bukti_donasi.jpg',
     jumlahPemasukan: 1500000.0,
     tanggalPemasukan: DateTime(2025, 2, 5),
     tanggalTerverifikasi: DateTime(2025, 2, 6),
@@ -82,7 +82,7 @@ List<PemasukanModel> dummyPemasukan = [
     namaPemasukan: 'Pendapatan Sewa Gedung',
     kategoriPemasukan: 'Sewa',
     verifikatorId: 203, // ID Rizky Maulana
-    bukti: 'bukti_sewa.pdf',
+    buktiPemasukan: 'bukti_sewa.pdf',
     jumlahPemasukan: 3000000.0,
     tanggalPemasukan: DateTime(2025, 2, 10),
     tanggalTerverifikasi: DateTime(2025, 2, 12),
@@ -92,7 +92,7 @@ List<PemasukanModel> dummyPemasukan = [
     namaPemasukan: 'Bantuan Pemerintah',
     kategoriPemasukan: 'Bantuan',
     verifikatorId: 204, // ID Dina Kartika
-    bukti: 'bukti_bantuan.jpg',
+    buktiPemasukan: 'bukti_bantuan.jpg',
     jumlahPemasukan: 10000000.0,
     tanggalPemasukan: DateTime(2025, 3, 1),
     tanggalTerverifikasi: DateTime(2025, 3, 2),
@@ -102,7 +102,7 @@ List<PemasukanModel> dummyPemasukan = [
     namaPemasukan: 'Pendapatan Jasa Konsultasi',
     kategoriPemasukan: 'Jasa',
     verifikatorId: 205, // ID Agus Prasetyo
-    bukti: 'bukti_konsultasi.pdf',
+    buktiPemasukan: 'bukti_konsultasi.pdf',
     jumlahPemasukan: 4000000.0,
     tanggalPemasukan: DateTime(2025, 3, 15),
     tanggalTerverifikasi: DateTime(2025, 3, 16),
@@ -112,7 +112,7 @@ List<PemasukanModel> dummyPemasukan = [
     namaPemasukan: 'Iuran Warga Bulan Februari',
     kategoriPemasukan: 'Iuran',
     verifikatorId: 206, // ID Maya Putri
-    bukti: 'bukti_iuran_februari.jpg',
+    buktiPemasukan: 'bukti_iuran_februari.jpg',
     jumlahPemasukan: 5200000.0,
     tanggalPemasukan: DateTime(2025, 4, 1),
     tanggalTerverifikasi: DateTime(2025, 4, 2),
@@ -122,7 +122,7 @@ List<PemasukanModel> dummyPemasukan = [
     namaPemasukan: 'Pendapatan Investasi',
     kategoriPemasukan: 'Investasi',
     verifikatorId: 207, // ID Andri Setiawan
-    bukti: 'bukti_investasi.pdf',
+    buktiPemasukan: 'bukti_investasi.pdf',
     jumlahPemasukan: 8000000.0,
     tanggalPemasukan: DateTime(2025, 4, 10),
     tanggalTerverifikasi: DateTime(2025, 4, 11),
@@ -132,7 +132,7 @@ List<PemasukanModel> dummyPemasukan = [
     namaPemasukan: 'Sumbangan Masyarakat',
     kategoriPemasukan: 'Sumbangan',
     verifikatorId: 208, // ID Tasya Amelia
-    bukti: 'bukti_sumbangan.jpg',
+    buktiPemasukan: 'bukti_sumbangan.jpg',
     jumlahPemasukan: 2000000.0,
     tanggalPemasukan: DateTime(2025, 5, 5),
     tanggalTerverifikasi: DateTime(2025, 5, 6),
@@ -142,7 +142,7 @@ List<PemasukanModel> dummyPemasukan = [
     namaPemasukan: 'Pendapatan Event',
     kategoriPemasukan: 'Event',
     verifikatorId: 209, // ID Fajar Ramadhan
-    bukti: 'bukti_event.pdf',
+    buktiPemasukan: 'bukti_event.pdf',
     jumlahPemasukan: 3500000.0,
     tanggalPemasukan: DateTime(2025, 5, 20),
     tanggalTerverifikasi: DateTime(2025, 5, 21),
