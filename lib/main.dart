@@ -14,7 +14,7 @@ void main() async {
   // **********************************************
   // !!! PENTING: JALANKAN INI HANYA SEKALI SAJA !!!
   // HAPUS ATAU KOMENTARI BARIS DI BAWAH INI SETELAH BERHASIL MIGRASI PERTAMA.
-  await migrateDummyDataToFirestore();
+  // await migrateDummyDataToFirestore();
   runApp(MyApp());
 }
 

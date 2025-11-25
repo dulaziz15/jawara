@@ -8,6 +8,8 @@ class UserModel {
   final String statusDomisili; // Aktif / Nonaktif
   final String statusHidup; // Hidup / Meninggal
   final String buktiIdentitas; // Path gambar KTP
+  final String role;
+  final String noHp;
 
   const UserModel({
     required this.id,
@@ -19,6 +21,8 @@ class UserModel {
     required this.statusDomisili,
     required this.statusHidup,
     required this.buktiIdentitas,
+    required this.role,
+    required this.noHp,
   });
 
   // ===============================================
@@ -35,6 +39,8 @@ class UserModel {
       statusDomisili: map['statusDomisili'] as String,
       statusHidup: map['statusHidup'] as String,
       buktiIdentitas: map['buktiIdentitas'] as String,
+      role: map['role'] as String,
+      noHp: map['noHp'] as String,
     );
   }
 
@@ -52,6 +58,8 @@ class UserModel {
       'statusDomisili': statusDomisili,
       'statusHidup': statusHidup,
       'buktiIdentitas': buktiIdentitas,
+      'role': role,
+      'noHp': noHp,
     };
   }
 }
@@ -67,6 +75,8 @@ final List<UserModel> daftarPengguna = const [
     statusDomisili: 'Aktif',
     statusHidup: 'Hidup',
     buktiIdentitas: 'assets/images/ktp_admin.jpg',
+    role: 'admin',
+    noHp: '085123123123',
   ),
   UserModel(
     id: 102,
@@ -78,6 +88,8 @@ final List<UserModel> daftarPengguna = const [
     statusDomisili: 'Aktif',
     statusHidup: 'Hidup',
     buktiIdentitas: 'assets/images/ktp_ahmad.jpg',
+    role: 'warga',
+    noHp: '085123123124',
   ),
   UserModel(
     id: 103,
@@ -89,6 +101,8 @@ final List<UserModel> daftarPengguna = const [
     statusDomisili: 'Aktif',
     statusHidup: 'Hidup',
     buktiIdentitas: 'assets/images/ktp_budi.jpg',
+    role: 'warga',
+    noHp: '085123123125',
   ),
   UserModel(
     id: 104,
@@ -100,6 +114,8 @@ final List<UserModel> daftarPengguna = const [
     statusDomisili: 'Aktif',
     statusHidup: 'Hidup',
     buktiIdentitas: 'assets/images/ktp_citra.jpg',
+    role: 'warga',
+    noHp: '0851231231236',
   ),
   UserModel(
     id: 105,
@@ -111,6 +127,8 @@ final List<UserModel> daftarPengguna = const [
     statusDomisili: 'Aktif',
     statusHidup: 'Hidup',
     buktiIdentitas: 'assets/images/ktp_dedi.jpg',
+    role: 'warga',
+    noHp: '085123123127',
   ),
   UserModel(
     id: 106,
@@ -122,5 +140,7 @@ final List<UserModel> daftarPengguna = const [
     statusDomisili: 'Aktif',
     statusHidup: 'Hidup',
     buktiIdentitas: 'assets/images/ktp_eka.jpg',
+    role: 'warga',
+    noHp: '085123123128',
   ),
 ];
