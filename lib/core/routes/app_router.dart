@@ -22,6 +22,7 @@ import 'package:jawara/presentation/pages/kegiatandanbroadcast/kegiatan_detail.d
 import 'package:jawara/presentation/pages/kegiatandanbroadcast/kegiatan_edit.dart';
 import 'package:jawara/presentation/pages/kegiatandanbroadcast/kegiatan_tambah.dart';
 import 'package:jawara/presentation/pages/laporan/laporan.dart';
+import 'package:jawara/presentation/pages/laporan/laporan_pemasukan_detail.dart';
 import 'package:jawara/presentation/pages/laporan/laporan_pengeluaran_detail.dart';
 import 'package:jawara/presentation/pages/mutasiKeluarga/daftarMutasi.dart';
 import 'package:jawara/presentation/pages/mutasiKeluarga/mutasiKeluarga.dart';
@@ -32,7 +33,6 @@ import 'package:jawara/presentation/pages/pemasukan/pemasukan_tambah.dart';
 import 'package:jawara/presentation/pages/pemasukan/tagih_iuran.dart';
 import 'package:jawara/presentation/pages/penerimaanWarga/penerimaan.dart';
 import 'package:jawara/presentation/pages/penerimaanWarga/penerimaanWarga.dart';
-import 'package:jawara/presentation/pages/pengeluaran/laporan_pemasukan_detail.dart';
 import 'package:jawara/presentation/pages/pengeluaran/pengeluaran.dart';
 import 'package:jawara/presentation/pages/pengeluaran/pengeluaran_detail.dart';
 
