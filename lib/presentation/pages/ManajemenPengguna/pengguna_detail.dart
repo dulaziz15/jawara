@@ -16,11 +16,14 @@ class PenggunaDetailPage extends StatelessWidget {
         id: 0,
         nama: 'Tidak Ditemukan',
         email: '-',
-        status: '-',
         role: '-',
         nik: '-',
         noHp: '-',
         jenisKelamin: '-',
+        idKeluarga: '',
+        statusDomisili: '',
+        statusHidup: '',
+        buktiIdentitas: '',
       ),
     );
 
@@ -62,10 +65,7 @@ class PenggunaDetailPage extends StatelessWidget {
               const SizedBox(height: 4),
               Text(
                 user.role,
-                style: const TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey,
-                ),
+                style: const TextStyle(fontSize: 16, color: Colors.grey),
               ),
 
               const SizedBox(height: 20),
@@ -80,8 +80,10 @@ class PenggunaDetailPage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 24,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -91,13 +93,17 @@ class PenggunaDetailPage extends StatelessWidget {
                       const SizedBox(height: 16),
                       _buildInfoItem(Icons.phone, 'Nomor HP', user.noHp),
                       const SizedBox(height: 16),
-                      _buildInfoItem(Icons.person_outline, 'Jenis Kelamin', user.jenisKelamin),
+                      _buildInfoItem(
+                        Icons.person_outline,
+                        'Jenis Kelamin',
+                        user.jenisKelamin,
+                      ),
                       const SizedBox(height: 16),
                       _buildInfoItem(
                         Icons.verified_user,
                         'Status Registrasi',
-                        user.status,
-                        valueColor: _getStatusColor(user.status),
+                        user.statusDomisili,
+                        valueColor: _getStatusColor(user.statusDomisili),
                       ),
                     ],
                   ),
@@ -110,8 +116,12 @@ class PenggunaDetailPage extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoItem(IconData icon, String label, String value,
-      {Color valueColor = Colors.black87}) {
+  Widget _buildInfoItem(
+    IconData icon,
+    String label,
+    String value, {
+    Color valueColor = Colors.black87,
+  }) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -121,11 +131,14 @@ class PenggunaDetailPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(label,
-                  style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                      color: Colors.black54)),
+              Text(
+                label,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                  color: Colors.black54,
+                ),
+              ),
               const SizedBox(height: 4),
               Text(
                 value,

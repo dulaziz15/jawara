@@ -39,9 +39,7 @@ class _ChannelEditPageState extends State<ChannelEditPage> {
     namaController = TextEditingController(text: currentChannel.nama);
     tipeController = TextEditingController(text: currentChannel.tipe);
     pemilikController = TextEditingController(text: currentChannel.an);
-    catatanController = TextEditingController(
-      text: 'Gunakan ${currentChannel.nama} untuk transaksi warga.',
-    );
+    catatanController = TextEditingController(text: currentChannel.catatan);
   }
 
   void _simpanPerubahan() {
