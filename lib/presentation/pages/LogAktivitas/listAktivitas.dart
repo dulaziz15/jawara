@@ -39,7 +39,7 @@ class _ListAktivitasState extends State<ListAktivitasPage> {
       // Ambil realtime data dari Firestore
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
-            .collection("activity_logs")
+            .collection("activities")
             .orderBy("date", descending: true)
             .snapshots(),
         builder: (context, snapshot) {
