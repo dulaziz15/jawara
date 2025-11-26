@@ -10,7 +10,21 @@ class PengeluaranPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: const Sidebar(),
-      appBar: AppBar(title: const Text("Pengeluaran")),
+      appBar: AppBar(
+        title: const Text(
+          'Data Pengeluaran',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: const Color(0xFF6C63FF),
+        foregroundColor: Colors.white,
+
+        centerTitle: true,
+        elevation: 0,
+      ),
       body: const AutoRouter(), // Nested route
     );
   }

@@ -10,7 +10,6 @@ class DashboardPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: const Sidebar(),
-      appBar: AppBar(title: const Text("Dashboard")),
       body: const AutoRouter(), // Nested route
     );
   }

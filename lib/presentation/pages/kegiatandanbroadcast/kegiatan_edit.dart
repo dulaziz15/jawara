@@ -177,7 +177,7 @@ class _KegiatanEditPageState extends State<KegiatanEditPage> {
               children: [
                 Row(
                   children: [
-                    Icon(icon, color: Colors.deepPurple, size: 20),
+                    Icon(icon, color: Color(0xFF6C63FF), size: 20),
                     const SizedBox(width: 8),
                     Text(currentFile.isEmpty ? "Tidak ada file" : currentFile),
                   ],
@@ -260,113 +260,95 @@ class _KegiatanEditPageState extends State<KegiatanEditPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey.shade100,
+      backgroundColor: Colors.grey.shade200,
+      appBar: AppBar(
+        backgroundColor: Colors.grey.shade100,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black87),
+          onPressed: () => context.router.pop(),
+        ),
+      ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Tombol Kembali
-            ElevatedButton.icon(
-              onPressed: () {
-                AutoRouter.of(context).pop();
-              },
-              icon: const Icon(Icons.arrow_back_ios_new, size: 16),
-              label: const Text('Kembali'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                foregroundColor: Colors.deepPurple,
-                elevation: 1, 
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0), 
-                  side: BorderSide(color: Colors.grey.shade300), 
+        padding: const EdgeInsets.all(16),
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.shade300,
+                blurRadius: 8,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Input Fields
+                _buildTextFormField(
+                  label: 'Nama Kegiatan',
+                  controller: _namaKegiatanController,
                 ),
-              ),
-            ),
-            const SizedBox(height: 16),
+                const SizedBox(height: 16),
+                _buildTextFormField(
+                  label: 'Kategori Kegiatan',
+                  controller: _kategoriKegiatanController,
+                ),
+                const SizedBox(height: 16),
+                _buildTextFormField(
+                  label: 'Penanggung Jawab',
+                  controller: _penanggungJawabController,
+                ),
+                const SizedBox(height: 16),
+                _buildTextFormField(
+                  label: 'Deskripsi',
+                  controller: _deskripsiController,
+                  maxLines: 3,
+                ),
+                const SizedBox(height: 16),
+                _buildTextFormField(
+                  label: 'Lokasi',
+                  controller: _lokasiController,
+                ),
+                const SizedBox(height: 16),
+                _buildDatePicker(),
+                const SizedBox(height: 16),
+                _buildTextFormField(
+                  label: 'Dibuat oleh',
+                  controller: _dibuatOlehController,
+                  readOnly: true,
+                ),
+                const SizedBox(height: 16),
+                const Divider(height: 24),
 
-            // Card Form Edit
-            Card(
-              color: Colors.white,
-              elevation: 2,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16.0), 
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(24.0),
-                // 5. Bungkus dengan Widget Form
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Judul Form
-                      const Text(
-                        'Edit Kegiatan',
-                        style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 24),
+                // Lampiran
+                _buildAttachmentPicker(
+                    "Dokumentasi:", _currentDokumentasi, Icons.description_outlined),
 
-                      // Input Fields
-                      _buildTextFormField(
-                        label: 'Nama Kegiatan',
-                        controller: _namaKegiatanController,
-                      ),
-                      _buildTextFormField(
-                        label: 'Kategori Kegiatan',
-                        controller: _kategoriKegiatanController,
-                      ),
-                      _buildTextFormField(
-                        label: 'Penanggung Jawab',
-                        controller: _penanggungJawabController,
-                      ),
-                      _buildTextFormField(
-                        label: 'Deskripsi',
-                        controller: _deskripsiController,
-                        maxLines: 3,
-                      ),
-                      _buildTextFormField(
-                        label: 'Lokasi',
-                        controller: _lokasiController,
-                      ),
-                      _buildDatePicker(),
-                      _buildTextFormField(
-                        label: 'Dibuat oleh',
-                        controller: _dibuatOlehController,
-                        readOnly: true, 
-                      ),
+                const SizedBox(height: 24),
 
-                      const Divider(height: 24),
-
-                      // Lampiran
-                      _buildAttachmentPicker(
-                          "Dokumentasi:", _currentDokumentasi, Icons.description_outlined),
-                      
-                      const SizedBox(height: 24),
-                      
-                      // Tombol Simpan
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton.icon(
-                          onPressed: _saveChanges, // Panggil fungsi simpan
-                          icon: const Icon(Icons.save),
-                          label: const Text('Simpan Perubahan'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.deepPurple,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
+                // Tombol Simpan
+                ElevatedButton(
+                  onPressed: _saveChanges,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF6C63FF),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    elevation: 4,
+                  ),
+                  child: const Text(
+                    'Simpan Perubahan',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
                   ),
                 ),
-              ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

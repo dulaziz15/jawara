@@ -67,7 +67,7 @@ class BroadcastDetailPage extends StatelessWidget {
                 )
               : Row(
                   children: [
-                    Icon(icon, color: Colors.deepPurple, size: 20),
+                    Icon(icon, color: Color(0xFF6C63FF), size: 20),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
@@ -99,36 +99,24 @@ class BroadcastDetailPage extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
+      appBar: AppBar(
+        backgroundColor: Colors.grey.shade100,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black87),
+          onPressed: () => context.router.pop(),
+        ),
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Tombol Kembali
-            ElevatedButton.icon(
-              onPressed: () {
-                AutoRouter.of(context).pop();
-              },
-              icon: const Icon(Icons.arrow_back_ios_new, size: 16),
-              label: const Text('Kembali'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                foregroundColor: Colors.deepPurple,
-                elevation: 1, 
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0), 
-                  side: BorderSide(color: Colors.grey.shade300), 
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
 
-            // Card Detail Broadcast
             Card(
               color: Colors.white,
               elevation: 2,
-              // ### PERUBAHAN: Baris ini dihapus agar shadow lebih terlihat ###
-              // shadowColor: Colors.black12, 
+
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16.0), 
               ),
