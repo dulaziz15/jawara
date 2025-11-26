@@ -1,6 +1,6 @@
 // model untuk tagihan
 class TagihanModel {
-  int? id;
+  String? docId;
   String kodeIuran; 
   String namaIuran; 
   String kategori; 
@@ -13,7 +13,7 @@ class TagihanModel {
   String alasanPenolakan;
 
   TagihanModel({
-    this.id,
+    this.docId,
     required this.kodeIuran,
     required this.namaIuran,
     required this.kategori,
@@ -29,7 +29,7 @@ class TagihanModel {
   // konversi dari map ke object
   factory TagihanModel.fromMap(Map<String, dynamic> map) {
     return TagihanModel(
-      id: map['id'],
+      docId: map['docId'],
       kodeIuran: map['kode_iuran'],
       namaIuran: map['nama_iuran'],
       kategori: map['kategori'],
@@ -46,7 +46,7 @@ class TagihanModel {
   // konversi dari object ke map
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
+      'docId': docId,
       'kode_iuran': kodeIuran,
       'nama_iuran': namaIuran,
       'kategori': kategori,
@@ -63,7 +63,7 @@ class TagihanModel {
 
 List<TagihanModel> dummyTagihan = [
   TagihanModel(
-    id: 1,
+    docId: '1',
     kodeIuran: 'IUR-KEB-001',
     namaIuran: 'Iuran Kebersihan Bulan Januari',
     kategori: 'Kebersihan',
@@ -76,7 +76,7 @@ List<TagihanModel> dummyTagihan = [
     alasanPenolakan: '',
   ),
   TagihanModel(
-    id: 2,
+    docId: '2',
     kodeIuran: 'IUR-KAM-002',
     namaIuran: 'Iuran Keamanan Bulan Februari',
     kategori: 'Keamanan',
@@ -89,7 +89,7 @@ List<TagihanModel> dummyTagihan = [
     alasanPenolakan: '',
   ),
   TagihanModel(
-    id: 3,
+    docId: '3',
     kodeIuran: 'IUR-SOS-003',
     namaIuran: 'Iuran Sosial Bulan Maret',
     kategori: 'Sosial',
@@ -102,7 +102,7 @@ List<TagihanModel> dummyTagihan = [
     alasanPenolakan: '',
   ),
   TagihanModel(
-    id: 4,
+    docId: '4',
     kodeIuran: 'IUR-INF-004',
     namaIuran: 'Iuran Infrastruktur Bulan April',
     kategori: 'Infrastruktur',
@@ -115,7 +115,7 @@ List<TagihanModel> dummyTagihan = [
     alasanPenolakan: '',
   ),
   TagihanModel(
-    id: 5,
+    docId: '5',
     kodeIuran: 'IUR-PEN-005',
     namaIuran: 'Iuran Pendidikan Bulan Mei',
     kategori: 'Pendidikan',

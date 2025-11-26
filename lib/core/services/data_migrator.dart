@@ -4,11 +4,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 // --- IMPORT SEMUA MODEL DUMMY ANDA (SESUAIKAN PATH!) ---
 // Asumsi path: lib/core/models/...
 import 'package:jawara/core/models/pengguna_models.dart';
-import 'package:jawara/core/models/family_model.dart'; 
+import 'package:jawara/core/models/family_models.dart'; 
 import 'package:jawara/core/models/tagihan_model.dart';
 import 'package:jawara/core/models/pemasukan_model.dart';
 import 'package:jawara/core/models/pengeluaran_model.dart';
-import 'package:jawara/core/models/iuran_model.dart';
+import 'package:jawara/core/models/iuran_models.dart';
 import 'package:jawara/core/models/broadcast_models.dart';
 import 'package:jawara/core/models/kegiatan_models.dart';
 import 'package:jawara/core/models/channel_models.dart';
@@ -43,11 +43,10 @@ Future<void> migrateDummyDataToFirestore() async {
     print('✅ Families migration complete.');
 
     // 3. MIGRASI IURAN MASTER (Master Konfigurasi)
-    final iuranMasterCollection = _db.collection('iuran_master');
+    final iuranMasterCollection = _db.collection('iuran');
     print('Migrating iuran master...');
     for (var iuran in dummyIuran) {
-      // Menggunakan add() agar Firestore memberikan ID Dokumen otomatis
-      await iuranMasterCollection.add(iuran.toMap());
+      await iuranMasterCollection.doc(iuran.docId).set(iuran.toMap());
     }
     print('✅ Iuran master migration complete.');
     
@@ -55,45 +54,39 @@ Future<void> migrateDummyDataToFirestore() async {
     final channelCollection = _db.collection('channels');
     print('Migrating channels...');
     for (var channel in dummyChannels) {
-      await channelCollection.add(channel.toMap());
+      await channelCollection.doc(channel.docId).set(channel.toMap());
     }
     print('✅ Channels migration complete.');
-
-
-    // --- MIGRASI DATA TRANSAKSI (Menggunakan Auto-ID) ---
 
     // 5. MIGRASI TAGIHAN
     final tagihanCollection = _db.collection('tagihan');
     print('Migrating tagihan...');
     for (var tagihan in dummyTagihan) {
-      await tagihanCollection.add(tagihan.toMap());
+      await tagihanCollection.doc(tagihan.docId).set(tagihan.toMap());
     }
     print('✅ Tagihan migration complete.');
-
 
     // 6. MIGRASI PEMASUKAN
     final pemasukanCollection = _db.collection('pemasukan');
     print('Migrating pemasukan...');
     for (var pemasukan in dummyPemasukan) {
-      await pemasukanCollection.add(pemasukan.toMap());
+      await pemasukanCollection.doc(pemasukan.docId).set(pemasukan.toMap());
     }
     print('✅ Pemasukan migration complete.');
-
 
     // 7. MIGRASI PENGELUARAN
     final pengeluaranCollection = _db.collection('pengeluaran');
     print('Migrating pengeluaran...');
     for (var pengeluaran in dummyPengeluaran) {
-      await pengeluaranCollection.add(pengeluaran.toMap());
+      await pengeluaranCollection.doc(pengeluaran.docId).set(pengeluaran.toMap());
     }
     print('✅ Pengeluaran migration complete.');
-
 
     // 8. MIGRASI BROADCAST
     final broadcastCollection = _db.collection('broadcasts');
     print('Migrating broadcasts...');
     for (var broadcast in dummyBroadcast) {
-      await broadcastCollection.add(broadcast.toMap());
+      await broadcastCollection.doc(broadcast.docId).set(broadcast.toMap());
     }
     print('✅ Broadcasts migration complete.');
     
@@ -101,7 +94,7 @@ Future<void> migrateDummyDataToFirestore() async {
     final kegiatanCollection = _db.collection('kegiatan');
     print('Migrating kegiatan...');
     for (var kegiatan in dummyKegiatan) {
-      await kegiatanCollection.add(kegiatan.toMap());
+      await kegiatanCollection.doc(kegiatan.docId).set(kegiatan.toMap());
     }
     print('✅ Kegiatan migration complete.');
 
@@ -109,10 +102,9 @@ Future<void> migrateDummyDataToFirestore() async {
     final activityCollection = _db.collection('activities');
     print('Migrating activities...');
     for (var activity in daftarAktivitas) {
-      await activityCollection.add(activity.toMap());
+      await activityCollection.doc(activity.docId).set(activity.toMap());
     }
     print('✅ Activities migration complete.');
-
 
     print("--- ALL DATA MIGRATION SUCCESSFUL! ---");
 

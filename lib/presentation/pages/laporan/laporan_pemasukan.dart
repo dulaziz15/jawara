@@ -276,7 +276,7 @@ class _LaporanPemasukanPageState extends State<LaporanPemasukanPage> {
                       // LANGSUNG PINDAH HALAMAN SAAT DIKLIK
                       onPressed: () {
                         context.router.pushNamed(
-                          '/laporan/detail_pemasukan/${item.id}',
+                          '/laporan/detail_pemasukan/${item.docId}',
                         );
                       },
                     ),

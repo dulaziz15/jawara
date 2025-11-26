@@ -1,7 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:jawara/core/models/tagihan_model.dart';
-import 'package:jawara/core/models/family_model.dart'; // pastikan path sesuai struktur project-mu
+import 'package:jawara/core/models/family_models.dart'; // pastikan path sesuai struktur project-mu
 
 @RoutePage()
 class TagihanDaftarPage extends StatefulWidget {
@@ -334,7 +334,7 @@ class _TagihanDaftarPageState extends State<TagihanDaftarPage> {
                       onSelected: (value) {
                         if (value == 'detail') {
                           context.router.pushNamed(
-                            'tagihan_detail/${item.id}',
+                            'tagihan_detail/${item.docId}',
                           );
                         }
                       },

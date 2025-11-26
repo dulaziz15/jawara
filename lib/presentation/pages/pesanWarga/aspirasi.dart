@@ -1,6 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import '../../../core/models/model_aspirasi.dart';
+import '../../../core/models/aspirasi_models.dart';
 import 'filter.dart';
 import 'edit_aspirasi.dart';
 
@@ -16,8 +16,8 @@ class AspirasiPage extends StatefulWidget {
 class _AspirasiPageState extends State<AspirasiPage> {
   
 
-  List<AspirationData> _filteredAspirasi = [];
-  List<AspirationData> _currentPageData = [];
+  List<AspirasiModels> _filteredAspirasi = [];
+  List<AspirasiModels> _currentPageData = [];
   final TextEditingController _searchController = TextEditingController();
   String _selectedFilter = 'Semua';
   
@@ -94,7 +94,7 @@ class _AspirasiPageState extends State<AspirasiPage> {
         // Pastikan _allAspirasi tidak null
         final allData = allAspirasi;
         
-        List<AspirationData> statusFilteredData;
+        List<AspirasiModels> statusFilteredData;
         if (status == 'Semua') {
           statusFilteredData = List.from(allData);
         } else {
@@ -134,7 +134,7 @@ class _AspirasiPageState extends State<AspirasiPage> {
         // Pastikan allAspirasi tidak null
         final allData = allAspirasi;
         
-        List<AspirationData> searchFilteredData;
+        List<AspirasiModels> searchFilteredData;
         if (value.isEmpty) {
           searchFilteredData = List.from(allData);
         } else {
@@ -175,7 +175,7 @@ class _AspirasiPageState extends State<AspirasiPage> {
   }
 
   // FUNGSI DELETE CONFIRMATION
-  void _showDeleteConfirmation(BuildContext context, AspirationData item) {
+  void _showDeleteConfirmation(BuildContext context, AspirasiModels item) {
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
@@ -204,7 +204,7 @@ class _AspirasiPageState extends State<AspirasiPage> {
   }
 
   // FUNGSI DELETE ASPIRASI
-  void _deleteAspirasi(AspirationData item) {
+  void _deleteAspirasi(AspirasiModels item) {
     setState(() {
       allAspirasi.removeWhere((a) => a.judul == item.judul);
       _applyFilter(_selectedFilter); // Re-apply filter to update the list
@@ -219,7 +219,7 @@ class _AspirasiPageState extends State<AspirasiPage> {
   }
 
   // FUNGSI DETAIL MODAL
-  void _showDetailModal(BuildContext context, AspirationData item) {
+  void _showDetailModal(BuildContext context, AspirasiModels item) {
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
@@ -498,7 +498,7 @@ class _AspirasiPageState extends State<AspirasiPage> {
     );
   }
 
-  Widget _buildAspirasiCard(AspirationData item) {
+  Widget _buildAspirasiCard(AspirasiModels item) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(

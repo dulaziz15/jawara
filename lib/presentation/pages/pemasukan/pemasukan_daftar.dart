@@ -289,7 +289,7 @@ class _PemasukanDaftarPageState extends State<PemasukanDaftarPage> {
                       onSelected: (value) {
                         if (value == 'pemasukan_detail') {
                           context.router.pushNamed(
-                            '/pemasukan/pemasukan_detail/${item.id}',
+                            '/pemasukan/pemasukan_detail/${item.docId}',
                           );
                         }
                       },

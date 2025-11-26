@@ -1,5 +1,5 @@
 class UserModel {
-  final int id; // Primary Key
+  final String docId; // Primary Key
   final String nama; // Nama Warga
   final String nik; // Unique Key
   final String email;
@@ -12,7 +12,7 @@ class UserModel {
   final String noHp;
 
   const UserModel({
-    required this.id,
+    required this.docId,
     required this.nama,
     required this.nik,
     required this.email,
@@ -30,7 +30,7 @@ class UserModel {
   // ===============================================
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
-      id: map['id'] is String ? int.tryParse(map['id']) ?? 0 : map['id'] as int,
+      docId: map['docId'] as String,
       nama: map['nama'] as String,
       nik: map['nik'] as String,
       email: map['email'] as String,
@@ -49,7 +49,7 @@ class UserModel {
   // ===============================================
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
+      'docId': docId,
       'nama': nama,
       'nik': nik,
       'email': email,
@@ -66,7 +66,7 @@ class UserModel {
 
 final List<UserModel> daftarPengguna = const [
   UserModel(
-    id: 101,
+    docId: '101',
     nama: 'Admin Jawara',
     email: 'admin@jawara.com',
     nik: '1234567890123451',
@@ -79,7 +79,7 @@ final List<UserModel> daftarPengguna = const [
     noHp: '085123123123',
   ),
   UserModel(
-    id: 102,
+    docId: '102',
     nama: 'Ahmad Surya',
     email: 'ahmad@warga.com',
     nik: '1111111111111111',
@@ -92,7 +92,7 @@ final List<UserModel> daftarPengguna = const [
     noHp: '085123123124',
   ),
   UserModel(
-    id: 103,
+    docId: '103',
     nama: 'Budi Santoso',
     email: 'budi@warga.com',
     nik: '2222222222222222',
@@ -105,7 +105,7 @@ final List<UserModel> daftarPengguna = const [
     noHp: '085123123125',
   ),
   UserModel(
-    id: 104,
+    docId: '104',
     nama: 'Citra Dewi',
     email: 'citra@warga.com',
     nik: '3333333333333333',
@@ -118,7 +118,7 @@ final List<UserModel> daftarPengguna = const [
     noHp: '0851231231236',
   ),
   UserModel(
-    id: 105,
+    docId: '105',
     nama: 'Dedi Rahman',
     email: 'dedi@warga.com',
     nik: '4444444444444444',
@@ -131,7 +131,7 @@ final List<UserModel> daftarPengguna = const [
     noHp: '085123123127',
   ),
   UserModel(
-    id: 106,
+    docId: '106',
     nama: 'Eka Putri',
     email: 'eka@warga.com',
     nik: '5555555555555555',

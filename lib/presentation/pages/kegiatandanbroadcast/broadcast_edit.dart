@@ -6,7 +6,7 @@ import 'package:jawara/core/models/broadcast_models.dart';
 
 @RoutePage()
 class BroadcastEditPage extends StatefulWidget {
-  final int broadcastId;
+  final String broadcastId;
 
   const BroadcastEditPage({
     super.key,
@@ -35,7 +35,7 @@ class _BroadcastEditPageState extends State<BroadcastEditPage> {
     super.initState();
     // 3. Ambil data asli dan inisialisasi controller
     _broadcast = dummyBroadcast.firstWhere(
-      (item) => item.id == widget.broadcastId,
+      (item) => item.docId == widget.broadcastId,
     );
 
     _judulController = TextEditingController(text: _broadcast.judulBroadcast);

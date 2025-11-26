@@ -274,12 +274,12 @@ class _PengeluaranDaftarPageState extends State<PengeluaranDaftarPage> {
                         if (value == 'detail') {
                           // Pastikan route menerima parameter String ID
                           context.router.pushNamed(
-                            '/pengeluaran/detail/${item.id}',
+                            '/pengeluaran/detail/${item.docId}',
                           );
                         } else if (value == 'hapus') {
                           // Contoh implementasi hapus
-                          if (item.id != null) {
-                            _repository.deletePengeluaran(item.id! as String);
+                          if (item.docId != null) {
+                            _repository.deletePengeluaran(item.docId);
                           }
                         }
                       },

@@ -5,7 +5,7 @@ import 'package:jawara/core/models/kegiatan_models.dart';
 
 @RoutePage()
 class KegiatanDetailPage extends StatelessWidget {
-  final int kegiatanId;
+  final String kegiatanId;
 
   const KegiatanDetailPage({
     super.key,
@@ -60,7 +60,7 @@ class KegiatanDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     // Ambil data kegiatan berdasarkan ID
     final kegiatan = dummyKegiatan.firstWhere(
-      (item) => item.id == kegiatanId,
+      (item) => item.docId == kegiatanId,
     );
 
     // Format tanggal

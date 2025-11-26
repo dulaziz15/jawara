@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:jawara/core/models/catergory_data.dart';
+import 'package:jawara/core/models/catergory_models.dart';
 
 class PieChart extends StatelessWidget {
   final String title;

@@ -103,7 +103,7 @@ class _KegiatanDaftarPageState extends State<KegiatanDaftarPage> {
             TextButton(
               onPressed: () {
                 // TODO: logika hapus data di sini
-                print('Menghapus item ${item.id}');
+                print('Menghapus item ${item.docId}');
                 Navigator.of(ctx).pop(); // Tutup dialog
               },
               style: TextButton.styleFrom(foregroundColor: Colors.red),
@@ -261,12 +261,12 @@ class _KegiatanDaftarPageState extends State<KegiatanDaftarPage> {
                     if (value == 'detail') {
                       // 1. Aksi Lihat Detail
                       context.router.pushNamed(
-                        '/kegiatandanbroadcast/kegiatan_detail/${item.id}',
+                        '/kegiatandanbroadcast/kegiatan_detail/${item.docId}',
                       );
                     } else if (value == 'edit') {
                       // 2. Aksi Edit (TODO: Buat halaman edit)
                       context.router.pushNamed(
-                        '/kegiatandanbroadcast/kegiatan_edit/${item.id}',
+                        '/kegiatandanbroadcast/kegiatan_edit/${item.docId}',
                       );
                     } else if (value == 'hapus') {
                       // 3. Aksi Hapus (memanggil dialog)

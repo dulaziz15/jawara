@@ -17,14 +17,17 @@ class ChannelRepository {
       return snapshot.docs.map((doc) {
         final data = doc.data() as Map<String, dynamic>;
         // Catatan: Asumsi Model Channel memiliki fromMap/toMap
-        return Channel.fromMap({...data, 'id': doc.id});
+        return Channel.fromMap({...data, 'docId': doc.id});
       }).toList();
     });
   }
 
+  // U: Update Channel
   Future<void> updateChannel(Channel channel) async => await _channelCollection
-      .doc(channel.id.toString())
+      .doc(channel.docId.toString())
       .update(channel.toMap());
+
+  // D: Delete Channel
   Future<void> deleteChannel(String channelId) async =>
       await _channelCollection.doc(channelId).delete();
 }

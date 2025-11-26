@@ -1,7 +1,7 @@
 // Lokasi: lib/core/repositories/tagihan_repository.dart
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:jawara/core/models/tagihan_model.dart';
-import 'package:jawara/core/models/iuran_model.dart';
+import 'package:jawara/core/models/iuran_models.dart';
 
 class TagihanRepository {
   final CollectionReference _tagihanCollection = 
@@ -42,6 +42,6 @@ class TagihanRepository {
   
   // U: Update Tagihan
   Future<void> updateTagihan(TagihanModel tagihan) async {
-      await _tagihanCollection.doc(tagihan.id.toString()).update(tagihan.toMap());
+      await _tagihanCollection.doc(tagihan.docId.toString()).update(tagihan.toMap());
   }
 }

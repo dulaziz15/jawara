@@ -1,8 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:jawara/presentation/pages/Channel/Channel.dart';
-import 'package:jawara/presentation/pages/Channel/Channel_daftar.dart';
-import 'package:jawara/presentation/pages/Channel/Channel_tambah.dart';
+import 'package:jawara/presentation/pages/Channel/channel.dart';
+import 'package:jawara/presentation/pages/Channel/channel_daftar.dart';
+import 'package:jawara/presentation/pages/Channel/channel_tambah.dart';
 import 'package:jawara/presentation/pages/Channel/channel_detail.dart';
 import 'package:jawara/presentation/pages/Channel/channel_edit.dart';
 import 'package:jawara/presentation/pages/LogAktivitas/listAktivitas.dart';

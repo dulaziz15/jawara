@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:jawara/core/models/tagihan_model.dart';
 import 'package:jawara/core/utils/formatter_util.dart';
-import 'package:jawara/core/models/family_model.dart';
+import 'package:jawara/core/models/family_models.dart';
 
 @RoutePage()
 class TagihanDetailPage extends StatelessWidget {
-  final int tagihanId;
+  final String tagihanId;
 
   const TagihanDetailPage({
     super.key,
@@ -141,7 +141,7 @@ class TagihanDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Ambil data tagihan yang sesuai berdasarkan ID
-    final tagihan = dummyTagihan.firstWhere((item) => item.id == tagihanId);
+    final tagihan = dummyTagihan.firstWhere((item) => item.docId == tagihanId);
     final namaKeluarga = _getNamaKeluarga(tagihan.nik);
     final alamat = _getAlamat(tagihan.nik);
 

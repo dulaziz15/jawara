@@ -4,16 +4,16 @@ import 'package:jawara/core/models/pengguna_models.dart';
 
 @RoutePage()
 class PenggunaDetailPage extends StatelessWidget {
-  final int userId;
+  final String userId;
 
   const PenggunaDetailPage({super.key, required this.userId});
 
   @override
   Widget build(BuildContext context) {
     final user = daftarPengguna.firstWhere(
-      (u) => u.id == userId,
+      (u) => u.docId == userId,
       orElse: () => const UserModel(
-        id: 0,
+        docId: '0',
         nama: 'Tidak Ditemukan',
         email: '-',
         role: '-',

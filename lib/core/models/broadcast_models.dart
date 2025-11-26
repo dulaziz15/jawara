@@ -1,12 +1,12 @@
 // model untuk broadcast
 class BroadcastModels {
-  int? id;
+  String docId;
   String judulBroadcast, isiPesan, kategoriBroadcast, lampiranGambar, lampiranDokumen; 
-  int dibuatOlehId; // **DIREVISI:** Relasi ke UserModel.id
+  String dibuatOlehId; // **DIREVISI:** Relasi ke UserModel.id
   DateTime tanggalPublikasi;
 
   BroadcastModels({
-    this.id,
+    required this.docId,
     required this.judulBroadcast,
     required this.isiPesan,
     required this.kategoriBroadcast,
@@ -19,7 +19,7 @@ class BroadcastModels {
   // konversi dari map ke object
   factory BroadcastModels.fromMap(Map<String, dynamic> map) {
     return BroadcastModels(
-      id: map['id'],
+      docId: map['docId'],
       judulBroadcast: map['judulBroadcast'],
       tanggalPublikasi: DateTime.parse(map['tanggalPublikasi']),
       isiPesan: map['isiPesan'],
@@ -33,7 +33,7 @@ class BroadcastModels {
   // konversi dari object ke map
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
+      'docId': docId,
       'judulBroadcast': judulBroadcast,
       'isiPesan': isiPesan,
       'kategoriBroadcast': kategoriBroadcast,
@@ -47,12 +47,12 @@ class BroadcastModels {
 
 List<BroadcastModels> dummyBroadcast = [
   BroadcastModels(
-    id: 1,
+    docId: "1",
     judulBroadcast: 'Pengumuman Libur Nasional',
     isiPesan: 'Hari Senin, 20 Oktober 2025, akan diliburkan karena perayaan Hari Nasional.',
     kategoriBroadcast: 'Pengumuman',
     tanggalPublikasi: DateTime(2025, 10, 16),
-    dibuatOlehId: 101, // ID Admin Jawara
+    dibuatOlehId: '101', // ID Admin Jawara
     lampiranGambar: 'libur_nasional.jpg',
     lampiranDokumen: 'libur_nasional.pdf',
   ),

@@ -106,11 +106,11 @@ class _DaftarPenggunaPageState extends State<DaftarPenggunaPage> {
   }
 
   void _showDetailDialog(UserModel user) {
-    context.router.push(PenggunaDetailRoute(userId: user.id));
+    context.router.push(PenggunaDetailRoute(userId: user.docId));
   }
 
   void _navigateToEdit(UserModel user) {
-    context.router.push(PenggunaEditRoute(userId: user.id));
+    context.router.push(PenggunaEditRoute(userId: user.docId));
   }
 
   Widget _buildActionButton(UserModel user) {

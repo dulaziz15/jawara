@@ -4,7 +4,7 @@ import 'package:jawara/core/models/pengguna_models.dart';
 
 @RoutePage()
 class PenggunaEditPage extends StatefulWidget {
-  final int userId;
+  final String userId;
 
   const PenggunaEditPage({super.key, required this.userId});
 
@@ -27,9 +27,9 @@ class _PenggunaEditPageState extends State<PenggunaEditPage> {
 
     // Ambil data user berdasarkan ID
     user = daftarPengguna.firstWhere(
-      (u) => u.id == widget.userId,
+      (u) => u.docId == widget.userId,
       orElse: () => UserModel(
-        id: widget.userId,
+        docId: widget.userId,
         nama: '',
         email: '',
         statusDomisili: 'Diproses',

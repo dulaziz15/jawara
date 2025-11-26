@@ -1,7 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:jawara/core/models/catergory_data.dart';
-import 'package:jawara/core/models/finance_model.dart';
+import 'package:jawara/core/models/catergory_models.dart';
+import 'package:jawara/core/models/finance_models.dart';
 import 'package:jawara/core/models/kegiatan_models.dart';
 import 'package:jawara/presentation/pages/dashboard/widgets/stat_card.dart';
 import 'package:jawara/presentation/pages/dashboard/widgets/pie_chart.dart';

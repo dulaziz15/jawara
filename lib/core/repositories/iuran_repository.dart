@@ -1,27 +1,34 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:jawara/core/models/iuran_model.dart';
+import 'package:jawara/core/models/iuran_models.dart';
 
-class MasterRepository {
+class IuranRepository {
   // Langsung gunakan FirebaseFirestore.instance
-  final CollectionReference _iuranMasterCollection = 
-      FirebaseFirestore.instance.collection('iuran_master');
+  final CollectionReference _iuranCollection = FirebaseFirestore.instance
+      .collection('iuran');
 
   // ==========================================================
-  // IURAN MASTER (CRUD Penuh)
+  // IURAN (CRUD Penuh)
   // ==========================================================
-  Future<void> addIuranMaster(IuranModel iuran) async => await _iuranMasterCollection.add(iuran.toMap());
-  
-  // R: Get Iuran Master (Stream)
-  Stream<List<IuranModel>> getIuranMaster() {
-    return _iuranMasterCollection.snapshots().map((snapshot) {
+  Future<void> addIuran(IuranModel iuran) async =>
+      await _iuranCollection.add(iuran.toMap());
+
+  // R: Get Iuran (Stream)
+  Stream<List<IuranModel>> getIuran() {
+    return _iuranCollection.snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
         final data = doc.data() as Map<String, dynamic>;
-        return IuranModel.fromMap({...data, 'id': doc.id}); 
+        return IuranModel.fromMap({...data, 'docId': doc.id});
       }).toList();
     });
   }
-  
-  Future<void> updateIuranMaster(IuranModel iuran) async => await _iuranMasterCollection.doc(iuran.id.toString()).update(iuran.toMap());
-  Future<void> deleteIuranMaster(String iuranId) async => await _iuranMasterCollection.doc(iuranId).delete();
 
+  // U: Update Iuran 
+  Future<void> updateIuran(IuranModel iuran) async =>
+      await _iuranCollection
+          .doc(iuran.docId.toString())
+          .update(iuran.toMap());
+
+  // D: Delete Iuran 
+  Future<void> deleteIuran(String iuranId) async =>
+      await _iuranCollection.doc(iuranId).delete();
 }

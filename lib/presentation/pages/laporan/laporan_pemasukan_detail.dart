@@ -7,7 +7,7 @@ import 'package:jawara/core/utils/formatter_util.dart';
 
 @RoutePage()
 class LaporanPemasukanDetailPage extends StatefulWidget {
-  final int laporanPemasukanId;
+  final String laporanPemasukanId;
 
   const LaporanPemasukanDetailPage({
     super.key,
@@ -30,7 +30,7 @@ class _LaporanPemasukanDetailPageState
     super.initState();
     // 2. Fetch data saat halaman dibuka
     _detailFuture =
-        _repository.getPemasukanByIntId(widget.laporanPemasukanId);
+        _repository.getPemasukanByDocId(widget.laporanPemasukanId);
   }
 
   // Helper format bulan (TETAP SAMA)

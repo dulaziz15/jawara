@@ -5,7 +5,7 @@ import 'package:jawara/core/utils/formatter_util.dart';
 
 @RoutePage()
 class LaporanPemasukanLainDetailPage extends StatelessWidget {
-  final int laporanPemasukanId;
+  final String laporanPemasukanId;
 
   const LaporanPemasukanLainDetailPage({
     super.key,
@@ -97,7 +97,7 @@ class LaporanPemasukanLainDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Ambil data pemasukan yang sesuai berdasarkan ID
-    final pemasukan = dummyPemasukan.firstWhere((item) => item.id == laporanPemasukanId);
+    final pemasukan = dummyPemasukan.firstWhere((item) => item.docId == laporanPemasukanId);
 
     // Format tanggal pemasukan
     final String tanggalPemasukanFormatted =

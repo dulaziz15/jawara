@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/models/finance_model.dart';
+import '../../../../core/models/finance_models.dart';
 import '../../../../core/utils/formatter_util.dart';
 
 class BarChart extends StatelessWidget {

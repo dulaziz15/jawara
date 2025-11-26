@@ -1,6 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:jawara/core/models/iuran_model.dart';
+import 'package:jawara/core/models/iuran_models.dart';
 import 'package:jawara/core/utils/formatter_util.dart';
 
 // Dialog untuk Tambah Iuran
@@ -39,10 +39,11 @@ class _TambahIuranDialogState extends State<TambahIuranDialog> {
   void _save() {
     if (_formKey.currentState!.validate()) {
       final newIuran = IuranModel(
-        id: (dummyIuran.map((e) => e.id ?? 0).reduce((a, b) => a > b ? a : b)) + 1,
+        // sementara gunakan timestamp sebagai docId
+        docId: DateTime.now().millisecondsSinceEpoch.toString(),
         namaIuran: _namaController.text,
         kategoriIuran: _selectedKategori,
-        verifikatorId: 1, // Default
+        verifikatorId: "1", // Default
         bukti: 'default_bukti.jpg', // Default
         jumlah: double.tryParse(_jumlahController.text) ?? 0.0,
         tanggalIuran: DateTime.now(),
@@ -131,22 +132,22 @@ class _EditIuranDialogState extends State<EditIuranDialog> {
     super.dispose();
   }
 
-  void _save() {
-    if (_formKey.currentState!.validate()) {
-      final updatedIuran = IuranModel(
-        id: widget.item.id,
-        namaIuran: _namaController.text,
-        kategoriIuran: _kategori, // Tidak bisa diedit
-        verifikatorId: widget.item.verifikatorId,
-        bukti: widget.item.bukti,
-        jumlah: double.tryParse(_jumlahController.text) ?? 0.0,
-        tanggalIuran: widget.item.tanggalIuran,
-        tanggalTerverifikasi: widget.item.tanggalTerverifikasi,
-      );
-      widget.onSave(updatedIuran);
-      Navigator.of(context).pop();
-    }
-  }
+  // void _save() {
+  //   if (_formKey.currentState!.validate()) {
+  //     final updatedIuran = IuranModel(
+  //       id: widget.item.docId,
+  //       namaIuran: _namaController.text,
+  //       kategoriIuran: _kategori, // Tidak bisa diedit
+  //       verifikatorId: widget.item.verifikatorId,
+  //       bukti: widget.item.bukti,
+  //       jumlah: double.tryParse(_jumlahController.text) ?? 0.0,
+  //       tanggalIuran: widget.item.tanggalIuran,
+  //       tanggalTerverifikasi: widget.item.tanggalTerverifikasi,
+  //     );
+  //     widget.onSave(updatedIuran);
+  //     Navigator.of(context).pop();
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -183,7 +184,7 @@ class _EditIuranDialogState extends State<EditIuranDialog> {
       ),
       actions: [
         TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Batal')),
-        ElevatedButton(onPressed: _save, child: const Text('Simpan')),
+        // ElevatedButton(onPressed: _save, child: const Text('Simpan')),
       ],
     );
   }
@@ -282,7 +283,7 @@ class _KategoriIuranPageState extends State<KategoriIuranPage> {
         item: item,
         onSave: (updatedIuran) {
           setState(() {
-            final index = dummyIuran.indexWhere((i) => i.id == updatedIuran.id);
+            final index = dummyIuran.indexWhere((i) => i.docId == updatedIuran.docId);
             if (index != -1) {
               dummyIuran[index] = updatedIuran;
               _applyFilter(_selectedFilter); // Refresh filter
@@ -323,7 +324,7 @@ class _KategoriIuranPageState extends State<KategoriIuranPage> {
             TextButton(
               onPressed: () {
                 // TODO: Tambahkan logika hapus data di sini
-                print('Menghapus item ${item.id}');
+                print('Menghapus item ${item.docId}');
                 Navigator.of(ctx).pop(); // Tutup dialog
               },
               style: TextButton.styleFrom(foregroundColor: Colors.red),
@@ -487,7 +488,7 @@ class _KategoriIuranPageState extends State<KategoriIuranPage> {
                   onSelected: (String value) {
                     if (value == 'detail') {
                       // TODO: Navigate to detail page
-                      print('Navigate to detail for ${item.id}');
+                      print('Navigate to detail for ${item.docId}');
                     } else if (value == 'edit') {
                       _showEditIuranDialog(item);
                     } else if (value == 'hapus') {
