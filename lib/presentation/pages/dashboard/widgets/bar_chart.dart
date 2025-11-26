@@ -40,33 +40,46 @@ class BarChart extends StatelessWidget {
                 children: data.map((item) {
                   double height = (item.amount / maxValue) * 150;
                   return Expanded(
-                    child: Column(
+                    child: Stack(
+                      alignment: Alignment.bottomCenter,
                       children: [
-                        Text(
-                          FormatterUtil.formatCompactCurrency(item.amount),
-                          style: const TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
+                        // GARIS LATAR BELAKANG (opsional)
                         Container(
-                          height: height,
                           margin: const EdgeInsets.symmetric(horizontal: 4),
-                          decoration: BoxDecoration(
-                            color: color,
-                            borderRadius: const BorderRadius.vertical(
-                              top: Radius.circular(8),
-                            ),
-                          ),
+                          color: Colors.grey[100],
+                          width: 20,
                         ),
-                        const SizedBox(height: 4),
-                        Text(
-                          item.month,
-                          style: const TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                          ),
+                        // BATANG GRAFIK
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Container(
+                              height: height,
+                              width: 20,
+                              decoration: BoxDecoration(
+                                color: color,
+                                borderRadius: const BorderRadius.vertical(
+                                  top: Radius.circular(8),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              item.month,
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              FormatterUtil.formatCompactCurrency(item.amount),
+                              style: const TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
