@@ -7,6 +7,7 @@ import 'edit_aspirasi.dart';
 
 @RoutePage()
 class AspirasiPage extends StatefulWidget {
+class AspirasiPage extends StatefulWidget {
   const AspirasiPage({super.key});
 
   @override
@@ -521,7 +522,89 @@ class _AspirasiPageState extends State<AspirasiPage> {
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Text(
+                    item.judul ?? 'Judul tidak tersedia',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Dikirim oleh: ${item.pengirim ?? 'Tidak diketahui'}',
+                              style: const TextStyle(
+                                color: Colors.grey,
+                                fontSize: 14,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Tanggal: ${item.tanggal ?? 'Tidak diketahui'}',
+                              style: const TextStyle(
+                                color: Colors.grey,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: _getStatusColor(item.status),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              item.status ?? 'Unknown',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          PopupMenuButton<String>(
+                            onSelected: (value) {
+                              switch (value) {
+                                case 'edit':
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => EditAspirasiPage(item: item),
+                                    ),
+                                  );
+                                  break;
+                                case 'delete':
+                                  _showDeleteConfirmation(context, item); // FIXED
+                                  break;
+                                case 'detail':
+                                  _showDetailModal(context, item); // FIXED
+                                  break;
+                              }
+                            },
+                            itemBuilder: (context) => const [
+                              PopupMenuItem(value: 'detail', child: Text('Detail')),
+                              PopupMenuItem(value: 'edit', child: Text('Edit')),
+                              PopupMenuItem(value: 'delete', child: Text('Hapus')),
+                            ],
+                            icon: const Icon(Icons.more_vert, color: Colors.grey),
+                          ),
+                        ],
+                      ),
+                    ],
                   Text(
                     item.judul ?? 'Judul tidak tersedia',
                     style: const TextStyle(
@@ -611,6 +694,22 @@ class _AspirasiPageState extends State<AspirasiPage> {
         ),
       ),
     );
+  }
+
+  Color _getStatusColor(String? status) {
+    final statusValue = status?.toLowerCase() ?? '';
+    switch (statusValue) {
+      case 'pending':
+        return Colors.orange;
+      case 'diproses':
+        return Colors.blue;
+      case 'selesai':
+        return Colors.green;
+      case 'ditolak':
+        return Colors.red;
+      default:
+        return Colors.grey;
+    }
   }
 
   Color _getStatusColor(String? status) {
