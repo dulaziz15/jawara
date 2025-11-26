@@ -1,18 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:jawara/core/models/pemasukan_model.dart';
+// Pastikan import repository sesuai path Anda
+import 'package:jawara/core/repositories/pemasukan_repository.dart'; 
 import 'package:jawara/core/utils/formatter_util.dart';
 
 @RoutePage()
-class LaporanPemasukanDetailPage extends StatelessWidget {
-  final int laporanPemasukanId;
+class LaporanPemasukanDetailPage extends StatefulWidget {
+  final String laporanPemasukanId;
 
   const LaporanPemasukanDetailPage({
     super.key,
     @PathParam('id') required this.laporanPemasukanId,
   });
 
-  // Helper untuk format bulan
+  @override
+  State<LaporanPemasukanDetailPage> createState() =>
+      _LaporanPemasukanDetailPageState();
+}
+
+class _LaporanPemasukanDetailPageState
+    extends State<LaporanPemasukanDetailPage> {
+  // 1. Panggil Repository
+  final PemasukanRepository _repository = PemasukanRepository();
+  late Future<PemasukanModel?> _detailFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    // 2. Fetch data saat halaman dibuka
+    _detailFuture =
+        _repository.getPemasukanByDocId(widget.laporanPemasukanId);
+  }
+
+  // Helper format bulan (TETAP SAMA)
   String _getBulan(int bulan) {
     const namaBulan = [
       'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli',
@@ -21,7 +42,7 @@ class LaporanPemasukanDetailPage extends StatelessWidget {
     return namaBulan[bulan - 1];
   }
 
-  // Helper widget untuk menampilkan baris detail teks
+  // Helper widget detail row (TETAP SAMA)
   Widget _buildDetailRow(String label, String value) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
@@ -46,9 +67,9 @@ class LaporanPemasukanDetailPage extends StatelessWidget {
     );
   }
 
-  // Helper widget untuk menampilkan baris lampiran dengan ikon
+  // Helper widget attachment row (TETAP SAMA)
   Widget _buildAttachmentRow(String label, String filename) {
-    IconData icon = Icons.description_outlined; // Default to document
+    IconData icon = Icons.description_outlined;
     if (filename.isNotEmpty) {
       if (filename.toLowerCase().endsWith('.jpg') ||
           filename.toLowerCase().endsWith('.png') ||
@@ -67,15 +88,17 @@ class LaporanPemasukanDetailPage extends StatelessWidget {
             style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
           ),
           const SizedBox(height: 6),
-          // Cek apakah ada nama file lampiran
           filename.isEmpty
               ? const Text(
                   "Tidak ada bukti",
-                  style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic, color: Colors.grey),
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontStyle: FontStyle.italic,
+                      color: Colors.grey),
                 )
               : Row(
                   children: [
-                    Icon(icon, color: Color(0xFF6C63FF), size: 20),
+                    Icon(icon, color: const Color(0xFF6C63FF), size: 20),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
@@ -96,24 +119,6 @@ class LaporanPemasukanDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Ambil data pemasukan yang sesuai berdasarkan ID
-    final pemasukan = dummyPemasukan.firstWhere((item) => item.id == laporanPemasukanId);
-
-    // Format tanggal pemasukan
-    final String tanggalPemasukanFormatted =
-        '${pemasukan.tanggalPemasukan.day} '
-        '${_getBulan(pemasukan.tanggalPemasukan.month)} '
-        '${pemasukan.tanggalPemasukan.year}';
-
-    // Format tanggal terverifikasi
-    final String tanggalTerverifikasiFormatted =
-        '${pemasukan.tanggalTerverifikasi.day} '
-        '${_getBulan(pemasukan.tanggalTerverifikasi.month)} '
-        '${pemasukan.tanggalTerverifikasi.year}';
-
-    // Format jumlah pemasukan
-    final String jumlahFormatted = FormatterUtil.formatCurrency(pemasukan.jumlahPemasukan);
-
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
       appBar: AppBar(
@@ -124,37 +129,84 @@ class LaporanPemasukanDetailPage extends StatelessWidget {
           onPressed: () => context.router.pop(),
         ),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Card Detail Laporan Pemasukan
-            Card(
-              color: Colors.white,
-              elevation: 2,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16.0),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildDetailRow("Nama Pemasukan:", pemasukan.namaPemasukan),
-                    _buildDetailRow("Kategori Pemasukan:", pemasukan.kategoriPemasukan),
-                    _buildDetailRow("Jumlah Pemasukan:", 'Rp $jumlahFormatted'),
-                    _buildDetailRow("Tanggal Pemasukan:", tanggalPemasukanFormatted),
-                    _buildDetailRow("Verifikator:", pemasukan.verifikator),
-                    _buildDetailRow("Tanggal Terverifikasi:", tanggalTerverifikasiFormatted),
-                    const Divider(height: 24),
-                    _buildAttachmentRow("Bukti:", pemasukan.bukti),
-                  ],
+      // 3. Gunakan FutureBuilder
+      body: FutureBuilder<PemasukanModel?>(
+        future: _detailFuture,
+        builder: (context, snapshot) {
+          // A. Loading State
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          // B. Error State
+          if (snapshot.hasError) {
+            return Center(child: Text("Terjadi kesalahan: ${snapshot.error}"));
+          }
+
+          // C. Data Kosong
+          if (!snapshot.hasData || snapshot.data == null) {
+            return const Center(child: Text("Data pemasukan tidak ditemukan"));
+          }
+
+          // D. Data Ditemukan (UI ASLI ANDA)
+          final pemasukan = snapshot.data!;
+
+          // Format tanggal pemasukan
+          final String tanggalPemasukanFormatted =
+              '${pemasukan.tanggalPemasukan.day} '
+              '${_getBulan(pemasukan.tanggalPemasukan.month)} '
+              '${pemasukan.tanggalPemasukan.year}';
+
+          // Format tanggal terverifikasi
+          final String tanggalTerverifikasiFormatted =
+              '${pemasukan.tanggalTerverifikasi.day} '
+              '${_getBulan(pemasukan.tanggalTerverifikasi.month)} '
+              '${pemasukan.tanggalTerverifikasi.year}';
+
+          // Format jumlah pemasukan
+          final String jumlahFormatted =
+              FormatterUtil.formatCurrency(pemasukan.jumlahPemasukan);
+
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Card Detail Laporan Pemasukan
+                Card(
+                  color: Colors.white,
+                  elevation: 2,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16.0),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(24.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildDetailRow(
+                            "Nama Pemasukan:", pemasukan.namaPemasukan),
+                        _buildDetailRow(
+                            "Kategori Pemasukan:", pemasukan.kategoriPemasukan),
+                        _buildDetailRow(
+                            "Jumlah Pemasukan:", 'Rp $jumlahFormatted'),
+                        _buildDetailRow(
+                            "Tanggal Pemasukan:", tanggalPemasukanFormatted),
+                        _buildDetailRow(
+                            "Verifikator:", pemasukan.verifikatorId.toString()),
+                        _buildDetailRow("Tanggal Terverifikasi:",
+                            tanggalTerverifikasiFormatted),
+                        const Divider(height: 24),
+                        _buildAttachmentRow(
+                            "Bukti:", pemasukan.buktiPemasukan),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

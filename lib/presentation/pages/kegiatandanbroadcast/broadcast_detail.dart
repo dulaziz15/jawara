@@ -6,7 +6,7 @@ import 'package:jawara/core/models/broadcast_models.dart';
 @RoutePage()
 class BroadcastDetailPage extends StatelessWidget {
   // Menerima ID broadcast dari halaman sebelumnya
-  final int broadcastId;
+  final String broadcastId;
 
   const BroadcastDetailPage({
     super.key,
@@ -89,7 +89,7 @@ class BroadcastDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Ambil data broadcast yang sesuai berdasarkan ID
-    final broadcast = dummyBroadcast.firstWhere((item) => item.id == broadcastId);
+    final broadcast = dummyBroadcast.firstWhere((item) => item.docId == broadcastId);
 
     // Format tanggal
     final String tanggalFormatted =
@@ -128,7 +128,7 @@ class BroadcastDetailPage extends StatelessWidget {
                     _buildDetailRow("Judul Broadcast:", broadcast.judulBroadcast),
                     _buildDetailRow("Isi Pesan:", broadcast.isiPesan),
                     _buildDetailRow("Tanggal Publikasi:", tanggalFormatted),
-                    _buildDetailRow("Dibuat oleh:", broadcast.dibuatOleh),
+                    _buildDetailRow("Dibuat oleh:", broadcast.dibuatOlehId.toString()),
                     const Divider(height: 24),
                     _buildAttachmentRow(
                         "Lampiran Gambar:", broadcast.lampiranGambar, Icons.image_outlined),

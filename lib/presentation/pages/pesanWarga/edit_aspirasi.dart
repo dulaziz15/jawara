@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'model_aspirasi.dart';
+import '../../../core/models/aspirasi_models.dart';
 
 class EditAspirasiPage extends StatefulWidget {
-  final AspirationData item;
+  final AspirasiModels item;
 
   const EditAspirasiPage({super.key, required this.item});
 

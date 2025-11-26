@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'model_aspirasi.dart';
+import '../../../core/models/aspirasi_models.dart';
 
-void showDetailModal(BuildContext context, AspirationData item) {
+void showDetailModal(BuildContext context, AspirasiModels item) {
   showDialog(
     context: context,
     builder: (BuildContext dialogContext) {

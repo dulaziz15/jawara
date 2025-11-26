@@ -4,7 +4,7 @@ import 'package:jawara/core/models/channel_models.dart';
 
 @RoutePage()
 class ChannelEditPage extends StatefulWidget {
-  final int channelId;
+  final String channelId;
   const ChannelEditPage({super.key, required this.channelId});
 
   @override
@@ -28,10 +28,10 @@ class _ChannelEditPageState extends State<ChannelEditPage> {
     _loadChannelData(widget.channelId);
   }
 
-  void _loadChannelData(int id) {
+  void _loadChannelData(String id) {
     // Ambil data dari model dummyChannels
     currentChannel = dummyChannels.firstWhere(
-      (c) => c.id == id,
+      (c) => c.docId == id,
       orElse: () => throw Exception("Channel dengan ID $id tidak ditemukan"),
     );
 
@@ -39,9 +39,7 @@ class _ChannelEditPageState extends State<ChannelEditPage> {
     namaController = TextEditingController(text: currentChannel.nama);
     tipeController = TextEditingController(text: currentChannel.tipe);
     pemilikController = TextEditingController(text: currentChannel.an);
-    catatanController = TextEditingController(
-      text: 'Gunakan ${currentChannel.nama} untuk transaksi warga.',
-    );
+    catatanController = TextEditingController(text: currentChannel.catatan);
   }
 
   void _simpanPerubahan() {

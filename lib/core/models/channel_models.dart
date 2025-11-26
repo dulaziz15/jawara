@@ -1,6 +1,5 @@
 class Channel {
-  final int id;
-  final int no;
+  final String docId;
   final String nama;
   final String tipe;
   final String an;
@@ -9,8 +8,7 @@ class Channel {
   final String catatan;
 
   const Channel({
-    required this.id,
-    required this.no,
+    required this.docId,
     required this.nama,
     required this.tipe,
     required this.an,
@@ -18,12 +16,41 @@ class Channel {
     required this.qr,
     required this.catatan,
   });
+
+  // ===============================================
+  // 📥 Konversi dari Map (Firestore/JSON) ke Object
+  // ===============================================
+  factory Channel.fromMap(Map<String, dynamic> map) {
+    return Channel(
+      docId: map['docId'] as String,
+      nama: map['nama'] as String,
+      tipe: map['tipe'] as String,
+      an: map['an'] as String,
+      thumbnail: map['thumbnail'] as String,
+      qr: map['qr'] as String,
+      catatan: map['catatan'] as String,
+    );
+  }
+
+  // ===============================================
+  // 📤 Konversi dari Object ke Map (Untuk Firestore Write)
+  // ===============================================
+  Map<String, dynamic> toMap() {
+    return {
+      'docId': docId,
+      'nama': nama,
+      'tipe': tipe,
+      'an': an,
+      'thumbnail': thumbnail,
+      'qr': qr,
+      'catatan': catatan,
+    };
+  }
 }
 
 const List<Channel> dummyChannels = [
   Channel(
-    id: 1,
-    no: 1,
+    docId: "1",
     nama: 'Transfer via BCA',
     tipe: 'Bank',
     an: 'RT Jawara Karangploso',
@@ -32,8 +59,7 @@ const List<Channel> dummyChannels = [
     catatan: 'Gunakan transfer BCA untuk iuran warga.',
   ),
   Channel(
-    id: 2,
-    no: 2,
+    docId: "2",
     nama: 'Copay Ketua RT',
     tipe: 'E-Wallet',
     an: 'Budi Santoso',
@@ -42,8 +68,7 @@ const List<Channel> dummyChannels = [
     catatan: 'Bayar langsung ke Ketua RT.',
   ),
   Channel(
-    id: 3,
-    no: 3,
+    docId: "3",
     nama: 'QRIS Resmi RT 08',
     tipe: 'QRIS',
     an: 'RW 08 Karangploso',

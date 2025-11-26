@@ -6,7 +6,7 @@ import 'package:jawara/core/models/kegiatan_models.dart';
 
 @RoutePage()
 class KegiatanEditPage extends StatefulWidget {
-  final int kegiatanId;
+  final String kegiatanId;
 
   const KegiatanEditPage({
     super.key,
@@ -36,14 +36,14 @@ class _KegiatanEditPageState extends State<KegiatanEditPage> {
   void initState() {
     super.initState();
     // 3. Ambil data asli dan inisialisasi controller
-    _kegiatan = dummyPengeluaran.firstWhere((item) => item.id == widget.kegiatanId);
+    _kegiatan = dummyKegiatan.firstWhere((item) => item.docId == widget.kegiatanId);
 
     _namaKegiatanController = TextEditingController(text: _kegiatan.namaKegiatan);
     _kategoriKegiatanController = TextEditingController(text: _kegiatan.kategoriKegiatan);
-    _penanggungJawabController = TextEditingController(text: _kegiatan.penanggungJawab);
+    _penanggungJawabController = TextEditingController(text: _kegiatan.penanggungJawabId.toString());
     _deskripsiController = TextEditingController(text: _kegiatan.deskripsi);
     _lokasiController = TextEditingController(text: _kegiatan.lokasi);
-    _dibuatOlehController = TextEditingController(text: _kegiatan.dibuatOleh);
+    _dibuatOlehController = TextEditingController(text: _kegiatan.dibuatOlehId.toString());
     _selectedDate = _kegiatan.tanggalPelaksanaan;
     _currentDokumentasi = _kegiatan.dokumentasi;
   }

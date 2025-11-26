@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/models/finance_model.dart';
+import '../../../../core/models/finance_models.dart';
 import '../../../../core/utils/formatter_util.dart';
 
 class BarChart extends StatelessWidget {
@@ -40,46 +40,33 @@ class BarChart extends StatelessWidget {
                 children: data.map((item) {
                   double height = (item.amount / maxValue) * 150;
                   return Expanded(
-                    child: Stack(
-                      alignment: Alignment.bottomCenter,
+                    child: Column(
                       children: [
-                        // GARIS LATAR BELAKANG (opsional)
-                        Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 4),
-                          color: Colors.grey[100],
-                          width: 20,
+                        Text(
+                          FormatterUtil.formatCompactCurrency(item.amount),
+                          style: const TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
-                        // BATANG GRAFIK
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Container(
-                              height: height,
-                              width: 20,
-                              decoration: BoxDecoration(
-                                color: color,
-                                borderRadius: const BorderRadius.vertical(
-                                  top: Radius.circular(8),
-                                ),
-                              ),
+                        const SizedBox(height: 4),
+                        Container(
+                          height: height,
+                          margin: const EdgeInsets.symmetric(horizontal: 4),
+                          decoration: BoxDecoration(
+                            color: color,
+                            borderRadius: const BorderRadius.vertical(
+                              top: Radius.circular(8),
                             ),
-                            const SizedBox(height: 4),
-                            Text(
-                              item.month,
-                              style: const TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              FormatterUtil.formatCompactCurrency(item.amount),
-                              style: const TextStyle(
-                                fontSize: 10,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          item.month,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                       ],
                     ),

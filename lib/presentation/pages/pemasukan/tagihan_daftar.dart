@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:jawara/core/models/tagihan_model.dart'; // pastikan path sesuai struktur project-mu
+import 'package:jawara/core/models/tagihan_model.dart';
+import 'package:jawara/core/models/family_models.dart'; // pastikan path sesuai struktur project-mu
 
 @RoutePage()
 class TagihanDaftarPage extends StatefulWidget {
@@ -42,7 +43,7 @@ class _TagihanDaftarPageState extends State<TagihanDaftarPage> {
                   data.kategori.toLowerCase().contains(
                     _searchController.text.toLowerCase(),
                   ) ||
-                  data.namaKK.toLowerCase().contains(
+                  data.nik.toLowerCase().contains(
                     _searchController.text.toLowerCase(),
                   ),
             )
@@ -68,7 +69,7 @@ class _TagihanDaftarPageState extends State<TagihanDaftarPage> {
                   data.kategori.toLowerCase().contains(
                     value.toLowerCase(),
                   ) ||
-                  data.namaKK.toLowerCase().contains(
+                  data.nik.toLowerCase().contains(
                     value.toLowerCase(),
                   ),
             )
@@ -98,6 +99,7 @@ class _TagihanDaftarPageState extends State<TagihanDaftarPage> {
       ),
     );
   }
+  
 
   // --- Widget untuk menampilkan badge status verifikasi ---
   Widget _buildVerifikasiBadge(DateTime tanggalTerverifikasi) {
@@ -145,6 +147,15 @@ class _TagihanDaftarPageState extends State<TagihanDaftarPage> {
       'Desember',
     ];
     return namaBulan[bulan - 1];
+  }
+
+
+  String _getNamaKeluarga(String nikKepalaKeluarga) {
+    final family = Family.dummyFamilies.firstWhere(
+      (f) => f.nikKepalaKeluarga == nikKepalaKeluarga,
+      orElse: () => Family.dummyFamilies.first,
+    );
+    return family.namaKeluarga;
   }
 
   @override
@@ -227,6 +238,8 @@ class _TagihanDaftarPageState extends State<TagihanDaftarPage> {
   }
 
   Widget _buildDataCard(TagihanModel item) {
+    final namaKK = _getNamaKeluarga(item.nik);
+
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
@@ -286,7 +299,7 @@ class _TagihanDaftarPageState extends State<TagihanDaftarPage> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'Nama KK: ${item.namaKK}',
+                        'Nama KK: ${namaKK}',
                         style: const TextStyle(
                           color: Colors.grey,
                           fontSize: 14,
@@ -321,7 +334,7 @@ class _TagihanDaftarPageState extends State<TagihanDaftarPage> {
                       onSelected: (value) {
                         if (value == 'detail') {
                           context.router.pushNamed(
-                            'tagihan_detail/${item.id}',
+                            'tagihan_detail/${item.docId}',
                           );
                         }
                       },

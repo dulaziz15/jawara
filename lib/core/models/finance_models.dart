@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:jawara/core/models/catergory_data.dart';
+import 'package:jawara/core/models/catergory_models.dart';
+// Asumsikan file 'catergory_data.dart' sudah ada di project Anda
+// import 'package:jawara/core/models/catergory_data.dart'; 
 
 class FinanceData {
   final double totalIncome;

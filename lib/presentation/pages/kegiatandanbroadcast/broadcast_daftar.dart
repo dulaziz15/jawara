@@ -102,7 +102,7 @@ class _BroadcastDaftarPageState extends State<BroadcastDaftarPage> {
             TextButton(
               onPressed: () {
                 // TODO: Tambahkan logika hapus data di sini
-                print('Menghapus item ${item.id}');
+                print('Menghapus item ${item.docId}');
                 Navigator.of(ctx).pop(); // Tutup dialog
               },
               style: TextButton.styleFrom(foregroundColor: Colors.red),
@@ -261,11 +261,11 @@ class _BroadcastDaftarPageState extends State<BroadcastDaftarPage> {
                   onSelected: (String value) {
                     if (value == 'detail') {
                       context.router.pushNamed(
-                        '/kegiatandanbroadcast/broadcast_detail/${item.id}',
+                        '/kegiatandanbroadcast/broadcast_detail/${item.docId}',
                       );
                     } else if (value == 'edit') {
                       context.router.pushNamed(
-                        '/kegiatandanbroadcast/broadcast_edit/${item.id}',
+                        '/kegiatandanbroadcast/broadcast_edit/${item.docId}',
                       );
                     } else if (value == 'hapus') {
                       _showDeleteConfirmationDialog(context, item);

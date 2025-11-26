@@ -4,7 +4,7 @@ import 'package:jawara/core/models/channel_models.dart';
 
 @RoutePage()
 class ChannelDetailPage extends StatelessWidget {
-  final int channelId;
+  final String channelId;
 
   const ChannelDetailPage({super.key, required this.channelId});
 
@@ -12,7 +12,7 @@ class ChannelDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     // Ambil data channel dari model
     final channel = dummyChannels.firstWhere(
-      (c) => c.id == channelId,
+      (c) => c.docId == channelId,
       orElse: () => throw Exception('Channel dengan ID $channelId tidak ditemukan'),
     );
 

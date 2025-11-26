@@ -1,11 +1,12 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'model_aspirasi.dart';
+import '../../../core/models/aspirasi_models.dart';
 import 'filter.dart';
 import 'edit_aspirasi.dart';
 
 
 @RoutePage()
+class AspirasiPage extends StatefulWidget {
 class AspirasiPage extends StatefulWidget {
   const AspirasiPage({super.key});
 
@@ -14,96 +15,10 @@ class AspirasiPage extends StatefulWidget {
 }
 
 class _AspirasiPageState extends State<AspirasiPage> {
-  final List<AspirationData> _allAspirasi = [
-    AspirationData(
-      judul: 'Lampu jalan di persimpangan padam',
-      deskripsi:
-          'Pada hari minggu malam saya cek lampu nya berkedip kemudian keesokan hari nya lampu sudah mati total',
-      status: 'Pending',
-      pengirim: 'Tono',
-      tanggal: '10-10-2025',
-    ),
-    AspirationData(
-      judul: 'Tempat sampah kurang',
-      deskripsi: 'aku hanya ingin pergi ke wisata kota yang ada di malang',
-      status: 'Diproses',
-      pengirim: 'Budi Doremi',
-      tanggal: '12-10-2025',
-    ),
-    AspirationData(
-      judul: 'Pipa bocor',
-      deskripsi: 'pipa bocor karena tidak sengaja saat penggalian tanah',
-      status: 'Diproses',
-      pengirim: 'Ehsan',
-      tanggal: '13-10-2025',
-    ),
-    AspirationData(
-      judul: 'Jalan rusak',
-      deskripsi: 'Jalan rusak akibat ada truk tronton lewat dini hari',
-      status: 'Selesai',
-      pengirim: 'Darmini',
-      tanggal: '1-09-2025',
-    ),
-    AspirationData(
-      judul: 'Jalan rusak 2',
-      deskripsi: 'Jalan rusak akibat ada truk tronton lewat dini hari',
-      status: 'Selesai',
-      pengirim: 'Darmini',
-      tanggal: '1-09-2025',
-    ),
-    AspirationData(
-      judul: 'Jalan rusak 3',
-      deskripsi: 'Jalan rusak akibat ada truk tronton lewat dini hari',
-      status: 'Selesai',
-      pengirim: 'Darmini',
-      tanggal: '1-09-2025',
-    ),
-    AspirationData(
-      judul: 'Jalan rusak 4',
-      deskripsi: 'Jalan rusak akibat ada truk tronton lewat dini hari',
-      status: 'Selesai',
-      pengirim: 'Darmini',
-      tanggal: '1-09-2025',
-    ),
-    AspirationData(
-      judul: 'Jalan rusak 5',
-      deskripsi: 'Jalan rusak akibat ada truk tronton lewat dini hari',
-      status: 'Selesai',
-      pengirim: 'Darmini',
-      tanggal: '1-09-2025',
-    ),
-    AspirationData(
-      judul: 'Jalan rusak 6',
-      deskripsi: 'Jalan rusak akibat ada truk tronton lewat dini hari',
-      status: 'Selesai',
-      pengirim: 'Darmini',
-      tanggal: '1-09-2025',
-    ),
-    AspirationData(
-      judul: 'Jalan rusak 7',
-      deskripsi: 'Jalan rusak akibat ada truk tronton lewat dini hari',
-      status: 'Selesai',
-      pengirim: 'Darmini',
-      tanggal: '1-09-2025',
-    ),
-    AspirationData(
-      judul: 'Jalan rusak 8',
-      deskripsi: 'Jalan rusak akibat ada truk tronton lewat dini hari',
-      status: 'Selesai',
-      pengirim: 'Darmini',
-      tanggal: '1-09-2025',
-    ),
-    AspirationData(
-      judul: 'Jalan rusak 9',
-      deskripsi: 'Jalan rusak akibat ada truk tronton lewat dini hari',
-      status: 'Selesai',
-      pengirim: 'Darmini',
-      tanggal: '1-09-2025',
-    ),
-  ];
+  
 
-  List<AspirationData> _filteredAspirasi = [];
-  List<AspirationData> _currentPageData = [];
+  List<AspirasiModels> _filteredAspirasi = [];
+  List<AspirasiModels> _currentPageData = [];
   final TextEditingController _searchController = TextEditingController();
   String _selectedFilter = 'Semua';
   
@@ -115,7 +30,7 @@ class _AspirasiPageState extends State<AspirasiPage> {
   @override
   void initState() {
     super.initState();
-    _filteredAspirasi = List.from(_allAspirasi);
+    _filteredAspirasi = List.from(allAspirasi);
     _updatePagination();
   }
 
@@ -178,9 +93,9 @@ class _AspirasiPageState extends State<AspirasiPage> {
         _currentPage = 1;
 
         // Pastikan _allAspirasi tidak null
-        final allData = _allAspirasi;
+        final allData = allAspirasi;
         
-        List<AspirationData> statusFilteredData;
+        List<AspirasiModels> statusFilteredData;
         if (status == 'Semua') {
           statusFilteredData = List.from(allData);
         } else {
@@ -206,7 +121,7 @@ class _AspirasiPageState extends State<AspirasiPage> {
     } catch (e) {
       print('Error applying filter: $e');
       setState(() {
-        _filteredAspirasi = List.from(_allAspirasi);
+        _filteredAspirasi = List.from(allAspirasi);
         _updatePagination();
       });
     }
@@ -217,10 +132,10 @@ class _AspirasiPageState extends State<AspirasiPage> {
       setState(() {
         _currentPage = 1;
         
-        // Pastikan _allAspirasi tidak null
-        final allData = _allAspirasi;
+        // Pastikan allAspirasi tidak null
+        final allData = allAspirasi;
         
-        List<AspirationData> searchFilteredData;
+        List<AspirasiModels> searchFilteredData;
         if (value.isEmpty) {
           searchFilteredData = List.from(allData);
         } else {
@@ -244,7 +159,7 @@ class _AspirasiPageState extends State<AspirasiPage> {
     } catch (e) {
       print('Error in search: $e');
       setState(() {
-        _filteredAspirasi = List.from(_allAspirasi);
+        _filteredAspirasi = List.from(allAspirasi);
         _updatePagination();
       });
     }
@@ -261,7 +176,7 @@ class _AspirasiPageState extends State<AspirasiPage> {
   }
 
   // FUNGSI DELETE CONFIRMATION
-  void _showDeleteConfirmation(BuildContext context, AspirationData item) {
+  void _showDeleteConfirmation(BuildContext context, AspirasiModels item) {
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
@@ -290,9 +205,9 @@ class _AspirasiPageState extends State<AspirasiPage> {
   }
 
   // FUNGSI DELETE ASPIRASI
-  void _deleteAspirasi(AspirationData item) {
+  void _deleteAspirasi(AspirasiModels item) {
     setState(() {
-      _allAspirasi.removeWhere((a) => a.judul == item.judul);
+      allAspirasi.removeWhere((a) => a.judul == item.judul);
       _applyFilter(_selectedFilter); // Re-apply filter to update the list
     });
     
@@ -305,7 +220,7 @@ class _AspirasiPageState extends State<AspirasiPage> {
   }
 
   // FUNGSI DETAIL MODAL
-  void _showDetailModal(BuildContext context, AspirationData item) {
+  void _showDetailModal(BuildContext context, AspirasiModels item) {
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
@@ -584,7 +499,7 @@ class _AspirasiPageState extends State<AspirasiPage> {
     );
   }
 
-  Widget _buildAspirasiCard(AspirationData item) {
+  Widget _buildAspirasiCard(AspirasiModels item) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
@@ -607,7 +522,89 @@ class _AspirasiPageState extends State<AspirasiPage> {
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Text(
+                    item.judul ?? 'Judul tidak tersedia',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Dikirim oleh: ${item.pengirim ?? 'Tidak diketahui'}',
+                              style: const TextStyle(
+                                color: Colors.grey,
+                                fontSize: 14,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Tanggal: ${item.tanggal ?? 'Tidak diketahui'}',
+                              style: const TextStyle(
+                                color: Colors.grey,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: _getStatusColor(item.status),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              item.status ?? 'Unknown',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          PopupMenuButton<String>(
+                            onSelected: (value) {
+                              switch (value) {
+                                case 'edit':
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => EditAspirasiPage(item: item),
+                                    ),
+                                  );
+                                  break;
+                                case 'delete':
+                                  _showDeleteConfirmation(context, item); // FIXED
+                                  break;
+                                case 'detail':
+                                  _showDetailModal(context, item); // FIXED
+                                  break;
+                              }
+                            },
+                            itemBuilder: (context) => const [
+                              PopupMenuItem(value: 'detail', child: Text('Detail')),
+                              PopupMenuItem(value: 'edit', child: Text('Edit')),
+                              PopupMenuItem(value: 'delete', child: Text('Hapus')),
+                            ],
+                            icon: const Icon(Icons.more_vert, color: Colors.grey),
+                          ),
+                        ],
+                      ),
+                    ],
                   Text(
                     item.judul ?? 'Judul tidak tersedia',
                     style: const TextStyle(
@@ -697,6 +694,22 @@ class _AspirasiPageState extends State<AspirasiPage> {
         ),
       ),
     );
+  }
+
+  Color _getStatusColor(String? status) {
+    final statusValue = status?.toLowerCase() ?? '';
+    switch (statusValue) {
+      case 'pending':
+        return Colors.orange;
+      case 'diproses':
+        return Colors.blue;
+      case 'selesai':
+        return Colors.green;
+      case 'ditolak':
+        return Colors.red;
+      default:
+        return Colors.grey;
+    }
   }
 
   Color _getStatusColor(String? status) {

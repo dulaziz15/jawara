@@ -5,7 +5,7 @@ import 'package:jawara/core/models/kegiatan_models.dart';
 
 @RoutePage()
 class KegiatanDetailPage extends StatelessWidget {
-  final int kegiatanId;
+  final String kegiatanId;
 
   const KegiatanDetailPage({
     super.key,
@@ -59,8 +59,8 @@ class KegiatanDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Ambil data kegiatan berdasarkan ID
-    final kegiatan = dummyPengeluaran.firstWhere(
-      (item) => item.id == kegiatanId,
+    final kegiatan = dummyKegiatan.firstWhere(
+      (item) => item.docId == kegiatanId,
     );
 
     // Format tanggal
@@ -105,9 +105,9 @@ class KegiatanDetailPage extends StatelessWidget {
                     _buildDetailRow("Lokasi:", kegiatan.lokasi),
                     _buildDetailRow(
                       "Penanggung Jawab:",
-                      kegiatan.penanggungJawab,
+                      kegiatan.penanggungJawabId.toString(),
                     ),
-                    _buildDetailRow("Dibuat oleh:", kegiatan.dibuatOleh),
+                    _buildDetailRow("Dibuat oleh:", kegiatan.dibuatOlehId.toString()),
                     _buildDetailRow(
                       "Dokumentasi:",
                       (kegiatan.dokumentasi.isEmpty)

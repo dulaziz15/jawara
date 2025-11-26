@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'model_aspirasi.dart';
+import '../../../core/models/aspirasi_models.dart';
 
-void showDeleteConfirmation(BuildContext context, AspirationData item) {
+void showDeleteConfirmation(BuildContext context, AspirasiModels item) {
   showDialog(
     context: context,
     builder: (BuildContext dialogContext) {

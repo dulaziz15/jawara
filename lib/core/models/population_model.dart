@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:jawara/core/models/catergory_data.dart';
+import 'package:jawara/core/models/catergory_models.dart';
+// Asumsikan file 'catergory_model.dart' sudah ada di project Anda
+// import 'package:jawara/core/models/catergory_model.dart';
 
 class PopulationData {
   final int totalFamilies;

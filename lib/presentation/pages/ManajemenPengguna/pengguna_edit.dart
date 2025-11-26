@@ -4,12 +4,9 @@ import 'package:jawara/core/models/pengguna_models.dart';
 
 @RoutePage()
 class PenggunaEditPage extends StatefulWidget {
-  final int userId;
+  final String userId;
 
-  const PenggunaEditPage({
-    super.key,
-    required this.userId,
-  });
+  const PenggunaEditPage({super.key, required this.userId});
 
   @override
   State<PenggunaEditPage> createState() => _PenggunaEditPageState();
@@ -30,16 +27,19 @@ class _PenggunaEditPageState extends State<PenggunaEditPage> {
 
     // Ambil data user berdasarkan ID
     user = daftarPengguna.firstWhere(
-      (u) => u.id == widget.userId,
+      (u) => u.docId == widget.userId,
       orElse: () => UserModel(
-        id: widget.userId,
+        docId: widget.userId,
         nama: '',
         email: '',
-        status: 'Diproses',
+        statusDomisili: 'Diproses',
         role: 'Warga',
         nik: '',
         noHp: '',
         jenisKelamin: '',
+        idKeluarga: '',
+        statusHidup: '',
+        buktiIdentitas: '',
       ),
     );
 
@@ -63,9 +63,9 @@ class _PenggunaEditPageState extends State<PenggunaEditPage> {
 
   void _simpanPerubahan() {
     // Simpan data atau lakukan validasi di sini
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Perubahan disimpan')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Perubahan disimpan')));
   }
 
   @override
@@ -82,7 +82,9 @@ class _PenggunaEditPageState extends State<PenggunaEditPage> {
         padding: const EdgeInsets.all(16),
         child: Card(
           elevation: 3,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
           child: Padding(
             padding: const EdgeInsets.all(24),
             child: Column(
@@ -137,7 +139,9 @@ class _PenggunaEditPageState extends State<PenggunaEditPage> {
                 TextField(
                   controller: confirmPasswordController,
                   obscureText: true,
-                  decoration: const InputDecoration(hintText: 'Konfirmasi Password Baru'),
+                  decoration: const InputDecoration(
+                    hintText: 'Konfirmasi Password Baru',
+                  ),
                 ),
 
                 const SizedBox(height: 16),
@@ -157,10 +161,18 @@ class _PenggunaEditPageState extends State<PenggunaEditPage> {
                   onPressed: _simpanPerubahan,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFF6C63FF),
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 12,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                   ),
-                  child: const Text('Perbarui', style: TextStyle(color: Colors.white)),
+                  child: const Text(
+                    'Perbarui',
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
               ],
             ),
