@@ -1,4 +1,4 @@
-class Family {
+class FamilyModel {
   final String docId; // Firestore Document ID
   final String noKk; // Nomor Kartu Keluarga
   final String namaKeluarga; // Nama Keluarga
@@ -7,7 +7,7 @@ class Family {
   final String statusKepemilikanRumah; // Status Kepemilikan Rumah
   final String statusDomisiliKeluarga; // Status Domisili Keluarga (Aktif/Nonaktif)
 
-  Family({
+  FamilyModel({
     required this.docId,
     required this.noKk,
     required this.namaKeluarga,
@@ -20,8 +20,8 @@ class Family {
   // ===============================================
   // 📥 Konversi dari Map (Firestore/JSON) ke Object
   // ===============================================
-  factory Family.fromMap(Map<String, dynamic> map) {
-    return Family(
+  factory FamilyModel.fromMap(Map<String, dynamic> map) {
+    return FamilyModel(
       docId: map['docId'] as String,
       noKk: map['noKk'] as String,
       namaKeluarga: map['namaKeluarga'] as String,
@@ -50,8 +50,8 @@ class Family {
   // ===============================================
   // 📌 Dummy Families
   // ===============================================
-  static final List<Family> dummyFamilies = [
-    Family(
+  static final List<FamilyModel> dummyFamilies = [
+    FamilyModel(
       docId: '1',
       noKk: '3501010101010001',
       namaKeluarga: 'Keluarga Surya',
@@ -60,7 +60,7 @@ class Family {
       statusKepemilikanRumah: 'Milik Sendiri',
       statusDomisiliKeluarga: 'Aktif',
     ),
-    Family(
+    FamilyModel(
       docId: '2',
       noKk: '3501010101010002',
       namaKeluarga: 'Keluarga Santoso',
@@ -69,7 +69,7 @@ class Family {
       statusKepemilikanRumah: 'Kontrak',
       statusDomisiliKeluarga: 'Aktif',
     ),
-    Family(
+    FamilyModel(
       docId: '3',
       noKk: '3501010101010003',
       namaKeluarga: 'Keluarga Dewi',
@@ -78,7 +78,7 @@ class Family {
       statusKepemilikanRumah: 'Kontrak',
       statusDomisiliKeluarga: 'Nonaktif',
     ),
-    Family(
+    FamilyModel(
       docId: '4',
       noKk: '3501010101010004',
       namaKeluarga: 'Keluarga Rahman',

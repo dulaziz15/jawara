@@ -37,7 +37,7 @@ Future<void> migrateDummyDataToFirestore() async {
     // Menggunakan NIK sebagai Document ID (ID Dokumen)
     final familyCollection = _db.collection('families');
     print('Migrating families...');
-    for (var family in Family.dummyFamilies) {
+    for (var family in FamilyModel.dummyFamilies) {
       await familyCollection.doc(family.noKk).set(family.toMap()); 
     }
     print('✅ Families migration complete.');

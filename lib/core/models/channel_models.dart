@@ -1,4 +1,4 @@
-class Channel {
+class ChannelModel {
   final String docId;
   final String nama;
   final String tipe;
@@ -7,7 +7,7 @@ class Channel {
   final String qr;
   final String catatan;
 
-  const Channel({
+  const ChannelModel({
     required this.docId,
     required this.nama,
     required this.tipe,
@@ -20,8 +20,8 @@ class Channel {
   // ===============================================
   // 📥 Konversi dari Map (Firestore/JSON) ke Object
   // ===============================================
-  factory Channel.fromMap(Map<String, dynamic> map) {
-    return Channel(
+  factory ChannelModel.fromMap(Map<String, dynamic> map) {
+    return ChannelModel(
       docId: map['docId'] as String,
       nama: map['nama'] as String,
       tipe: map['tipe'] as String,
@@ -48,8 +48,8 @@ class Channel {
   }
 }
 
-const List<Channel> dummyChannels = [
-  Channel(
+const List<ChannelModel> dummyChannels = [
+  ChannelModel(
     docId: "1",
     nama: 'Transfer via BCA',
     tipe: 'Bank',
@@ -58,7 +58,7 @@ const List<Channel> dummyChannels = [
     qr: 'assets/channel/qr/default_qr.jpg',
     catatan: 'Gunakan transfer BCA untuk iuran warga.',
   ),
-  Channel(
+  ChannelModel(
     docId: "2",
     nama: 'Copay Ketua RT',
     tipe: 'E-Wallet',
@@ -67,7 +67,7 @@ const List<Channel> dummyChannels = [
     qr: 'assets/channel/qr/default_qr.jpg',
     catatan: 'Bayar langsung ke Ketua RT.',
   ),
-  Channel(
+  ChannelModel(
     docId: "3",
     nama: 'QRIS Resmi RT 08',
     tipe: 'QRIS',

@@ -46,7 +46,6 @@ class PengeluaranRepository {
       await _pengeluaranCollection.doc(docId).delete();
 
   // R: Get Single Detail by Document ID (Future)
-  // Fungsi ini dipanggil oleh Halaman Detail
   Future<PengeluaranModel?> getPengeluaranByDocId(String docId) async {
     try {
       // PERBAIKAN: Gunakan .doc(docId).get() 

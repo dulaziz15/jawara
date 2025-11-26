@@ -1,12 +1,11 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import '../../../core/models/aspirasi_models.dart';
+import '../../../core/models/model_aspirasi.dart';
 import 'filter.dart';
 import 'edit_aspirasi.dart';
 
 
 @RoutePage()
-class AspirasiPage extends StatefulWidget {
 class AspirasiPage extends StatefulWidget {
   const AspirasiPage({super.key});
 
@@ -15,10 +14,9 @@ class AspirasiPage extends StatefulWidget {
 }
 
 class _AspirasiPageState extends State<AspirasiPage> {
-  
 
-  List<AspirasiModels> _filteredAspirasi = [];
-  List<AspirasiModels> _currentPageData = [];
+  List<AspirationData> _filteredAspirasi = [];
+  List<AspirationData> _currentPageData = [];
   final TextEditingController _searchController = TextEditingController();
   String _selectedFilter = 'Semua';
   
@@ -95,7 +93,7 @@ class _AspirasiPageState extends State<AspirasiPage> {
         // Pastikan _allAspirasi tidak null
         final allData = allAspirasi;
         
-        List<AspirasiModels> statusFilteredData;
+        List<AspirationData> statusFilteredData;
         if (status == 'Semua') {
           statusFilteredData = List.from(allData);
         } else {
@@ -135,7 +133,7 @@ class _AspirasiPageState extends State<AspirasiPage> {
         // Pastikan allAspirasi tidak null
         final allData = allAspirasi;
         
-        List<AspirasiModels> searchFilteredData;
+        List<AspirationData> searchFilteredData;
         if (value.isEmpty) {
           searchFilteredData = List.from(allData);
         } else {
@@ -176,7 +174,7 @@ class _AspirasiPageState extends State<AspirasiPage> {
   }
 
   // FUNGSI DELETE CONFIRMATION
-  void _showDeleteConfirmation(BuildContext context, AspirasiModels item) {
+  void _showDeleteConfirmation(BuildContext context, AspirationData item) {
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
@@ -205,7 +203,7 @@ class _AspirasiPageState extends State<AspirasiPage> {
   }
 
   // FUNGSI DELETE ASPIRASI
-  void _deleteAspirasi(AspirasiModels item) {
+  void _deleteAspirasi(AspirationData item) {
     setState(() {
       allAspirasi.removeWhere((a) => a.judul == item.judul);
       _applyFilter(_selectedFilter); // Re-apply filter to update the list
@@ -220,7 +218,7 @@ class _AspirasiPageState extends State<AspirasiPage> {
   }
 
   // FUNGSI DETAIL MODAL
-  void _showDetailModal(BuildContext context, AspirasiModels item) {
+  void _showDetailModal(BuildContext context, AspirationData item) {
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
@@ -499,7 +497,7 @@ class _AspirasiPageState extends State<AspirasiPage> {
     );
   }
 
-  Widget _buildAspirasiCard(AspirasiModels item) {
+  Widget _buildAspirasiCard(AspirationData item) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
@@ -521,7 +519,6 @@ class _AspirasiPageState extends State<AspirasiPage> {
           children: [
             Expanded(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
@@ -558,133 +555,52 @@ class _AspirasiPageState extends State<AspirasiPage> {
                           ],
                         ),
                       ),
-                      Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                            decoration: BoxDecoration(
-                              color: _getStatusColor(item.status),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Text(
-                              item.status ?? 'Unknown',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          PopupMenuButton<String>(
-                            onSelected: (value) {
-                              switch (value) {
-                                case 'edit':
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => EditAspirasiPage(item: item),
-                                    ),
-                                  );
-                                  break;
-                                case 'delete':
-                                  _showDeleteConfirmation(context, item); // FIXED
-                                  break;
-                                case 'detail':
-                                  _showDetailModal(context, item); // FIXED
-                                  break;
-                              }
-                            },
-                            itemBuilder: (context) => const [
-                              PopupMenuItem(value: 'detail', child: Text('Detail')),
-                              PopupMenuItem(value: 'edit', child: Text('Edit')),
-                              PopupMenuItem(value: 'delete', child: Text('Hapus')),
-                            ],
-                            icon: const Icon(Icons.more_vert, color: Colors.grey),
-                          ),
-                        ],
-                      ),
-                    ],
-                  Text(
-                    item.judul ?? 'Judul tidak tersedia',
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Dikirim oleh: ${item.pengirim ?? 'Tidak diketahui'}',
-                              style: const TextStyle(
-                                color: Colors.grey,
-                                fontSize: 14,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'Tanggal: ${item.tanggal ?? 'Tidak diketahui'}',
-                              style: const TextStyle(
-                                color: Colors.grey,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                            decoration: BoxDecoration(
-                              color: _getStatusColor(item.status),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Text(
-                              item.status ?? 'Unknown',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          PopupMenuButton<String>(
-                            onSelected: (value) {
-                              switch (value) {
-                                case 'edit':
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => EditAspirasiPage(item: item),
-                                    ),
-                                  );
-                                  break;
-                                case 'delete':
-                                  _showDeleteConfirmation(context, item); // FIXED
-                                  break;
-                                case 'detail':
-                                  _showDetailModal(context, item); // FIXED
-                                  break;
-                              }
-                            },
-                            itemBuilder: (context) => const [
-                              PopupMenuItem(value: 'detail', child: Text('Detail')),
-                              PopupMenuItem(value: 'edit', child: Text('Edit')),
-                              PopupMenuItem(value: 'delete', child: Text('Hapus')),
-                            ],
-                            icon: const Icon(Icons.more_vert, color: Colors.grey),
-                          ),
-                        ],
-                      ),
+                      // Row(
+                      //   children: [
+                      //     Container(
+                      //       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      //       decoration: BoxDecoration(
+                      //         color: _getStatusColor(item.status),
+                      //         borderRadius: BorderRadius.circular(20),
+                      //       ),
+                      //       child: Text(
+                      //         item.status ?? 'Unknown',
+                      //         style: const TextStyle(
+                      //           color: Colors.white,
+                      //           fontSize: 12,
+                      //           fontWeight: FontWeight.w600,
+                      //         ),
+                      //       ),
+                      //     ),
+                      //     const SizedBox(width: 8),
+                      //     PopupMenuButton<String>(
+                      //       onSelected: (value) {
+                      //         switch (value) {
+                      //           case 'edit':
+                      //             Navigator.push(
+                      //               context,
+                      //               MaterialPageRoute(
+                      //                 builder: (_) => EditAspirasiPage(item: item),
+                      //               ),
+                      //             );
+                      //             break;
+                      //           case 'delete':
+                      //             _showDeleteConfirmation(context, item); // FIXED
+                      //             break;
+                      //           case 'detail':
+                      //             _showDetailModal(context, item); // FIXED
+                      //             break;
+                      //         }
+                      //       },
+                      //       itemBuilder: (context) => const [
+                      //         PopupMenuItem(value: 'detail', child: Text('Detail')),
+                      //         PopupMenuItem(value: 'edit', child: Text('Edit')),
+                      //         PopupMenuItem(value: 'delete', child: Text('Hapus')),
+                      //       ],
+                      //       icon: const Icon(Icons.more_vert, color: Colors.grey),
+                      //     ),
+                      //   ],
+                      // ),
                     ],
                   ),
                 ],
@@ -694,22 +610,6 @@ class _AspirasiPageState extends State<AspirasiPage> {
         ),
       ),
     );
-  }
-
-  Color _getStatusColor(String? status) {
-    final statusValue = status?.toLowerCase() ?? '';
-    switch (statusValue) {
-      case 'pending':
-        return Colors.orange;
-      case 'diproses':
-        return Colors.blue;
-      case 'selesai':
-        return Colors.green;
-      case 'ditolak':
-        return Colors.red;
-      default:
-        return Colors.grey;
-    }
   }
 
   Color _getStatusColor(String? status) {

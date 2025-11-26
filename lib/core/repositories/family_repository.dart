@@ -10,33 +10,33 @@ class FamilyRepository {
   // FAMILY (Data Keluarga Master - CRUD Penuh)
   // ==========================================================
   // R: Stream semua Family
-  Stream<List<Family>> getAllFamilies() {
+  Stream<List<FamilyModel>> getAllFamilies() {
     return _familyCollection.snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
         final data = doc.data() as Map<String, dynamic>;
-        return Family.fromMap(data);
+        return FamilyModel.fromMap(data);
       }).toList();
     });
   }
 
   // R: Ambil data Family berdasarkan NIK (Future)
-  Future<Family?> getFamilyByNoKk(String noKk) async {
+  Future<FamilyModel?> getFamilyByNoKk(String noKk) async {
     final docSnapshot = await _familyCollection.doc(noKk).get();
 
     if (docSnapshot.exists) {
       final data = docSnapshot.data() as Map<String, dynamic>;
-      return Family.fromMap(data);
+      return FamilyModel.fromMap(data);
     }
     return null;
   }
 
   // C: Tambah Family (NIK digunakan sebagai ID Dokumen)
-  Future<void> addFamily(Family family) async {
+  Future<void> addFamily(FamilyModel family) async {
     await _familyCollection.doc(family.noKk).set(family.toMap());
   }
 
   // U: Update Family
-  Future<void> updateFamily(Family family) async {
+  Future<void> updateFamily(FamilyModel family) async {
     await _familyCollection.doc(family.noKk).update(family.toMap());
   }
 

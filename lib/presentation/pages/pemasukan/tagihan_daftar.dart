@@ -151,9 +151,9 @@ class _TagihanDaftarPageState extends State<TagihanDaftarPage> {
 
 
   String _getNamaKeluarga(String nikKepalaKeluarga) {
-    final family = Family.dummyFamilies.firstWhere(
+    final family = FamilyModel.dummyFamilies.firstWhere(
       (f) => f.nikKepalaKeluarga == nikKepalaKeluarga,
-      orElse: () => Family.dummyFamilies.first,
+      orElse: () => FamilyModel.dummyFamilies.first,
     );
     return family.namaKeluarga;
   }

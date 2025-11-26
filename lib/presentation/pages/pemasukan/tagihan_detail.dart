@@ -87,17 +87,17 @@ class TagihanDetailPage extends StatelessWidget {
   }
 
   String _getNamaKeluarga(String nikKepalaKeluarga) {
-    final family = Family.dummyFamilies.firstWhere(
+    final family = FamilyModel.dummyFamilies.firstWhere(
       (f) => f.nikKepalaKeluarga == nikKepalaKeluarga,
-      orElse: () => Family.dummyFamilies.first,
+      orElse: () => FamilyModel.dummyFamilies.first,
     );
     return family.namaKeluarga;
   }
 
   String _getAlamat(String nikKepalaKeluarga) {
-    final family = Family.dummyFamilies.firstWhere(
+    final family = FamilyModel.dummyFamilies.firstWhere(
       (f) => f.nikKepalaKeluarga == nikKepalaKeluarga,
-      orElse: () => Family.dummyFamilies.first,
+      orElse: () => FamilyModel.dummyFamilies.first,
     );
     return family.alamatRumah;
   }
