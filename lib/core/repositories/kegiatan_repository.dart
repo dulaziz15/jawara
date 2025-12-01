@@ -25,6 +25,23 @@ class KegiatanRepository {
         });
   }
 
+  // R: Get Kegiatan by DocId
+  Future<KegiatanModel?> getKegiatanByDocId(String docId) async {
+    try {
+      final doc = await _kegiatanCollection.doc(docId).get();
+      
+      if (doc.exists) {
+        final data = doc.data() as Map<String, dynamic>;
+        // Pastikan ID dokumen disertakan
+        return KegiatanModel.fromMap({...data, 'docId': doc.id});
+      }
+      return null;
+    } catch (e) {
+      // Anda bisa log error di sini
+      return null;
+    }
+  }
+
   // U
   Future<void> updateKegiatan(KegiatanModel kegiatan) async =>
       await _kegiatanCollection

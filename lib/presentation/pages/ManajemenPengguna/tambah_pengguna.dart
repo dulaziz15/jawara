@@ -1,87 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
-// ==================== MODEL ====================
-class UserModel {
-  String fullName;
-  String email;
-  String phoneNumber;
-  String password;
-  String confirmPassword;
-  String role;
-
-  UserModel({
-    this.fullName = '',
-    this.email = '',
-    this.phoneNumber = '',
-    this.password = '',
-    this.confirmPassword = '',
-    this.role = '',
-  });
-}
-
-// ==================== CONTROLLER ====================
-class UserController {
-  final UserModel user = UserModel();
-
-  final TextEditingController fullNameController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController phoneController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController = TextEditingController();
-
-  String selectedRole = '';
-
-  bool validateInputs(BuildContext context) {
-    if (fullNameController.text.isEmpty ||
-        emailController.text.isEmpty ||
-        phoneController.text.isEmpty ||
-        passwordController.text.isEmpty ||
-        confirmPasswordController.text.isEmpty ||
-        selectedRole.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Semua field harus diisi')),
-      );
-      return false;
-    }
-
-    if (passwordController.text != confirmPasswordController.text) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Password tidak cocok')),
-      );
-      return false;
-    }
-
-    return true;
-  }
-
-  void saveUser(BuildContext context) {
-    if (validateInputs(context)) {
-      user.fullName = fullNameController.text;
-      user.email = emailController.text;
-      user.phoneNumber = phoneController.text;
-      user.password = passwordController.text;
-      user.role = selectedRole;
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Akun ${user.fullName} berhasil disimpan!')),
-      );
-
-      resetForm();
-    }
-  }
-
-  void resetForm() {
-    fullNameController.clear();
-    emailController.clear();
-    phoneController.clear();
-    passwordController.clear();
-    confirmPasswordController.clear();
-    selectedRole = '';
-  }
-}
+import 'package:firebase_auth/firebase_auth.dart'; // Import Auth
+import 'package:jawara/core/models/pengguna_models.dart';
+import 'package:jawara/core/repositories/pengguna_repository.dart';
 
 @RoutePage()
-// ==================== VIEW ====================
 class PenggunaTambahPage extends StatefulWidget {
   const PenggunaTambahPage({super.key});
 
@@ -90,7 +13,19 @@ class PenggunaTambahPage extends StatefulWidget {
 }
 
 class _PenggunaTambahPageState extends State<PenggunaTambahPage> {
-  final UserController controller = UserController();
+  final PenggunaRepository _repository = PenggunaRepository();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  // Controllers
+  final TextEditingController fullNameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
+  final TextEditingController nikController = TextEditingController(); // NIK Wajib
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmPasswordController = TextEditingController();
+
+  String selectedRole = '';
+  bool _isLoading = false;
 
   final List<String> roles = [
     'Admin',
@@ -98,12 +33,142 @@ class _PenggunaTambahPageState extends State<PenggunaTambahPage> {
     'Ketua RT',
     'Sekretaris',
     'Bendahara',
+    'Warga',
   ];
+
+  @override
+  void dispose() {
+    fullNameController.dispose();
+    emailController.dispose();
+    phoneController.dispose();
+    nikController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    super.dispose();
+  }
+
+  // Fungsi Validasi & Simpan
+  Future<void> _saveUser() async {
+    // 1. Validasi Input Dasar
+    if (fullNameController.text.isEmpty ||
+        emailController.text.isEmpty ||
+        phoneController.text.isEmpty ||
+        nikController.text.isEmpty ||
+        passwordController.text.isEmpty ||
+        confirmPasswordController.text.isEmpty ||
+        selectedRole.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Semua field (termasuk NIK & Role) harus diisi')),
+      );
+      return;
+    }
+
+    // 2. Validasi Password Match
+    if (passwordController.text != confirmPasswordController.text) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Password dan Konfirmasi tidak cocok')),
+      );
+      return;
+    }
+
+    // 3. Validasi Panjang Password (Syarat Firebase min 6 karakter)
+    if (passwordController.text.length < 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Password minimal 6 karakter')),
+      );
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    try {
+      // 4. Buat User di Firebase Authentication (Email & Pass)
+      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text,
+      );
+
+      // Ambil UID yang baru dibuat
+      String newUid = userCredential.user!.uid;
+
+      // 5. Siapkan Data Model untuk Firestore
+      // Kita isi default value untuk field yang tidak ada di form input
+      UserModel newUser = UserModel(
+        docId: newUid, // ID Dokumen = UID Auth
+        nama: fullNameController.text,
+        email: emailController.text.trim(),
+        noHp: phoneController.text,
+        role: selectedRole,
+        nik: nikController.text,
+        idKeluarga: '',         // Default kosong
+        jenisKelamin: '-',      // Default strip
+        statusDomisili: 'Aktif',// Default Aktif
+        statusHidup: 'Hidup',   // Default Hidup
+        buktiIdentitas: '',     // Default kosong (bisa update nanti)
+      );
+
+      // 6. Simpan ke Firestore
+      await _repository.createUserProfile(newUser);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Akun ${newUser.nama} berhasil dibuat!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        _resetForm();
+      }
+    } on FirebaseAuthException catch (e) {
+      String message = 'Terjadi kesalahan';
+      if (e.code == 'email-already-in-use') {
+        message = 'Email sudah terdaftar. Gunakan email lain.';
+      } else if (e.code == 'invalid-email') {
+        message = 'Format email salah.';
+      } else if (e.code == 'weak-password') {
+        message = 'Password terlalu lemah.';
+      }
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(message), backgroundColor: Colors.red),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  void _resetForm() {
+    fullNameController.clear();
+    emailController.clear();
+    phoneController.clear();
+    nikController.clear();
+    passwordController.clear();
+    confirmPasswordController.clear();
+    setState(() {
+      selectedRole = '';
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F8FA),
+      // Tombol Back di AppBar (Opsional jika ingin navigasi manual)
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () => context.router.pop(),
+        ),
+      ),
       body: Center(
         child: Container(
           width: 800,
@@ -134,30 +199,37 @@ class _PenggunaTambahPageState extends State<PenggunaTambahPage> {
                 const SizedBox(height: 20),
 
                 _buildTextField(
-                  controller.fullNameController,
+                  fullNameController,
                   'Nama Lengkap',
                   'Masukkan nama lengkap',
                 ),
+                // Field NIK Wajib ditambahkan karena Model memerlukannya
                 _buildTextField(
-                  controller.emailController,
+                  nikController,
+                  'NIK',
+                  'Masukkan NIK (16 digit)',
+                  keyboardType: TextInputType.number,
+                ),
+                _buildTextField(
+                  emailController,
                   'Email',
                   'Masukkan email aktif',
                   keyboardType: TextInputType.emailAddress,
                 ),
                 _buildTextField(
-                  controller.phoneController,
+                  phoneController,
                   'Nomor HP',
                   'Masukkan nomor HP (cth: 08xxxxxxxxxx)',
                   keyboardType: TextInputType.phone,
                 ),
                 _buildTextField(
-                  controller.passwordController,
+                  passwordController,
                   'Password',
-                  'Masukkan password',
+                  'Masukkan password (min 6 karakter)',
                   obscure: true,
                 ),
                 _buildTextField(
-                  controller.confirmPasswordController,
+                  confirmPasswordController,
                   'Konfirmasi Password',
                   'Masukkan ulang password',
                   obscure: true,
@@ -172,9 +244,7 @@ class _PenggunaTambahPageState extends State<PenggunaTambahPage> {
                   alignment: Alignment.centerRight,
                   children: [
                     DropdownButtonFormField<String>(
-                      value: controller.selectedRole.isEmpty
-                          ? null
-                          : controller.selectedRole,
+                      value: selectedRole.isEmpty ? null : selectedRole,
                       decoration: InputDecoration(
                         contentPadding: const EdgeInsets.symmetric(
                             horizontal: 12, vertical: 16),
@@ -198,19 +268,17 @@ class _PenggunaTambahPageState extends State<PenggunaTambahPage> {
                       }).toList(),
                       onChanged: (String? newValue) {
                         setState(() {
-                          controller.selectedRole = newValue ?? '';
+                          selectedRole = newValue ?? '';
                         });
                       },
                     ),
-
-                    // Tombol "X" di kanan dropdown
-                    if (controller.selectedRole.isNotEmpty)
+                    if (selectedRole.isNotEmpty)
                       Positioned(
-                        right: 12,
+                        right: 30, // Geser sedikit agar tidak menimpa panah dropdown
                         child: GestureDetector(
                           onTap: () {
                             setState(() {
-                              controller.selectedRole = '';
+                              selectedRole = '';
                             });
                           },
                           child: const Icon(Icons.close,
@@ -224,27 +292,29 @@ class _PenggunaTambahPageState extends State<PenggunaTambahPage> {
                 Row(
                   children: [
                     ElevatedButton(
-                      onPressed: () => controller.saveUser(context),
+                      onPressed: _isLoading ? null : _saveUser,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFF6C63FF),
+                        backgroundColor: const Color(0xFF6C63FF),
                         padding: const EdgeInsets.symmetric(
                             horizontal: 20, vertical: 12),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-                      child: const Text(
-                        'Simpan',
-                        style: TextStyle(color: Colors.white),
-                      ),
+                      child: _isLoading 
+                          ? const SizedBox(
+                              width: 20, 
+                              height: 20, 
+                              child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)
+                            )
+                          : const Text(
+                              'Simpan',
+                              style: TextStyle(color: Colors.white),
+                            ),
                     ),
                     const SizedBox(width: 10),
                     OutlinedButton(
-                      onPressed: () {
-                        setState(() {
-                          controller.resetForm();
-                        });
-                      },
+                      onPressed: _isLoading ? null : _resetForm,
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 20, vertical: 12),
@@ -280,7 +350,7 @@ class _PenggunaTambahPageState extends State<PenggunaTambahPage> {
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
           ),
-          focusedBorder: OutlineInputBorder(
+          focusedBorder: const OutlineInputBorder(
             borderSide: BorderSide(color: Color(0xFF6C63FF)),
           ),
         ),

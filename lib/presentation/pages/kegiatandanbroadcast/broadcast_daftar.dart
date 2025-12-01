@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:jawara/core/models/broadcast_models.dart'; // pastikan path sesuai struktur project-mu
+import 'package:jawara/core/models/broadcast_models.dart';
+import 'package:jawara/core/repositories/broadcast_repository.dart'; // Pastikan import ini
 
 @RoutePage()
 class BroadcastDaftarPage extends StatefulWidget {
@@ -11,70 +12,49 @@ class BroadcastDaftarPage extends StatefulWidget {
 }
 
 class _BroadcastDaftarPageState extends State<BroadcastDaftarPage> {
-  List<BroadcastModels> _filteredData = dummyBroadcast;
+  // 1. Inisialisasi Repository
+  late BroadcastRepository _repository;
+  
   final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
   String _selectedFilter = 'Semua';
+  List<String> _availableCategories = [];
 
   @override
   void initState() {
     super.initState();
-    _filteredData = dummyBroadcast;
+    _repository = BroadcastRepository(); // Init di sini
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _onSearchChanged(String value) {
+    setState(() {
+      _searchQuery = value;
+    });
   }
 
   void _applyFilter(String kategori) {
     setState(() {
       _selectedFilter = kategori;
-      List<BroadcastModels> kategoriFilteredData;
-      if (kategori == 'Semua') {
-        kategoriFilteredData = dummyBroadcast;
-      } else {
-        kategoriFilteredData = dummyBroadcast.where((data) => data.kategoriBroadcast == kategori).toList();
-      }
-      if (_searchController.text.isNotEmpty) {
-        _filteredData = kategoriFilteredData
-            .where((data) =>
-                data.judulBroadcast.toLowerCase().contains(_searchController.text.toLowerCase()) ||
-                data.kategoriBroadcast.toLowerCase().contains(_searchController.text.toLowerCase()))
-            .toList();
-      } else {
-        _filteredData = kategoriFilteredData;
-      }
-    });
-  }
-
-  void _onSearchChanged(String value) {
-    setState(() {
-      List<BroadcastModels> searchFilteredData;
-      if (value.isEmpty) {
-        searchFilteredData = dummyBroadcast;
-      } else {
-        searchFilteredData = dummyBroadcast
-            .where((data) =>
-                data.judulBroadcast.toLowerCase().contains(value.toLowerCase()) ||
-                data.kategoriBroadcast.toLowerCase().contains(value.toLowerCase()))
-            .toList();
-      }
-      if (_selectedFilter != 'Semua') {
-        _filteredData = searchFilteredData.where((data) => data.kategoriBroadcast == _selectedFilter).toList();
-      } else {
-        _filteredData = searchFilteredData;
-      }
     });
   }
 
   void _showFilterDialog() {
-    final List<String> kategoriList = dummyBroadcast.map((e) => e.kategoriBroadcast).toSet().toList();
     showDialog(
       context: context,
       builder: (context) => FilterBroadcastDialog(
         initialKategori: _selectedFilter,
-        kategoriList: kategoriList,
+        kategoriList: _availableCategories,
         onApplyFilter: _applyFilter,
       ),
     );
   }
 
-  // --- Helper format bulan ---
   String _getBulan(int bulan) {
     const namaBulan = [
       'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli',
@@ -83,7 +63,6 @@ class _BroadcastDaftarPageState extends State<BroadcastDaftarPage> {
     return namaBulan[bulan - 1];
   }
 
-  // --- DIALOG UNTUK AKSI HAPUS ---
   void _showDeleteConfirmationDialog(BuildContext context, BroadcastModels item) {
     showDialog(
       context: context,
@@ -94,16 +73,26 @@ class _BroadcastDaftarPageState extends State<BroadcastDaftarPage> {
               'Apakah Anda yakin ingin menghapus broadcast "${item.judulBroadcast}"?'),
           actions: [
             TextButton(
-              onPressed: () {
-                Navigator.of(ctx).pop(); // Tutup dialog
-              },
+              onPressed: () => Navigator.of(ctx).pop(),
               child: const Text('Batal'),
             ),
             TextButton(
-              onPressed: () {
-                // TODO: Tambahkan logika hapus data di sini
-                print('Menghapus item ${item.docId}');
-                Navigator.of(ctx).pop(); // Tutup dialog
+              onPressed: () async {
+                Navigator.of(ctx).pop();
+                try {
+                  await _repository.deleteBroadcast(item.docId);
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Broadcast berhasil dihapus')),
+                    );
+                  }
+                } catch (e) {
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Gagal menghapus: $e')),
+                    );
+                  }
+                }
               },
               style: TextButton.styleFrom(foregroundColor: Colors.red),
               child: const Text('Hapus'),
@@ -155,33 +144,68 @@ class _BroadcastDaftarPageState extends State<BroadcastDaftarPage> {
             ),
           ),
 
-          // Jumlah data ditemukan
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Text(
-              '${_filteredData.length} data ditemukan',
-              style: const TextStyle(color: Colors.grey, fontSize: 14),
-            ),
-          ),
-
-          // List Data
+          // StreamBuilder
           Expanded(
-            child: _filteredData.isEmpty
-                ? Center(
-                    child: Text(
-                      'Data tidak ditemukan',
-                      style: TextStyle(color: Colors.grey.shade500),
+            child: StreamBuilder<List<BroadcastModels>>(
+              stream: _repository.getBroadcasts(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                }
+
+                List<BroadcastModels> allData = snapshot.data ?? [];
+
+                // Update kategori unik untuk filter
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  final categories = allData.map((e) => e.kategoriBroadcast).toSet().toList();
+                  if (_availableCategories.length != categories.length) {
+                    _availableCategories = categories;
+                  }
+                });
+
+                // Logic Filter
+                final filteredData = allData.where((item) {
+                  bool matchesCategory = _selectedFilter == 'Semua' || 
+                                         item.kategoriBroadcast == _selectedFilter;
+                  bool matchesSearch = _searchQuery.isEmpty ||
+                      item.judulBroadcast.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+                      item.kategoriBroadcast.toLowerCase().contains(_searchQuery.toLowerCase());
+                  return matchesCategory && matchesSearch;
+                }).toList();
+
+                return Column(
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      child: Text(
+                        '${filteredData.length} data ditemukan',
+                        style: const TextStyle(color: Colors.grey, fontSize: 14),
+                      ),
                     ),
-                  )
-                : ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    itemCount: _filteredData.length,
-                    itemBuilder: (context, index) {
-                      final item = _filteredData[index];
-                      return _buildDataCard(item);
-                    },
-                  ),
+                    Expanded(
+                      child: filteredData.isEmpty
+                          ? Center(
+                              child: Text(
+                                'Data tidak ditemukan',
+                                style: TextStyle(color: Colors.grey.shade500),
+                              ),
+                            )
+                          : ListView.builder(
+                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              itemCount: filteredData.length,
+                              itemBuilder: (context, index) {
+                                return _buildDataCard(filteredData[index]);
+                              },
+                            ),
+                    ),
+                  ],
+                );
+              },
+            ),
           ),
         ],
       ),
@@ -222,36 +246,24 @@ class _BroadcastDaftarPageState extends State<BroadcastDaftarPage> {
                     children: [
                       Text(
                         item.judulBroadcast,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
+                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         'Kategori: ${item.kategoriBroadcast}',
-                        style: const TextStyle(
-                          color: Colors.grey,
-                          fontSize: 14,
-                        ),
+                        style: const TextStyle(color: Colors.grey, fontSize: 14),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         'Isi Pesan: ${item.isiPesan}',
-                        style: const TextStyle(
-                          color: Colors.grey,
-                          fontSize: 14,
-                        ),
+                        style: const TextStyle(color: Colors.grey, fontSize: 14),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 4),
                       Text(
                         'Tanggal: ${item.tanggalPublikasi.day.toString().padLeft(2, '0')} ${_getBulan(item.tanggalPublikasi.month)} ${item.tanggalPublikasi.year}',
-                        style: const TextStyle(
-                          color: Colors.grey,
-                          fontSize: 14,
-                        ),
+                        style: const TextStyle(color: Colors.grey, fontSize: 14),
                       ),
                     ],
                   ),
@@ -260,48 +272,17 @@ class _BroadcastDaftarPageState extends State<BroadcastDaftarPage> {
                   icon: const Icon(Icons.more_vert, color: Colors.black54),
                   onSelected: (String value) {
                     if (value == 'detail') {
-                      context.router.pushNamed(
-                        '/kegiatandanbroadcast/broadcast_detail/${item.docId}',
-                      );
+                      context.router.pushNamed('/kegiatandanbroadcast/broadcast_detail/${item.docId}');
                     } else if (value == 'edit') {
-                      context.router.pushNamed(
-                        '/kegiatandanbroadcast/broadcast_edit/${item.docId}',
-                      );
+                      context.router.pushNamed('/kegiatandanbroadcast/broadcast_edit/${item.docId}');
                     } else if (value == 'hapus') {
                       _showDeleteConfirmationDialog(context, item);
                     }
                   },
-                  itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-                    const PopupMenuItem<String>(
-                      value: 'detail',
-                      child: Row(
-                        children: [
-                          // Icon(Icons.visibility_outlined, color: Colors.blue, size: 20),
-                          SizedBox(width: 10),
-                          Text('Detail'),
-                        ],
-                      ),
-                    ),
-                    const PopupMenuItem<String>(
-                      value: 'edit',
-                      child: Row(
-                        children: [
-                          // Icon(Icons.edit_outlined, color: Colors.green, size: 20),
-                          SizedBox(width: 10),
-                          Text('Edit'),
-                        ],
-                      ),
-                    ),
-                    const PopupMenuItem<String>(
-                      value: 'hapus',
-                      child: Row(
-                        children: [
-                          // Icon(Icons.delete_outline, color: Colors.red, size: 20),
-                          SizedBox(width: 10),
-                          Text('Hapus'),
-                        ],
-                      ),
-                    ),
+                  itemBuilder: (context) => [
+                    const PopupMenuItem(value: 'detail', child: Row(children: [SizedBox(width: 8), Text('Detail')])),
+                    const PopupMenuItem(value: 'edit', child: Row(children: [SizedBox(width: 8), Text('Edit')])),
+                    const PopupMenuItem(value: 'hapus', child: Row(children: [SizedBox(width: 8), Text('Hapus')])),
                   ],
                 ),
               ],
@@ -313,6 +294,7 @@ class _BroadcastDaftarPageState extends State<BroadcastDaftarPage> {
   }
 }
 
+// Widget Dialog Filter (Tetap sama seperti kode Anda, tidak perlu diubah)
 class FilterBroadcastDialog extends StatefulWidget {
   final String initialKategori;
   final List<String> kategoriList;
@@ -349,29 +331,19 @@ class _FilterBroadcastDialogState extends State<FilterBroadcastDialog> {
             value: _selectedKategori,
             hint: const Text('Pilih Kategori'),
             decoration: InputDecoration(
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8.0),
-              ),
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.0)),
             ),
             items: ['Semua', ...widget.kategoriList].map((String kategori) {
-              return DropdownMenuItem<String>(
-                value: kategori,
-                child: Text(kategori),
-              );
+              return DropdownMenuItem<String>(value: kategori, child: Text(kategori));
             }).toList(),
             onChanged: (String? newValue) {
-              setState(() {
-                _selectedKategori = newValue!;
-              });
+              setState(() => _selectedKategori = newValue!);
             },
           ),
         ],
       ),
       actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Batal'),
-        ),
+        TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Batal')),
         TextButton(
           onPressed: () {
             widget.onApplyFilter(_selectedKategori);

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
-// Pastikan path import ini benar menunjuk ke file di mana KegiatanModel didefinisikan
 import 'package:jawara/core/models/kegiatan_models.dart';
+import 'package:jawara/core/repositories/kegiatan_repository.dart'; // Pastikan import repo
 
 @RoutePage()
 class KegiatanDaftarPage extends StatefulWidget {
@@ -12,64 +12,44 @@ class KegiatanDaftarPage extends StatefulWidget {
 }
 
 class _KegiatanDaftarPageState extends State<KegiatanDaftarPage> {
-  List<KegiatanModel> _filteredData = dummyKegiatan;
+  // 1. Panggil Repository
+  final KegiatanRepository _repository = KegiatanRepository();
+  
+  // Controller & State Filter
   final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
   String _selectedFilter = 'Semua';
 
+  // Menyimpan daftar kategori unik dari data yang dimuat (untuk Dialog Filter)
+  List<String> _availableCategories = [];
+
   @override
-  void initState() {
-    super.initState();
-    _filteredData = dummyKegiatan;
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
+  // Update state saat ketik search
+  void _onSearchChanged(String value) {
+    setState(() {
+      _searchQuery = value;
+    });
+  }
+
+  // Update state saat filter kategori dipilih
   void _applyFilter(String kategori) {
     setState(() {
       _selectedFilter = kategori;
-      List<KegiatanModel> kategoriFilteredData;
-      if (kategori == 'Semua') {
-        kategoriFilteredData = dummyKegiatan;
-      } else {
-        kategoriFilteredData = dummyKegiatan.where((data) => data.kategoriKegiatan == kategori).toList();
-      }
-      if (_searchController.text.isNotEmpty) {
-        _filteredData = kategoriFilteredData
-            .where((data) =>
-                data.namaKegiatan.toLowerCase().contains(_searchController.text.toLowerCase()) ||
-                data.kategoriKegiatan.toLowerCase().contains(_searchController.text.toLowerCase()))
-            .toList();
-      } else {
-        _filteredData = kategoriFilteredData;
-      }
     });
   }
 
-  void _onSearchChanged(String value) {
-    setState(() {
-      List<KegiatanModel> searchFilteredData;
-      if (value.isEmpty) {
-        searchFilteredData = dummyKegiatan;
-      } else {
-        searchFilteredData = dummyKegiatan
-            .where((data) =>
-                data.namaKegiatan.toLowerCase().contains(value.toLowerCase()) ||
-                data.kategoriKegiatan.toLowerCase().contains(value.toLowerCase()))
-            .toList();
-      }
-      if (_selectedFilter != 'Semua') {
-        _filteredData = searchFilteredData.where((data) => data.kategoriKegiatan == _selectedFilter).toList();
-      } else {
-        _filteredData = searchFilteredData;
-      }
-    });
-  }
-
+  // Menampilkan Dialog Filter
   void _showFilterDialog() {
-    final List<String> kategoriList = dummyKegiatan.map((e) => e.kategoriKegiatan).toSet().toList();
     showDialog(
       context: context,
       builder: (context) => FilterKegiatanDialog(
         initialKategori: _selectedFilter,
-        kategoriList: kategoriList,
+        kategoriList: _availableCategories, // Menggunakan kategori dari data asli
         onApplyFilter: _applyFilter,
       ),
     );
@@ -84,7 +64,7 @@ class _KegiatanDaftarPageState extends State<KegiatanDaftarPage> {
     return namaBulan[bulan - 1];
   }
 
-  // --- CONTOH DIALOG UNTUK AKSI HAPUS KEGIATAN ---
+  // --- LOGIKA HAPUS DENGAN FIREBASE ---
   void _showDeleteConfirmationDialog(BuildContext context, KegiatanModel item) {
     showDialog(
       context: context,
@@ -95,16 +75,28 @@ class _KegiatanDaftarPageState extends State<KegiatanDaftarPage> {
               'Apakah Anda yakin ingin menghapus kegiatan "${item.namaKegiatan}"?'),
           actions: [
             TextButton(
-              onPressed: () {
-                Navigator.of(ctx).pop(); // Tutup dialog
-              },
+              onPressed: () => Navigator.of(ctx).pop(),
               child: const Text('Batal'),
             ),
             TextButton(
-              onPressed: () {
-                // TODO: logika hapus data di sini
-                print('Menghapus item ${item.docId}');
-                Navigator.of(ctx).pop(); // Tutup dialog
+              onPressed: () async {
+                Navigator.of(ctx).pop(); // Tutup dialog dulu
+                try {
+                  // Panggil fungsi delete di repository
+                  await _repository.deleteKegiatan(item.docId);
+                  
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Kegiatan berhasil dihapus')),
+                    );
+                  }
+                } catch (e) {
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Gagal menghapus: $e')),
+                    );
+                  }
+                }
               },
               style: TextButton.styleFrom(foregroundColor: Colors.red),
               child: const Text('Hapus'),
@@ -156,33 +148,83 @@ class _KegiatanDaftarPageState extends State<KegiatanDaftarPage> {
             ),
           ),
 
-          // Jumlah data ditemukan
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Text(
-              '${_filteredData.length} data ditemukan',
-              style: const TextStyle(color: Colors.grey, fontSize: 14),
-            ),
-          ),
-
-          // List Data
+          // 2. Gunakan StreamBuilder untuk data Realtime
           Expanded(
-            child: _filteredData.isEmpty
-                ? Center(
-                    child: Text(
-                      'Data tidak ditemukan',
-                      style: TextStyle(color: Colors.grey.shade500),
+            child: StreamBuilder<List<KegiatanModel>>(
+              stream: _repository.getKegiatan(),
+              builder: (context, snapshot) {
+                // A. Loading State
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                // B. Error State
+                if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                }
+
+                // C. Ambil Data
+                List<KegiatanModel> allData = snapshot.data ?? [];
+
+                // --- UPDATE KATEGORI UNTUK FILTER DIALOG ---
+                // Kita ambil semua kategori unik dari data yang ada
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  final categories = allData.map((e) => e.kategoriKegiatan).toSet().toList();
+                  if (_availableCategories.length != categories.length) {
+                     // Update hanya jika ada perubahan agar tidak loop setState
+                     _availableCategories = categories;
+                  }
+                });
+
+                // --- LOGIKA FILTER CLIENT-SIDE ---
+                final filteredData = allData.where((item) {
+                  // 1. Cek Filter Kategori
+                  bool matchesCategory = _selectedFilter == 'Semua' || 
+                                         item.kategoriKegiatan == _selectedFilter;
+                  
+                  // 2. Cek Search Query
+                  bool matchesSearch = _searchQuery.isEmpty ||
+                      item.namaKegiatan.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+                      item.kategoriKegiatan.toLowerCase().contains(_searchQuery.toLowerCase());
+
+                  return matchesCategory && matchesSearch;
+                }).toList();
+
+
+                // D. Tampilkan Data
+                return Column(
+                  children: [
+                    // Jumlah data ditemukan
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      child: Text(
+                        '${filteredData.length} data ditemukan',
+                        style: const TextStyle(color: Colors.grey, fontSize: 14),
+                      ),
                     ),
-                  )
-                : ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    itemCount: _filteredData.length,
-                    itemBuilder: (context, index) {
-                      final item = _filteredData[index];
-                      return _buildDataCard(item);
-                    },
-                  ),
+                    
+                    Expanded(
+                      child: filteredData.isEmpty
+                          ? Center(
+                              child: Text(
+                                'Data tidak ditemukan',
+                                style: TextStyle(color: Colors.grey.shade500),
+                              ),
+                            )
+                          : ListView.builder(
+                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              itemCount: filteredData.length,
+                              itemBuilder: (context, index) {
+                                final item = filteredData[index];
+                                return _buildDataCard(item);
+                              },
+                            ),
+                    ),
+                  ],
+                );
+              },
+            ),
           ),
         ],
       ),
@@ -259,17 +301,14 @@ class _KegiatanDaftarPageState extends State<KegiatanDaftarPage> {
                   icon: const Icon(Icons.more_vert, color: Colors.black54),
                   onSelected: (String value) {
                     if (value == 'detail') {
-                      // 1. Aksi Lihat Detail
                       context.router.pushNamed(
                         '/kegiatandanbroadcast/kegiatan_detail/${item.docId}',
                       );
                     } else if (value == 'edit') {
-                      // 2. Aksi Edit (TODO: Buat halaman edit)
                       context.router.pushNamed(
                         '/kegiatandanbroadcast/kegiatan_edit/${item.docId}',
                       );
                     } else if (value == 'hapus') {
-                      // 3. Aksi Hapus (memanggil dialog)
                       _showDeleteConfirmationDialog(context, item);
                     }
                   },
@@ -278,7 +317,6 @@ class _KegiatanDaftarPageState extends State<KegiatanDaftarPage> {
                       value: 'detail',
                       child: Row(
                         children: [
-                          // Icon(Icons.visibility_outlined, color: Colors.blue, size: 20),
                           SizedBox(width: 10),
                           Text('Detail'),
                         ],
@@ -288,7 +326,6 @@ class _KegiatanDaftarPageState extends State<KegiatanDaftarPage> {
                       value: 'edit',
                       child: Row(
                         children: [
-                          // Icon(Icons.edit_outlined, color: Colors.green, size: 20),
                           SizedBox(width: 10),
                           Text('Edit'),
                         ],
@@ -298,7 +335,6 @@ class _KegiatanDaftarPageState extends State<KegiatanDaftarPage> {
                       value: 'hapus',
                       child: Row(
                         children: [
-                          // Icon(Icons.delete_outline, color: Colors.red, size: 20),
                           SizedBox(width: 10),
                           Text('Hapus'),
                         ],
@@ -315,6 +351,7 @@ class _KegiatanDaftarPageState extends State<KegiatanDaftarPage> {
   }
 }
 
+// === DIALOG FILTER (TETAP SAMA) ===
 class FilterKegiatanDialog extends StatefulWidget {
   final String initialKategori;
   final List<String> kategoriList;
@@ -355,6 +392,7 @@ class _FilterKegiatanDialogState extends State<FilterKegiatanDialog> {
                 borderRadius: BorderRadius.circular(8.0),
               ),
             ),
+            // Tambahkan 'Semua' manual + list dari parent
             items: ['Semua', ...widget.kategoriList].map((String kategori) {
               return DropdownMenuItem<String>(
                 value: kategori,

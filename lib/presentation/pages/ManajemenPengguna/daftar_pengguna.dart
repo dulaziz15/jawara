@@ -14,7 +14,7 @@ class DaftarPenggunaPage extends StatefulWidget {
 }
 
 class _DaftarPenggunaPageState extends State<DaftarPenggunaPage> {
-  final UserRepository _userRepository = UserRepository();
+  final PenggunaRepository _penggunaRepository = PenggunaRepository();
 
   List<UserModel> allUsers = [];
   List<UserModel> displayedUsers = [];
@@ -27,7 +27,7 @@ class _DaftarPenggunaPageState extends State<DaftarPenggunaPage> {
     super.initState();
 
     // Ambil data realtime dari Firestore
-    _userRepository.getAllUsers().listen((users) {
+    _penggunaRepository.getAllUsers().listen((users) {
       setState(() {
         allUsers = users;
         displayedUsers = users;
@@ -106,11 +106,11 @@ class _DaftarPenggunaPageState extends State<DaftarPenggunaPage> {
   }
 
   void _showDetailDialog(UserModel user) {
-    context.router.push(PenggunaDetailRoute(userId: user.docId));
+    context.router.push(PenggunaDetailRoute(userId: user.nik));
   }
 
   void _navigateToEdit(UserModel user) {
-    context.router.push(PenggunaEditRoute(userId: user.docId));
+    context.router.push(PenggunaEditRoute(userId: user.nik));
   }
 
   Widget _buildActionButton(UserModel user) {

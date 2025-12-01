@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:jawara/core/models/broadcast_models.dart';
-// Import intl untuk format tanggal (opsional, tapi disarankan)
-// import 'package:intl/intl.dart';
+import 'package:jawara/core/repositories/broadcast_repository.dart'; // Import Repository
 
 @RoutePage()
 class BroadcastEditPage extends StatefulWidget {
@@ -18,51 +17,77 @@ class BroadcastEditPage extends StatefulWidget {
 }
 
 class _BroadcastEditPageState extends State<BroadcastEditPage> {
-  // 2. Buat GlobalKey untuk Form dan Controllers
+  // 1. Inisialisasi Repository
+  final BroadcastRepository _repository = BroadcastRepository();
   final _formKey = GlobalKey<FormState>();
+
+  // State
+  bool _isLoading = true; // Loading awal
+  bool _isSaving = false; // Loading saat simpan
+
+  // Controllers & Data
   late TextEditingController _judulController;
   late TextEditingController _isiPesanController;
   late TextEditingController _dibuatOlehController;
-
-  // Variabel untuk menyimpan data yang sedang diedit
-  late BroadcastModels _broadcast;
+  
+  // Model data
+  BroadcastModels? _broadcast;
   late DateTime _selectedDate;
   String _currentGambar = '';
   String _currentDokumen = '';
+  // Field Kategori (jika perlu diedit)
+  String _currentKategori = ''; 
 
   @override
   void initState() {
     super.initState();
-    // 3. Ambil data asli dan inisialisasi controller
-    _broadcast = dummyBroadcast.firstWhere(
-      (item) => item.docId == widget.broadcastId,
-    );
+    // Init Controller
+    _judulController = TextEditingController();
+    _isiPesanController = TextEditingController();
+    _dibuatOlehController = TextEditingController();
+    
+    // 2. Load Data dari Firebase
+    _loadData();
+  }
 
-    _judulController = TextEditingController(text: _broadcast.judulBroadcast);
-    _isiPesanController = TextEditingController(text: _broadcast.isiPesan);
-    _dibuatOlehController = TextEditingController(text: _broadcast.dibuatOlehId.toString());
-    _selectedDate = _broadcast.tanggalPublikasi;
-    _currentGambar = _broadcast.lampiranGambar;
-    _currentDokumen = _broadcast.lampiranDokumen;
+  Future<void> _loadData() async {
+    final data = await _repository.getBroadcastByDocId(widget.broadcastId);
+    
+    if (data != null) {
+      setState(() {
+        _broadcast = data;
+        _judulController.text = data.judulBroadcast;
+        _isiPesanController.text = data.isiPesan;
+        _dibuatOlehController.text = data.dibuatOlehId;
+        _selectedDate = data.tanggalPublikasi;
+        _currentGambar = data.lampiranGambar;
+        _currentDokumen = data.lampiranDokumen;
+        _currentKategori = data.kategoriBroadcast;
+        _isLoading = false;
+      });
+    } else {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Data broadcast tidak ditemukan')),
+        );
+        context.router.pop();
+      }
+    }
   }
 
   @override
   void dispose() {
-    // 4. Dispose controller untuk menghindari memory leaks
     _judulController.dispose();
     _isiPesanController.dispose();
     _dibuatOlehController.dispose();
     super.dispose();
   }
 
-  // --- Helper format bulan (opsional, bisa diganti intl) ---
   String _formatTanggal(DateTime date) {
-    // Gunakan 'intl' package untuk format yang lebih baik
-    // return DateFormat('dd MMMM yyyy').format(date);
     return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
   }
 
-  // --- Helper widget untuk TextFormField ---
+  // --- Helper Widget TextFormField ---
   Widget _buildTextFormField({
     required String label,
     required TextEditingController controller,
@@ -92,7 +117,7 @@ class _BroadcastEditPageState extends State<BroadcastEditPage> {
                 borderRadius: BorderRadius.circular(8.0),
               ),
               filled: readOnly,
-              fillColor: Colors.grey.shade100,
+              fillColor: readOnly ? Colors.grey.shade100 : Colors.white,
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 12,
                 vertical: 14,
@@ -110,7 +135,7 @@ class _BroadcastEditPageState extends State<BroadcastEditPage> {
     );
   }
 
-  // --- Helper widget untuk Date Picker ---
+  // --- Helper Widget Date Picker ---
   Widget _buildDatePicker() {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
@@ -164,12 +189,9 @@ class _BroadcastEditPageState extends State<BroadcastEditPage> {
     );
   }
 
-  // --- Helper widget untuk File Picker (Stub) ---
-  Widget _buildAttachmentPicker(
-    String label,
-    String currentFile,
-    IconData icon,
-  ) {
+  // --- Helper Widget Attachment (Updated) ---
+  Widget _buildAttachmentInfo(String label, String url, IconData icon) {
+    bool hasFile = url.isNotEmpty;
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
       child: Column(
@@ -189,37 +211,33 @@ class _BroadcastEditPageState extends State<BroadcastEditPage> {
             decoration: BoxDecoration(
               border: Border.all(color: Colors.grey.shade300),
               borderRadius: BorderRadius.circular(8.0),
+              color: Colors.grey.shade50,
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  children: [
-                    Icon(icon, color: Color(0xFF6C63FF), size: 20),
-                    const SizedBox(width: 8),
-                    Text(currentFile.isEmpty ? "Tidak ada file" : currentFile),
-                  ],
-                ),
-                TextButton(
-                  onPressed: () {
-                    // TODO: Tambahkan logika file_picker di sini
-                    // Contoh:
-                    // FilePickerResult? result = await FilePicker.platform.pickFiles();
-                    // if (result != null) {
-                    //   setState(() {
-                    //     if (label.contains("Gambar")) {
-                    //       _currentGambar = result.files.single.name;
-                    //     } else {
-                    //       _currentDokumen = result.files.single.name;
-                    //     }
-                    //   });
-                    // }
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text(
-                          'Logika ganti file belum diimplementasi.',
+                Expanded(
+                  child: Row(
+                    children: [
+                      Icon(icon, color: const Color(0xFF6C63FF), size: 20),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          hasFile ? url : "Tidak ada file",
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: hasFile ? Colors.black87 : Colors.grey,
+                          ),
                         ),
                       ),
+                    ],
+                  ),
+                ),
+                // Tombol Ganti (Opsional: Butuh implementasi Upload seperti di Tambah Page)
+                TextButton(
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Fitur ganti file belum tersedia')),
                     );
                   },
                   child: const Text("Ganti"),
@@ -232,50 +250,62 @@ class _BroadcastEditPageState extends State<BroadcastEditPage> {
     );
   }
 
-  // --- Logika untuk Simpan Perubahan ---
-  void _saveChanges() {
-    // 1. Validasi form
+  // --- Fungsi Simpan Perubahan ke Firebase ---
+  Future<void> _saveChanges() async {
     if (_formKey.currentState!.validate()) {
-      // 2. Ambil semua data dari controller
-      final String updatedJudul = _judulController.text;
-      final String updatedIsi = _isiPesanController.text;
-      // ... ambil juga data file yang baru jika ada
+      setState(() => _isSaving = true);
 
-      // 3. TODO: Implementasi logika penyimpanan data
-      // Di aplikasi nyata, Anda akan panggil API atau update database di sini.
-      // Untuk demo, kita print datanya:
-      print('--- Data Disimpan ---');
-      print('ID: ${widget.broadcastId}');
-      print('Judul: $updatedJudul');
-      print('Isi: $updatedIsi');
-      print('Tanggal: $_selectedDate');
-      print('Gambar: $_currentGambar');
-      print('Dokumen: $_currentDokumen');
-      print('--------------------');
+      try {
+        // Buat model dengan data baru
+        BroadcastModels updatedBroadcast = BroadcastModels(
+          docId: widget.broadcastId,
+          judulBroadcast: _judulController.text,
+          isiPesan: _isiPesanController.text,
+          tanggalPublikasi: _selectedDate,
+          dibuatOlehId: _dibuatOlehController.text, // Tetap sama
+          lampiranGambar: _currentGambar,   // Tetap sama (kecuali fitur upload edit dibuat)
+          lampiranDokumen: _currentDokumen, // Tetap sama
+          kategoriBroadcast: _currentKategori, // Tetap sama
+        );
 
-      // 4. Tampilkan notifikasi sukses
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Broadcast "$updatedJudul" berhasil diperbarui.'),
-          backgroundColor: Colors.green,
-        ),
-      );
+        // Update di Firestore
+        await _repository.updateBroadcast(updatedBroadcast);
 
-      // 5. Kembali ke halaman sebelumnya
-      AutoRouter.of(context).pop();
-    } else {
-      // Jika validasi gagal, tampilkan pesan
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Harap isi semua field yang wajib diisi.'),
-          backgroundColor: Colors.red,
-        ),
-      );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('✅ Broadcast berhasil diperbarui'),
+              backgroundColor: Colors.green,
+            ),
+          );
+          context.router.pop(); // Kembali
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('❌ Gagal update: $e'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      } finally {
+        if (mounted) setState(() => _isSaving = false);
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    // Tampilan Loading
+    if (_isLoading) {
+      return Scaffold(
+        backgroundColor: Colors.grey.shade200,
+        appBar: AppBar(backgroundColor: Colors.grey.shade100),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
+
     return Scaffold(
       backgroundColor: Colors.grey.shade200,
       appBar: AppBar(
@@ -285,6 +315,7 @@ class _BroadcastEditPageState extends State<BroadcastEditPage> {
           icon: const Icon(Icons.arrow_back, color: Colors.black87),
           onPressed: () => context.router.pop(),
         ),
+        title: const Text('Edit Broadcast', style: TextStyle(color: Colors.black87)),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -306,36 +337,30 @@ class _BroadcastEditPageState extends State<BroadcastEditPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // Input Fields
                 _buildTextFormField(
                   label: 'Judul Broadcast',
                   controller: _judulController,
                 ),
-                const SizedBox(height: 16),
                 _buildTextFormField(
                   label: 'Isi Pesan',
                   controller: _isiPesanController,
                   maxLines: 5,
                 ),
-                const SizedBox(height: 16),
                 _buildDatePicker(),
-                const SizedBox(height: 16),
                 _buildTextFormField(
-                  label: 'Dibuat oleh',
+                  label: 'Dibuat oleh (ID)',
                   controller: _dibuatOlehController,
                   readOnly: true,
                 ),
-                const SizedBox(height: 16),
                 const Divider(height: 24),
 
-                // Lampiran
-                _buildAttachmentPicker(
+                // Info Lampiran (Read Only untuk saat ini)
+                _buildAttachmentInfo(
                   "Lampiran Gambar:",
                   _currentGambar,
                   Icons.image_outlined,
                 ),
-                const SizedBox(height: 16),
-                _buildAttachmentPicker(
+                _buildAttachmentInfo(
                   "Lampiran Dokumen:",
                   _currentDokumen,
                   Icons.description_outlined,
@@ -345,7 +370,7 @@ class _BroadcastEditPageState extends State<BroadcastEditPage> {
 
                 // Tombol Simpan
                 ElevatedButton(
-                  onPressed: _saveChanges,
+                  onPressed: _isSaving ? null : _saveChanges,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF6C63FF),
                     padding: const EdgeInsets.symmetric(vertical: 14),
@@ -354,14 +379,20 @@ class _BroadcastEditPageState extends State<BroadcastEditPage> {
                     ),
                     elevation: 4,
                   ),
-                  child: const Text(
-                    'Simpan Perubahan',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
+                  child: _isSaving
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                        )
+                      : const Text(
+                          'Simpan Perubahan',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
                 ),
               ],
             ),
