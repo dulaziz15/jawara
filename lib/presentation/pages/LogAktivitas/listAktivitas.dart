@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:jawara/core/models/activity_models.dart';
-import 'package:jawara/presentation/pages/LogAktivitas/filter_aktivitas.dart';
 
 @RoutePage()
 class ListAktivitasPage extends StatefulWidget {
@@ -14,124 +13,124 @@ class ListAktivitasPage extends StatefulWidget {
 }
 
 class _ListAktivitasState extends State<ListAktivitasPage> {
-  List<ActivityModel> logs = [];
-  List<ActivityModel> filteredLogs = [];
-
-  void _filterData(String value) {
-    setState(() {
-      filteredLogs = logs.where((log) {
-        final matchDesc = log.description.toLowerCase().contains(value.toLowerCase());
-        final matchActor = log.actor.toLowerCase().contains(value.toLowerCase());
-        return matchDesc || matchActor;
-      }).toList();
-    });
-  }
-
-  void _openFilterDialog() {
-    showDialog(context: context, builder: (context) => const FilterAktivitas());
-  }
+  // State untuk query pencarian
+  String _searchQuery = '';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-
-      // Ambil realtime data dari Firestore
-      body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection("activities")
-            .orderBy("date", descending: true)
-            .snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return const Center(
-              child: Text("Belum ada aktivitas"),
-            );
-          }
-
-          logs = snapshot.data!.docs.map((doc) {
-            return ActivityModel.fromMap(doc.data() as Map<String, dynamic>);
-          }).toList();
-
-          if (filteredLogs.isEmpty) {
-            filteredLogs = List.from(logs);
-          }
-
-          return Column(
-            children: [
-              // Search Bar (TETAP SESUAI UI AWAL)
-              Container(
-                margin: const EdgeInsets.all(16),
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.grey.shade300),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.1),
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
+      body: Column(
+        children: [
+          // --- Search Bar (Sesuai Pattern Contoh) ---
+          Container(
+            margin: const EdgeInsets.all(16),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.grey.shade300),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.1),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                )
+              ],
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.search, color: Colors.grey),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: TextField(
+                    onChanged: (value) {
+                      setState(() {
+                        _searchQuery = value;
+                      });
+                    },
+                    decoration: const InputDecoration(
+                      hintText: 'Cari aktivitas atau aktor...',
+                      border: InputBorder.none,
+                      hintStyle: TextStyle(color: Colors.grey),
                     ),
-                  ],
+                  ),
                 ),
-                child: Row(
+              ],
+            ),
+          ),
+
+          // --- List Data dari Firebase ---
+          Expanded(
+            child: StreamBuilder<QuerySnapshot>(
+              // Mengambil data langsung (atau bisa via Repository jika ada)
+              stream: FirebaseFirestore.instance
+                  .collection("activities")
+                  .orderBy("date", descending: true)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (snapshot.hasError) {
+                  return Center(child: Text('Terjadi kesalahan: ${snapshot.error}'));
+                }
+
+                // 1. Konversi Dokumen ke Model
+                final allLogs = snapshot.data?.docs.map((doc) {
+                      final data = doc.data() as Map<String, dynamic>;
+                      // Pastikan ID dokumen ikut ter-parsing jika dibutuhkan logic delete/edit
+                      return ActivityModel.fromMap(data, doc.id);
+                    }).toList() ?? [];
+
+                // 2. Filter berdasarkan search query (Description OR Actor)
+                final displayedLogs = allLogs.where((log) {
+                  final query = _searchQuery.toLowerCase();
+                  return log.description.toLowerCase().contains(query) ||
+                         log.actor.toLowerCase().contains(query);
+                }).toList();
+
+                return Column(
                   children: [
-                    const Icon(Icons.search, color: Colors.grey),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: TextField(
-                        onChanged: (value) => _filterData(value),
-                        decoration: const InputDecoration(
-                          hintText: 'Cari berdasarkan deskripsi atau aktor...',
-                          border: InputBorder.none,
-                          hintStyle: TextStyle(color: Colors.grey),
-                        ),
+                    // Counter Data Ditemukan
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      child: Text(
+                        '${displayedLogs.length} data ditemukan',
+                        style: const TextStyle(color: Colors.grey, fontSize: 14),
                       ),
                     ),
+                    
+                    // List View
+                    Expanded(
+                      child: displayedLogs.isEmpty
+                          ? Center(
+                              child: Text(
+                                'Data tidak ditemukan',
+                                style: TextStyle(color: Colors.grey.shade500),
+                              ),
+                            )
+                          : ListView.builder(
+                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              itemCount: displayedLogs.length,
+                              itemBuilder: (context, index) {
+                                final log = displayedLogs[index];
+                                return _buildDataCard(log);
+                              },
+                            ),
+                    ),
                   ],
-                ),
-              ),
-
-              // Counter jumlah data ditemukan
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: Text(
-                  '${filteredLogs.length} data ditemukan',
-                  style: const TextStyle(color: Colors.grey, fontSize: 14),
-                ),
-              ),
-
-              // List Aktivitas
-              Expanded(
-                child: filteredLogs.isEmpty
-                    ? const Center(child: Text("Data tidak ditemukan"))
-                    : ListView.builder(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        itemCount: filteredLogs.length,
-                        itemBuilder: (context, index) =>
-                            _buildDataCard(filteredLogs[index]),
-                      ),
-              ),
-            ],
-          );
-        },
-      ),
-
-      floatingActionButton: FloatingActionButton(
-        onPressed: _openFilterDialog,
-        backgroundColor: const Color(0xFF6C63FF),
-        child: const Icon(Icons.filter_list, color: Colors.white),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  /// CARD UI tetap sama seperti code awal
+  // --- Widget Card (Sesuai Style Contoh) ---
   Widget _buildDataCard(ActivityModel log) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -144,7 +143,7 @@ class _ListAktivitasState extends State<ListAktivitasPage> {
             color: Colors.grey.withOpacity(0.1),
             blurRadius: 4,
             offset: const Offset(0, 2),
-          ),
+          )
         ],
       ),
       child: Padding(
@@ -152,21 +151,24 @@ class _ListAktivitasState extends State<ListAktivitasPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Deskripsi Utama
             Text(
               log.description,
               style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
+                fontWeight: FontWeight.bold, 
+                fontSize: 16
               ),
             ),
-
             const SizedBox(height: 4),
+            
+            // Aktor
             Text(
               'Aktor: ${log.actor}',
               style: const TextStyle(color: Colors.grey, fontSize: 14),
             ),
-
             const SizedBox(height: 4),
+
+            // Tanggal (Formatted)
             Text(
               'Tanggal: ${DateFormat("dd MMMM yyyy • HH:mm").format(log.date)}',
               style: const TextStyle(color: Colors.grey, fontSize: 14),

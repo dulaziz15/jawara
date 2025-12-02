@@ -1,34 +1,57 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:jawara/core/models/iuran_models.dart';
+import 'package:jawara/core/models/kategori_iuran_models.dart';
 
 class IuranRepository {
-  // Langsung gunakan FirebaseFirestore.instance
-  final CollectionReference _iuranCollection = FirebaseFirestore.instance
-      .collection('iuran');
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  // ==========================================================
-  // IURAN (CRUD Penuh)
-  // ==========================================================
-  Future<void> addIuran(IuranModel iuran) async =>
-      await _iuranCollection.add(iuran.toMap());
+  // ========================================================================
+  // PERBAIKAN DI SINI: SESUAIKAN DENGAN NAMA DI FIREBASE ANDA
+  // ========================================================================
+  final String _colMasterIuran = 'iuran';            // Collection Data Utama
+  final String _colLabelKategori = 'kategori_iuran'; // Collection Data Dropdown
 
-  // R: Get Iuran (Stream)
-  Stream<List<IuranModel>> getIuran() {
-    return _iuranCollection.snapshots().map((snapshot) {
+  // 1. BAGIAN DROPDOWN (Label Kategori)
+  Stream<List<String>> getLabelKategori() {
+    return _firestore
+        .collection(_colLabelKategori)
+        .orderBy('nama') // Pastikan field di Firebase namanya 'nama'
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) => doc['nama'] as String).toList();
+    });
+  }
+
+  // 2. BAGIAN CRUD DATA IURAN
+  Stream<List<KategoriIuranModel>> getMasterIuran() {
+    return _firestore.collection(_colMasterIuran).snapshots().map((snapshot) {
+      // DEBUGGING: Cek data masuk di Console
+      print("🔥 Mengambil data dari collection: $_colMasterIuran");
+      print("🔥 Jumlah dokumen ditemukan: ${snapshot.docs.length}");
+      
       return snapshot.docs.map((doc) {
-        final data = doc.data() as Map<String, dynamic>;
-        return IuranModel.fromMap({...data, 'docId': doc.id});
+        final data = doc.data();
+        print("   📄 Data Dokumen ID ${doc.id}: $data"); // Lihat isi data mentah
+        
+        return KategoriIuranModel.fromMap(data, doc.id);
       }).toList();
     });
   }
 
-  // U: Update Iuran 
-  Future<void> updateIuran(IuranModel iuran) async =>
-      await _iuranCollection
-          .doc(iuran.docId.toString())
-          .update(iuran.toMap());
+  // CREATE
+  Future<void> addMasterKategoriIuran(KategoriIuranModel data) async {
+    await _firestore.collection(_colMasterIuran).add(data.toMap());
+  }
 
-  // D: Delete Iuran 
-  Future<void> deleteIuran(String iuranId) async =>
-      await _iuranCollection.doc(iuranId).delete();
+  // UPDATE
+  Future<void> updateMasterIuran(KategoriIuranModel data) async {
+    await _firestore
+        .collection(_colMasterIuran)
+        .doc(data.docId)
+        .update(data.toMap());
+  }
+
+  // DELETE
+  Future<void> deleteMasterIuran(String docId) async {
+    await _firestore.collection(_colMasterIuran).doc(docId).delete();
+  }
 }

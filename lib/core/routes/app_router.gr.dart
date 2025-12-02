@@ -21,6 +21,19 @@ abstract class _$AppRouter extends RootStackRouter {
         child: AspirasiPage(),
       );
     },
+    AspirasiEditRoute.name: (routeData) {
+      final pathParams = routeData.inheritedPathParams;
+      final args = routeData.argsAs<AspirasiEditRouteArgs>(
+          orElse: () =>
+              AspirasiEditRouteArgs(aspirasiId: pathParams.getString('id')));
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: AspirasiEditPage(
+          key: args.key,
+          aspirasiId: args.aspirasiId,
+        ),
+      );
+    },
     BroadcastDaftarRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
@@ -493,6 +506,45 @@ class AspirasiRoute extends PageRouteInfo<void> {
   static const String name = 'AspirasiRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [AspirasiEditPage]
+class AspirasiEditRoute extends PageRouteInfo<AspirasiEditRouteArgs> {
+  AspirasiEditRoute({
+    Key? key,
+    required String aspirasiId,
+    List<PageRouteInfo>? children,
+  }) : super(
+          AspirasiEditRoute.name,
+          args: AspirasiEditRouteArgs(
+            key: key,
+            aspirasiId: aspirasiId,
+          ),
+          rawPathParams: {'id': aspirasiId},
+          initialChildren: children,
+        );
+
+  static const String name = 'AspirasiEditRoute';
+
+  static const PageInfo<AspirasiEditRouteArgs> page =
+      PageInfo<AspirasiEditRouteArgs>(name);
+}
+
+class AspirasiEditRouteArgs {
+  const AspirasiEditRouteArgs({
+    this.key,
+    required this.aspirasiId,
+  });
+
+  final Key? key;
+
+  final String aspirasiId;
+
+  @override
+  String toString() {
+    return 'AspirasiEditRouteArgs{key: $key, aspirasiId: $aspirasiId}';
+  }
 }
 
 /// generated route for

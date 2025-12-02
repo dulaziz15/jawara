@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:jawara/core/models/activity_models.dart'; 
 
-class BroadcastRepository {
+class ActivityRepository {
   // Langsung gunakan FirebaseFirestore.instance
   final CollectionReference _activityCollection = 
       FirebaseFirestore.instance.collection('activities'); 
@@ -9,6 +9,7 @@ class BroadcastRepository {
   // ==========================================================
   // ACTIVITY (Log Audit: CR Saja)
   // ==========================================================
+  
   // C: Tambah Log Aktivitas
   Future<void> addActivity(ActivityModel activity) async => await _activityCollection.add(activity.toMap());
   
@@ -21,10 +22,11 @@ class BroadcastRepository {
         .map((snapshot) {
       final activityList = snapshot.docs.map((doc) {
         final data = doc.data() as Map<String, dynamic>;
-        return ActivityModel.fromMap({...data, 'id': doc.id}); 
+        
+        return ActivityModel.fromMap(data, doc.id); 
+        
       }).toList();
       return activityList;
     });
   }
-  // U & D dihilangkan
 }
