@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
-// Impor model dan data dummy Anda
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:jawara/core/models/kegiatan_models.dart';
 
 @RoutePage()
@@ -12,36 +12,36 @@ class KegiatanDetailPage extends StatelessWidget {
     @PathParam('id') required this.kegiatanId,
   });
 
-  // Helper untuk format bulan
+  // Ambil detail data dari Firestore
+  Future<KegiatanModel> _getDetailKegiatan() async {
+    final doc = await FirebaseFirestore.instance
+        .collection('kegiatan')
+        .doc(kegiatanId)
+        .get();
+
+    if (!doc.exists) throw Exception("Data tidak ditemukan");
+
+    final data = doc.data() as Map<String, dynamic>;
+    return KegiatanModel.fromMap({...data, 'docId': doc.id});
+  }
+
+  // Format nama bulan
   String _getBulan(int bulan) {
     const namaBulan = [
-      'Januari',
-      'Februari',
-      'Maret',
-      'April',
-      'Mei',
-      'Juni',
-      'Juli',
-      'Agustus',
-      'September',
-      'Oktober',
-      'November',
-      'Desember',
+      'Januari','Februari','Maret','April','Mei','Juni',
+      'Juli','Agustus','September','Oktober','November','Desember'
     ];
     return namaBulan[bulan - 1];
   }
 
-  // Helper widget untuk menampilkan baris detail
+  // Widget baris detail — UI TETAP SAMA
   Widget _buildDetailRow(String label, String value) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            label,
-            style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
-          ),
+          Text(label, style: TextStyle(fontSize: 14, color: Colors.grey.shade600)),
           const SizedBox(height: 4),
           Text(
             value,
@@ -58,17 +58,6 @@ class KegiatanDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Ambil data kegiatan berdasarkan ID
-    final kegiatan = dummyKegiatan.firstWhere(
-      (item) => item.docId == kegiatanId,
-    );
-
-    // Format tanggal
-    final String tanggalFormatted =
-        '${kegiatan.tanggalPelaksanaan.day} '
-        '${_getBulan(kegiatan.tanggalPelaksanaan.month)} '
-        '${kegiatan.tanggalPelaksanaan.year}';
-
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
       appBar: AppBar(
@@ -79,48 +68,65 @@ class KegiatanDetailPage extends StatelessWidget {
           onPressed: () => context.router.pop(),
         ),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        // ### PERUBAHAN: Tambahkan Column untuk menampung tombol dan Card ###
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // ### Card Detail Kegiatan ###
-            Card(
-              color: Colors.white,
-              elevation: 2,
-              shadowColor: Colors.black12,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12.0),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildDetailRow("Nama Kegiatan:", kegiatan.namaKegiatan),
-                    _buildDetailRow("Kategori:", kegiatan.kategoriKegiatan),
-                    _buildDetailRow("Deskripsi:", kegiatan.deskripsi),
-                    _buildDetailRow("Tanggal:", tanggalFormatted),
-                    _buildDetailRow("Lokasi:", kegiatan.lokasi),
-                    _buildDetailRow(
-                      "Penanggung Jawab:",
-                      kegiatan.penanggungJawabId.toString(),
+      body: FutureBuilder<KegiatanModel>(
+        future: _getDetailKegiatan(),
+        builder: (context, snapshot) {
+          // loader tetap menyesuaikan UI
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          // jika error (docId tidak ditemukan)
+          if (snapshot.hasError || !snapshot.hasData) {
+            return const Center(
+              child: Text("Data tidak ditemukan", style: TextStyle(color: Colors.grey)),
+            );
+          }
+
+          final kegiatan = snapshot.data!;
+          final String tanggalFormatted =
+              '${kegiatan.tanggalPelaksanaan.day} '
+              '${_getBulan(kegiatan.tanggalPelaksanaan.month)} '
+              '${kegiatan.tanggalPelaksanaan.year}';
+
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Card(
+                  color: Colors.white,
+                  elevation: 2,
+                  shadowColor: Colors.black12,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.0),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(24.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildDetailRow("Nama Kegiatan:", kegiatan.namaKegiatan),
+                        _buildDetailRow("Kategori:", kegiatan.kategoriKegiatan),
+                        _buildDetailRow("Deskripsi:", kegiatan.deskripsi),
+                        _buildDetailRow("Tanggal:", tanggalFormatted),
+                        _buildDetailRow("Lokasi:", kegiatan.lokasi),
+                        _buildDetailRow("Penanggung Jawab:", kegiatan.penanggungJawabId),
+                        _buildDetailRow("Dibuat oleh:", kegiatan.dibuatOlehId),
+                        _buildDetailRow(
+                          "Dokumentasi:",
+                          kegiatan.dokumentasi.isEmpty
+                              ? "Dokumentasi belum diupload"
+                              : kegiatan.dokumentasi,
+                        ),
+                      ],
                     ),
-                    _buildDetailRow("Dibuat oleh:", kegiatan.dibuatOlehId.toString()),
-                    _buildDetailRow(
-                      "Dokumentasi:",
-                      (kegiatan.dokumentasi.isEmpty)
-                          ? "Dokumentasi belum diupload"
-                          : kegiatan
-                                .dokumentasi, // Menampilkan nama file dokumentasi
-                    ),
-                  ],
+                  ),
                 ),
-              ),
+              ],
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

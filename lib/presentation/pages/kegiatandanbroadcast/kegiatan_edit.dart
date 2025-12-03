@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:jawara/core/models/kegiatan_models.dart';
-// Import intl untuk format tanggal (opsional, tapi disarankan)
-// import 'package:intl/intl.dart';
+import 'package:jawara/core/repositories/kegiatan_repository.dart';
 
 @RoutePage()
 class KegiatanEditPage extends StatefulWidget {
@@ -18,8 +17,9 @@ class KegiatanEditPage extends StatefulWidget {
 }
 
 class _KegiatanEditPageState extends State<KegiatanEditPage> {
-  // 2. Buat GlobalKey untuk Form dan Controllers
   final _formKey = GlobalKey<FormState>();
+  final _repo = KegiatanRepository();
+
   late TextEditingController _namaKegiatanController;
   late TextEditingController _kategoriKegiatanController;
   late TextEditingController _penanggungJawabController;
@@ -27,30 +27,36 @@ class _KegiatanEditPageState extends State<KegiatanEditPage> {
   late TextEditingController _lokasiController;
   late TextEditingController _dibuatOlehController;
 
-  // Variabel untuk menyimpan data yang sedang diedit
-  late KegiatanModel _kegiatan;
+  KegiatanModel? _kegiatan;
+  bool _isLoading = true;
   late DateTime _selectedDate;
   String _currentDokumentasi = '';
 
   @override
   void initState() {
     super.initState();
-    // 3. Ambil data asli dan inisialisasi controller
-    _kegiatan = dummyKegiatan.firstWhere((item) => item.docId == widget.kegiatanId);
+    _fetchData();
+  }
 
-    _namaKegiatanController = TextEditingController(text: _kegiatan.namaKegiatan);
-    _kategoriKegiatanController = TextEditingController(text: _kegiatan.kategoriKegiatan);
-    _penanggungJawabController = TextEditingController(text: _kegiatan.penanggungJawabId.toString());
-    _deskripsiController = TextEditingController(text: _kegiatan.deskripsi);
-    _lokasiController = TextEditingController(text: _kegiatan.lokasi);
-    _dibuatOlehController = TextEditingController(text: _kegiatan.dibuatOlehId.toString());
-    _selectedDate = _kegiatan.tanggalPelaksanaan;
-    _currentDokumentasi = _kegiatan.dokumentasi;
+  /// Ambil data kegiatan berdasarkan docId
+  void _fetchData() async {
+    final doc = await _repo.getKegiatan().first;
+    _kegiatan = doc.firstWhere((e) => e.docId == widget.kegiatanId);
+
+    _namaKegiatanController = TextEditingController(text: _kegiatan!.namaKegiatan);
+    _kategoriKegiatanController = TextEditingController(text: _kegiatan!.kategoriKegiatan);
+    _penanggungJawabController = TextEditingController(text: _kegiatan!.penanggungJawabId);
+    _deskripsiController = TextEditingController(text: _kegiatan!.deskripsi);
+    _lokasiController = TextEditingController(text: _kegiatan!.lokasi);
+    _dibuatOlehController = TextEditingController(text: _kegiatan!.dibuatOlehId);
+    _selectedDate = _kegiatan!.tanggalPelaksanaan;
+    _currentDokumentasi = _kegiatan!.dokumentasi;
+
+    setState(() => _isLoading = false);
   }
 
   @override
   void dispose() {
-    // 4. Dispose controller untuk menghindari memory leaks
     _namaKegiatanController.dispose();
     _kategoriKegiatanController.dispose();
     _penanggungJawabController.dispose();
@@ -60,14 +66,9 @@ class _KegiatanEditPageState extends State<KegiatanEditPage> {
     super.dispose();
   }
 
-  // --- Helper format bulan (opsional, bisa diganti intl) ---
-  String _formatTanggal(DateTime date) {
-    // Gunakan 'intl' package untuk format yang lebih baik
-    // return DateFormat('dd MMMM yyyy').format(date);
-    return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
-  }
+  String _formatTanggal(DateTime date) =>
+      '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
 
-  // --- Helper widget untuk TextFormField ---
   Widget _buildTextFormField({
     required String label,
     required TextEditingController controller,
@@ -79,66 +80,47 @@ class _KegiatanEditPageState extends State<KegiatanEditPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            label,
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Colors.grey.shade700),
-          ),
+          Text(label, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Colors.grey.shade700)),
           const SizedBox(height: 8),
           TextFormField(
             controller: controller,
             readOnly: readOnly,
             maxLines: maxLines,
             decoration: InputDecoration(
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8.0),
-              ),
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
               filled: readOnly,
               fillColor: Colors.grey.shade100,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
             ),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return '$label tidak boleh kosong';
-              }
-              return null;
-            },
+            validator: (value) => value == null || value.isEmpty ? "$label tidak boleh kosong" : null,
           ),
         ],
       ),
     );
   }
 
-  // --- Helper widget untuk Date Picker ---
   Widget _buildDatePicker() {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Tanggal Pelaksanaan',
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Colors.grey.shade700),
-          ),
+          Text("Tanggal Pelaksanaan", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Colors.grey.shade700)),
           const SizedBox(height: 8),
           InkWell(
             onTap: () async {
-              final DateTime? picked = await showDatePicker(
+              final picked = await showDatePicker(
                 context: context,
                 initialDate: _selectedDate,
                 firstDate: DateTime(2000),
-                lastDate: DateTime(2101),
+                lastDate: DateTime(2100),
               );
-              if (picked != null && picked != _selectedDate) {
-                setState(() {
-                  _selectedDate = picked;
-                });
-              }
+              if (picked != null) setState(() => _selectedDate = picked);
             },
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
               decoration: BoxDecoration(
                 border: Border.all(color: Colors.grey.shade400),
-                borderRadius: BorderRadius.circular(8.0),
+                borderRadius: BorderRadius.circular(8),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -154,54 +136,28 @@ class _KegiatanEditPageState extends State<KegiatanEditPage> {
     );
   }
 
-  // --- Helper widget untuk File Picker (Stub) ---
   Widget _buildAttachmentPicker(String label, String currentFile, IconData icon) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            label,
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Colors.grey.shade700),
-          ),
+          Text(label, style: TextStyle(fontWeight: FontWeight.w500)),
           const SizedBox(height: 8),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
               border: Border.all(color: Colors.grey.shade300),
-              borderRadius: BorderRadius.circular(8.0),
+              borderRadius: BorderRadius.circular(8),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  children: [
-                    Icon(icon, color: Color(0xFF6C63FF), size: 20),
-                    const SizedBox(width: 8),
-                    Text(currentFile.isEmpty ? "Tidak ada file" : currentFile),
-                  ],
-                ),
+                Row(children: [Icon(icon, color: Color(0xFF6C63FF)), SizedBox(width: 8), Text(currentFile.isEmpty ? "Tidak ada file" : currentFile)]),
                 TextButton(
-                  onPressed: () {
-                    // TODO: Tambahkan logika file_picker di sini
-                    // Contoh:
-                    // FilePickerResult? result = await FilePicker.platform.pickFiles();
-                    // if (result != null) {
-                    //   setState(() {
-                    //     if (label.contains("Gambar")) {
-                    //       _currentGambar = result.files.single.name;
-                    //     } else {
-                    //       _currentDokumen = result.files.single.name;
-                    //     }
-                    //   });
-                    // }
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Logika ganti file belum diimplementasi.')),
-                    );
-                  },
+                  onPressed: () => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Logika ganti file belum diimplementasi"))),
                   child: const Text("Ganti"),
-                ),
+                )
               ],
             ),
           ),
@@ -210,62 +166,44 @@ class _KegiatanEditPageState extends State<KegiatanEditPage> {
     );
   }
 
-  // --- Logika untuk Simpan Perubahan ---
-  void _saveChanges() {
-    // 1. Validasi form
-    if (_formKey.currentState!.validate()) {
-      // 2. Ambil semua data dari controller
-      final String updatedNama = _namaKegiatanController.text;
-      final String updatedKategori = _kategoriKegiatanController.text;
-      final String updatedPenanggungJawab = _penanggungJawabController.text;
-      final String updatedDeskripsi = _deskripsiController.text;
-      final String updatedLokasi = _lokasiController.text;
-      // ... ambil juga data file yang baru jika ada
+  Future<void> _saveChanges() async {
+    if (!_formKey.currentState!.validate()) return;
 
-      // 3. TODO: Implementasi logika penyimpanan data
-      // Di aplikasi nyata, Anda akan panggil API atau update database di sini.
-      // Untuk demo, kita print datanya:
-      print('--- Data Disimpan ---');
-      print('ID: ${widget.kegiatanId}');
-      print('Nama Kegiatan: $updatedNama');
-      print('Kategori: $updatedKategori');
-      print('Penanggung Jawab: $updatedPenanggungJawab');
-      print('Deskripsi: $updatedDeskripsi');
-      print('Lokasi: $updatedLokasi');
-      print('Tanggal: $_selectedDate');
-      print('Dokumentasi: $_currentDokumentasi');
-      print('--------------------');
+    final updatedKegiatan = KegiatanModel(
+      docId: widget.kegiatanId,
+      namaKegiatan: _namaKegiatanController.text,
+      kategoriKegiatan: _kategoriKegiatanController.text,
+      penanggungJawabId: _penanggungJawabController.text,
+      deskripsi: _deskripsiController.text,
+      lokasi: _lokasiController.text,
+      tanggalPelaksanaan: _selectedDate,
+      dibuatOlehId: _dibuatOlehController.text,
+      dokumentasi: _currentDokumentasi,
+    );
 
-      // 4. Tampilkan notifikasi sukses
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Kegiatan "$updatedNama" berhasil diperbarui.'),
-          backgroundColor: Colors.green,
-        ),
-      );
+    await _repo.updateKegiatan(updatedKegiatan);
 
-      // 5. Kembali ke halaman sebelumnya
-      AutoRouter.of(context).pop();
-    } else {
-      // Jika validasi gagal, tampilkan pesan
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Harap isi semua field yang wajib diisi.'),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+      content: Text("Kegiatan berhasil diperbarui"),
+      backgroundColor: Colors.green,
+    ));
+
+    context.router.pop();
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
     return Scaffold(
       backgroundColor: Colors.grey.shade200,
       appBar: AppBar(
         backgroundColor: Colors.grey.shade100,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black87),
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => context.router.pop(),
         ),
       ),
@@ -273,79 +211,32 @@ class _KegiatanEditPageState extends State<KegiatanEditPage> {
         padding: const EdgeInsets.all(16),
         child: Container(
           padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.shade300,
-                blurRadius: 8,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
+          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12), boxShadow: [
+            BoxShadow(color: Colors.grey.shade300, blurRadius: 8, offset: Offset(0, 4))
+          ]),
           child: Form(
             key: _formKey,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // Input Fields
-                _buildTextFormField(
-                  label: 'Nama Kegiatan',
-                  controller: _namaKegiatanController,
-                ),
-                const SizedBox(height: 16),
-                _buildTextFormField(
-                  label: 'Kategori Kegiatan',
-                  controller: _kategoriKegiatanController,
-                ),
-                const SizedBox(height: 16),
-                _buildTextFormField(
-                  label: 'Penanggung Jawab',
-                  controller: _penanggungJawabController,
-                ),
-                const SizedBox(height: 16),
-                _buildTextFormField(
-                  label: 'Deskripsi',
-                  controller: _deskripsiController,
-                  maxLines: 3,
-                ),
-                const SizedBox(height: 16),
-                _buildTextFormField(
-                  label: 'Lokasi',
-                  controller: _lokasiController,
-                ),
-                const SizedBox(height: 16),
+                _buildTextFormField(label: 'Nama Kegiatan', controller: _namaKegiatanController),
+                _buildTextFormField(label: 'Kategori Kegiatan', controller: _kategoriKegiatanController),
+                _buildTextFormField(label: 'Penanggung Jawab', controller: _penanggungJawabController),
+                _buildTextFormField(label: 'Deskripsi', controller: _deskripsiController, maxLines: 3),
+                _buildTextFormField(label: 'Lokasi', controller: _lokasiController),
                 _buildDatePicker(),
-                const SizedBox(height: 16),
-                _buildTextFormField(
-                  label: 'Dibuat oleh',
-                  controller: _dibuatOlehController,
-                  readOnly: true,
-                ),
-                const SizedBox(height: 16),
+                _buildTextFormField(label: 'Dibuat oleh', controller: _dibuatOlehController, readOnly: true),
                 const Divider(height: 24),
-
-                // Lampiran
-                _buildAttachmentPicker(
-                    "Dokumentasi:", _currentDokumentasi, Icons.description_outlined),
-
-                const SizedBox(height: 24),
-
-                // Tombol Simpan
+                _buildAttachmentPicker("Dokumentasi:", _currentDokumentasi, Icons.description_outlined),
+                const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: _saveChanges,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF6C63FF),
+                    backgroundColor: Color(0xFF6C63FF),
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                    elevation: 4,
                   ),
-                  child: const Text(
-                    'Simpan Perubahan',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
-                  ),
-                ),
+                  child: Text("Simpan Perubahan", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                )
               ],
             ),
           ),

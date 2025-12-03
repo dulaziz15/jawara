@@ -1,4 +1,6 @@
 // model untuk broadcast
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class BroadcastModels {
   String docId;
   String judulBroadcast, isiPesan, kategoriBroadcast, lampiranGambar, lampiranDokumen; 
@@ -31,6 +33,7 @@ class BroadcastModels {
   }
 
   // konversi dari object ke map
+
   Map<String, dynamic> toMap() {
     return {
       'docId': docId,
@@ -43,6 +46,8 @@ class BroadcastModels {
       'lampiranDokumen': lampiranDokumen,
     };
   }
+
+  // static BroadcastModels fromFirestore(DocumentSnapshot<Object?> snap) {}
 }
 
 List<BroadcastModels> dummyBroadcast = [
