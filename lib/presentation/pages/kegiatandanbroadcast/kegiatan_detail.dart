@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:jawara/core/models/kegiatan_models.dart';
+import 'package:jawara/core/repositories/kegiatan_repository.dart'; // Import Repo
 
 @RoutePage()
-class KegiatanDetailPage extends StatelessWidget {
+class KegiatanDetailPage extends StatefulWidget {
   final String kegiatanId;
 
   const KegiatanDetailPage({

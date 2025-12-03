@@ -11,6 +11,7 @@ import 'package:jawara/presentation/pages/dashboard/dashboard_kependudukan.dart'
 import 'package:jawara/presentation/pages/dashboard/dashboard_keuangan.dart';
 import 'package:jawara/presentation/pages/dashboard/dashboard_kegiatan.dart';
 import 'package:jawara/presentation/pages/dashboard/main_dashboard.dart';
+import 'package:jawara/presentation/pages/pesanWarga/aspirasi_edit.dart';
 
 // Report
 import 'package:jawara/presentation/pages/report/report.dart';
@@ -62,7 +63,7 @@ import 'package:jawara/presentation/pages/kegiatandanbroadcast/broadcast_edit.da
 
 // Pesan & Penerimaan Warga & Mutasi
 import 'package:jawara/presentation/pages/pesanWarga/pesanWarga.dart';
-import 'package:jawara/presentation/pages/pesanWarga/aspirasi.dart';
+import 'package:jawara/presentation/pages/pesanWarga/aspirasi_daftar.dart';
 import 'package:jawara/presentation/pages/penerimaanWarga/penerimaanWarga.dart';
 import 'package:jawara/presentation/pages/penerimaanWarga/penerimaan.dart';
 import 'package:jawara/presentation/pages/mutasiKeluarga/mutasiKeluarga.dart';
@@ -80,11 +81,11 @@ import 'package:jawara/presentation/pages/ManajemenPengguna/pengguna_edit.dart';
 import 'package:jawara/presentation/pages/ManajemenPengguna/pengguna_detail.dart';
 
 // Channel
-import 'package:jawara/presentation/pages/Channel/channel.dart';
-import 'package:jawara/presentation/pages/Channel/channel_daftar.dart';
-import 'package:jawara/presentation/pages/Channel/channel_tambah.dart';
-import 'package:jawara/presentation/pages/Channel/channel_detail.dart';
-import 'package:jawara/presentation/pages/Channel/channel_edit.dart';
+import 'package:jawara/presentation/pages/channel/channel.dart';
+import 'package:jawara/presentation/pages/channel/channel_daftar.dart';
+import 'package:jawara/presentation/pages/channel/channel_tambah.dart';
+import 'package:jawara/presentation/pages/channel/channel_detail.dart';
+import 'package:jawara/presentation/pages/channel/channel_edit.dart';
 
 part 'app_router.gr.dart';
 
@@ -196,7 +197,10 @@ class AppRouter extends _$AppRouter {
     AutoRoute(
       page: PesanWargaRoute.page,
       path: '/pesanWarga',
-      children: [AutoRoute(page: AspirasiRoute.page, path: 'aspirasi')],
+      children: [
+        AutoRoute(page: AspirasiRoute.page, path: 'aspirasi'),
+        AutoRoute(page: AspirasiEditRoute.page, path: 'aspirasi_edit'),
+        ],
     ),
     AutoRoute(
       page: PenerimaanWargaRoute.page,

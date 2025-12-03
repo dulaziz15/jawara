@@ -9,11 +9,12 @@ import 'package:jawara/core/models/tagihan_model.dart';
 import 'package:jawara/core/models/pemasukan_model.dart';
 import 'package:jawara/core/models/pengeluaran_model.dart';
 import 'package:jawara/core/models/iuran_models.dart';
+import 'package:jawara/core/models/kategori_iuran_models.dart';
 import 'package:jawara/core/models/broadcast_models.dart';
 import 'package:jawara/core/models/kegiatan_models.dart';
 import 'package:jawara/core/models/channel_models.dart';
-import 'package:jawara/core/models/activity_models.dart'; 
-import 'package:jawara/core/models/mutasi_model.dart';
+import 'package:jawara/core/models/activity_models.dart';
+import 'package:jawara/core/models/aspirasi_models.dart'; 
 
 
 final FirebaseFirestore _db = FirebaseFirestore.instance;
@@ -25,7 +26,7 @@ Future<void> migrateDummyDataToFirestore() async {
   // Catatan: Pastikan Anda sudah login saat menjalankan skrip ini!
 
   try {
-    // 1. MIGRASI USERS (Master Data)
+    // // 1. MIGRASI USERS (Master Data)
     // // Menggunakan NIK sebagai Document ID (ID Dokumen)
     // final usersCollection = _db.collection('users');
     // print('Migrating users...');
@@ -107,13 +108,22 @@ Future<void> migrateDummyDataToFirestore() async {
     // }
     // print('✅ Activities migration complete.');
 
-  final mutasiActivity = _db.collection('mutasi');
-    print('Migrating mutasi...');
-    for (var mutasi in MutasiDataProvider.dummyDataMutasi) {
-      await mutasiActivity.doc(mutasi.docId).set(mutasi.toMap());
-    }
-    print('✅ Activities migration complete.');
 
+    // // 10. MIGRASI ACTIVITIES (LOG)
+    // final aspirasiCollection = _db.collection('aspirasi');
+    // print('Migrating aspirasi...');
+    // for (var aspirasi in allAspirasi) {
+    //   await aspirasiCollection.doc(aspirasi.docId).set(aspirasi.toMap());
+    // }
+    // print('✅ Aspirasi migration complete.');
+
+     // 10. MIGRASI ACTIVITIES (LOG)
+    final iuranKategoriCollection = _db.collection('kategori_iuran');
+    print('Migrating kategori iuran...');
+    for (var kategori in dummyKategoriIuran) {
+      await iuranKategoriCollection.doc(kategori.docId).set(kategori.toMap());
+    }
+    print('✅ Kategori iuran migration complete.');
 
     print("--- ALL DATA MIGRATION SUCCESSFUL! ---");
 

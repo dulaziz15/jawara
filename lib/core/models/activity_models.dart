@@ -1,11 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ActivityModel {
-  final String docId ; // ID dokumen Firestore
+  final String docId;
   final String description;
-  final String actor; 
-  // 💡 PERUBAHAN: Menggunakan DateTime untuk mempermudah sorting dan filtering
-  final DateTime date; 
+  final String actor;
+  final DateTime date;
 
   const ActivityModel({
     required this.docId,
@@ -14,28 +13,29 @@ class ActivityModel {
     required this.date,
   });
 
-  // Konversi dari Object ke Map (Untuk Firestore Write/Simpan)
+  // Konversi ke Map (Simpan ke Firestore)
   Map<String, dynamic> toMap() {
     return {
-      'docId': docId,
       'description': description,
       'actor': actor,
-      // 🔑 Mengubah DateTime menjadi Timestamp (Tipe data ideal di Firestore)
-      'date': Timestamp.fromDate(date), 
+      'date': Timestamp.fromDate(date), // DateTime -> Timestamp
     };
   }
 
-  // Konversi dari Map ke Object (Untuk Firestore Read/Ambil)
-  factory ActivityModel.fromMap(Map<String, dynamic> map) {
+  // Konversi dari Map (Ambil dari Firestore)
+  factory ActivityModel.fromMap(Map<String, dynamic> map, String docId) {
     return ActivityModel(
-      docId: map['docId'] as String,
-      description: map['description'] as String,
-      actor: map['actor'] as String,
-      // 🔑 Mengubah Timestamp dari Firestore menjadi DateTime di Dart
-      date: (map['date'] as Timestamp).toDate(), 
+      docId: docId,
+      description: map['description'] ?? '',
+      actor: map['actor'] ?? 'System',
+      // Handle jika data null atau format Timestamp
+      date: (map['date'] is Timestamp) 
+          ? (map['date'] as Timestamp).toDate() 
+          : DateTime.now(),
     );
   }
 }
+
 /// === DATA DUMMY (Setelah Konversi ke DateTime) ===
 final List<ActivityModel> daftarAktivitas = [
   ActivityModel(

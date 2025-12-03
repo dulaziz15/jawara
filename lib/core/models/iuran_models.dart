@@ -10,7 +10,7 @@ class IuranModel {
     required this.docId,
     required this.namaIuran,
     required this.kategoriIuran,
-    required this.verifikatorId, // **DIREVISI**
+    required this.verifikatorId,
     required this.bukti,
     required this.jumlah,
     required this.tanggalIuran,
@@ -18,7 +18,7 @@ class IuranModel {
   });
 
   // konversi dari map ke object
-  factory IuranModel.fromMap(Map<String, dynamic> map) {
+  factory IuranModel.fromMap(Map<String, dynamic> map, String id) {
     return IuranModel(
       docId: map['docId'],
       namaIuran: map['nama_iuran'],

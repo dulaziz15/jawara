@@ -17,13 +17,17 @@ class _KegiatanDaftarPageState extends State<KegiatanDaftarPage> {
 
   String _selectedFilter = 'Semua';
 
+  // Menyimpan daftar kategori unik dari data yang dimuat (untuk Dialog Filter)
+  List<String> _availableCategories = [];
+
   @override
   void initState() {
     super.initState();
     _searchController.addListener(() => setState(() {}));
   }
 
-  void _applyFilter(String kategori) {
+  // Update state saat ketik search
+  void _onSearchChanged(String value) {
     setState(() {
       _selectedFilter = kategori;
     });

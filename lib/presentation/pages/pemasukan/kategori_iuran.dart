@@ -1,13 +1,17 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:jawara/core/models/iuran_models.dart';
+import 'package:jawara/core/models/kategori_iuran_models.dart';
+// Pastikan path import repository sudah benar
+import 'package:jawara/core/repositories/kategori_iuran_repository.dart';
 import 'package:jawara/core/utils/formatter_util.dart';
 
-// Dialog untuk Tambah Iuran
+// ============================================================================
+// 1. DIALOG TAMBAH IURAN
+// ============================================================================
 class TambahIuranDialog extends StatefulWidget {
-  final Function(IuranModel) onSave;
+  final KategoriIuranRepository repository;
 
-  const TambahIuranDialog({super.key, required this.onSave});
+  const TambahIuranDialog({super.key, required this.repository});
 
   @override
   State<TambahIuranDialog> createState() => _TambahIuranDialogState();
@@ -17,17 +21,17 @@ class _TambahIuranDialogState extends State<TambahIuranDialog> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _namaController = TextEditingController();
   final TextEditingController _jumlahController = TextEditingController();
-  String _selectedKategori = '';
-
-  @override
-  void initState() {
-    super.initState();
-    // Set kategori default ke yang pertama jika ada
-    final kategoriList = dummyIuran.map((e) => e.kategoriIuran).toSet().toList();
-    if (kategoriList.isNotEmpty) {
-      _selectedKategori = kategoriList.first;
-    }
-  }
+  String? _selectedKategori;
+  bool _isLoading = false;
+  
+  // List manual sesuai permintaan
+  final List<String> manualKategoriList = [
+    'Kebersihan',
+    'Keamanan',
+    'Sosial',
+    'Operasional',
+    'Lainnya',
+  ];
 
   @override
   void dispose() {
@@ -36,28 +40,33 @@ class _TambahIuranDialogState extends State<TambahIuranDialog> {
     super.dispose();
   }
 
-  void _save() {
+  Future<void> _save() async {
     if (_formKey.currentState!.validate()) {
-      final newIuran = IuranModel(
-        // sementara gunakan timestamp sebagai docId
-        docId: DateTime.now().millisecondsSinceEpoch.toString(),
-        namaIuran: _namaController.text,
-        kategoriIuran: _selectedKategori,
-        verifikatorId: "1", // Default
-        bukti: 'default_bukti.jpg', // Default
-        jumlah: double.tryParse(_jumlahController.text) ?? 0.0,
-        tanggalIuran: DateTime.now(),
-        tanggalTerverifikasi: DateTime.now(),
-      );
-      widget.onSave(newIuran);
-      Navigator.of(context).pop();
+      setState(() => _isLoading = true);
+      try {
+        final newKategoriIuranModel = KategoriIuranModel(
+          docId: '', // ID otomatis dari Firebase
+          namaIuran: _namaController.text,
+          kategoriIuran: _selectedKategori!,
+          jumlah: double.tryParse(_jumlahController.text) ?? 0.0,
+        );
+
+        // Panggil method addKategoriIuran di Repository
+        await widget.repository.addKategoriIuran(newKategoriIuranModel);
+
+        if (mounted) Navigator.of(context).pop();
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Gagal menyimpan: $e')));
+        }
+      } finally {
+        if (mounted) setState(() => _isLoading = false);
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final kategoriList = dummyIuran.map((e) => e.kategoriIuran).toSet().toList();
-
     return AlertDialog(
       title: const Text('Buat Iuran Baru'),
       content: Form(
@@ -80,32 +89,44 @@ class _TambahIuranDialogState extends State<TambahIuranDialog> {
                 return null;
               },
             ),
+            const SizedBox(height: 16),
             DropdownButtonFormField<String>(
               value: _selectedKategori,
               decoration: const InputDecoration(labelText: 'Kategori Iuran'),
-              items: kategoriList.map((kategori) {
+              items: manualKategoriList.map((kategori) {
                 return DropdownMenuItem(value: kategori, child: Text(kategori));
               }).toList(),
-              onChanged: (value) => setState(() => _selectedKategori = value!),
-              validator: (value) => value!.isEmpty ? 'Pilih kategori' : null,
+              onChanged: (value) => setState(() => _selectedKategori = value),
+              validator: (value) => value == null ? 'Pilih kategori' : null,
             ),
           ],
         ),
       ),
       actions: [
         TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Batal')),
-        ElevatedButton(onPressed: _save, child: const Text('Simpan')),
+        ElevatedButton(
+          onPressed: _isLoading ? null : _save,
+          child: _isLoading
+              ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
+              : const Text('Simpan'),
+        ),
       ],
     );
   }
 }
 
-// Dialog untuk Edit Iuran
+// ============================================================================
+// 2. DIALOG EDIT IURAN
+// ============================================================================
 class EditIuranDialog extends StatefulWidget {
-  final IuranModel item;
-  final Function(IuranModel) onSave;
+  final KategoriIuranModel item;
+  final KategoriIuranRepository repository;
 
-  const EditIuranDialog({super.key, required this.item, required this.onSave});
+  const EditIuranDialog({
+    super.key,
+    required this.item,
+    required this.repository,
+  });
 
   @override
   State<EditIuranDialog> createState() => _EditIuranDialogState();
@@ -116,12 +137,13 @@ class _EditIuranDialogState extends State<EditIuranDialog> {
   late TextEditingController _namaController;
   late TextEditingController _jumlahController;
   late String _kategori;
+  bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
     _namaController = TextEditingController(text: widget.item.namaIuran);
-    _jumlahController = TextEditingController(text: widget.item.jumlah.toString());
+    _jumlahController = TextEditingController(text: widget.item.jumlah.toStringAsFixed(0));
     _kategori = widget.item.kategoriIuran;
   }
 
@@ -132,22 +154,30 @@ class _EditIuranDialogState extends State<EditIuranDialog> {
     super.dispose();
   }
 
-  // void _save() {
-  //   if (_formKey.currentState!.validate()) {
-  //     final updatedIuran = IuranModel(
-  //       id: widget.item.docId,
-  //       namaIuran: _namaController.text,
-  //       kategoriIuran: _kategori, // Tidak bisa diedit
-  //       verifikatorId: widget.item.verifikatorId,
-  //       bukti: widget.item.bukti,
-  //       jumlah: double.tryParse(_jumlahController.text) ?? 0.0,
-  //       tanggalIuran: widget.item.tanggalIuran,
-  //       tanggalTerverifikasi: widget.item.tanggalTerverifikasi,
-  //     );
-  //     widget.onSave(updatedIuran);
-  //     Navigator.of(context).pop();
-  //   }
-  // }
+  Future<void> _update() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() => _isLoading = true);
+      try {
+        final updatedIuran = KategoriIuranModel(
+          docId: widget.item.docId,
+          namaIuran: _namaController.text,
+          kategoriIuran: _kategori,
+          jumlah: double.tryParse(_jumlahController.text) ?? 0.0,
+        );
+
+        // Panggil method updateKategoriIuran di Repository
+        await widget.repository.updateKategoriIuran(updatedIuran);
+        
+        if (mounted) Navigator.of(context).pop();
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Gagal update: $e')));
+        }
+      } finally {
+        if (mounted) setState(() => _isLoading = false);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -176,7 +206,7 @@ class _EditIuranDialogState extends State<EditIuranDialog> {
             TextFormField(
               initialValue: _kategori,
               decoration: const InputDecoration(labelText: 'Kategori Iuran'),
-              readOnly: true, // Tidak bisa diedit
+              readOnly: true,
               enabled: false,
             ),
           ],
@@ -184,12 +214,18 @@ class _EditIuranDialogState extends State<EditIuranDialog> {
       ),
       actions: [
         TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Batal')),
-        // ElevatedButton(onPressed: _save, child: const Text('Simpan')),
+        ElevatedButton(
+          onPressed: _isLoading ? null : _update,
+          child: const Text('Update'),
+        ),
       ],
     );
   }
 }
 
+// ============================================================================
+// 3. HALAMAN UTAMA
+// ============================================================================
 @RoutePage()
 class KategoriIuranPage extends StatefulWidget {
   const KategoriIuranPage({super.key});
@@ -199,133 +235,72 @@ class KategoriIuranPage extends StatefulWidget {
 }
 
 class _KategoriIuranPageState extends State<KategoriIuranPage> {
-  List<IuranModel> _filteredData = dummyIuran;
+  final KategoriIuranRepository _repository = KategoriIuranRepository();
+
   final TextEditingController _searchController = TextEditingController();
   String _selectedFilter = 'Semua';
-
-  @override
-  void initState() {
-    super.initState();
-    _filteredData = dummyIuran;
-  }
-
-  void _applyFilter(String kategori) {
-    setState(() {
-      _selectedFilter = kategori;
-      List<IuranModel> kategoriFilteredData;
-      if (kategori == 'Semua') {
-        kategoriFilteredData = dummyIuran;
-      } else {
-        kategoriFilteredData = dummyIuran.where((data) => data.kategoriIuran == kategori).toList();
-      }
-      if (_searchController.text.isNotEmpty) {
-        _filteredData = kategoriFilteredData
-            .where((data) =>
-                data.namaIuran.toLowerCase().contains(_searchController.text.toLowerCase()) ||
-                data.kategoriIuran.toLowerCase().contains(_searchController.text.toLowerCase()))
-            .toList();
-      } else {
-        _filteredData = kategoriFilteredData;
-      }
-    });
-  }
+  String _searchQuery = '';
 
   void _onSearchChanged(String value) {
     setState(() {
-      List<IuranModel> searchFilteredData;
-      if (value.isEmpty) {
-        searchFilteredData = dummyIuran;
-      } else {
-        searchFilteredData = dummyIuran
-            .where((data) =>
-                data.namaIuran.toLowerCase().contains(value.toLowerCase()) ||
-                data.kategoriIuran.toLowerCase().contains(value.toLowerCase()))
-            .toList();
-      }
-      if (_selectedFilter != 'Semua') {
-        _filteredData = searchFilteredData.where((data) => data.kategoriIuran == _selectedFilter).toList();
-      } else {
-        _filteredData = searchFilteredData;
-      }
+      _searchQuery = value.toLowerCase();
     });
   }
 
-  void _showFilterDialog() {
-    final List<String> kategoriList = dummyIuran.map((e) => e.kategoriIuran).toSet().toList();
+  List<KategoriIuranModel> _applyFilters(List<KategoriIuranModel> allData) {
+    return allData.where((data) {
+      final matchKategori = _selectedFilter == 'Semua' || data.kategoriIuran == _selectedFilter;
+      final matchSearch = _searchQuery.isEmpty ||
+          data.namaIuran.toLowerCase().contains(_searchQuery) ||
+          data.kategoriIuran.toLowerCase().contains(_searchQuery);
+
+      return matchKategori && matchSearch;
+    }).toList();
+  }
+
+  void _showFilterDialog(List<String> availableKategoris) {
     showDialog(
       context: context,
       builder: (context) => FilterIuranDialog(
         initialKategori: _selectedFilter,
-        kategoriList: kategoriList,
-        onApplyFilter: _applyFilter,
-      ),
-    );
-  }
-
-  void _showTambahIuranDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => TambahIuranDialog(
-        onSave: (newIuran) {
-          setState(() {
-            dummyIuran.add(newIuran);
-            _applyFilter(_selectedFilter); // Refresh filter
-          });
+        kategoriList: availableKategoris,
+        onApplyFilter: (kategori) {
+          setState(() => _selectedFilter = kategori);
         },
       ),
     );
   }
 
-  void _showEditIuranDialog(IuranModel item) {
-    showDialog(
-      context: context,
-      builder: (context) => EditIuranDialog(
-        item: item,
-        onSave: (updatedIuran) {
-          setState(() {
-            final index = dummyIuran.indexWhere((i) => i.docId == updatedIuran.docId);
-            if (index != -1) {
-              dummyIuran[index] = updatedIuran;
-              _applyFilter(_selectedFilter); // Refresh filter
-            }
-          });
-        },
-      ),
-    );
-  }
-
-  // --- Helper format bulan ---
-  String _getBulan(int bulan) {
-    const namaBulan = [
-      'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli',
-      'Agustus', 'September', 'Oktober', 'November', 'Desember',
-    ];
-    return namaBulan[bulan - 1];
-  }
-
-  
-
-  // --- DIALOG UNTUK AKSI HAPUS ---
-  void _showDeleteConfirmationDialog(BuildContext context, IuranModel item) {
+  void _showDeleteConfirmationDialog(BuildContext context, KategoriIuranModel item) {
     showDialog(
       context: context,
       builder: (BuildContext ctx) {
         return AlertDialog(
           title: const Text('Konfirmasi Hapus'),
-          content: Text(
-              'Apakah Anda yakin ingin menghapus iuran "${item.namaIuran}"?'),
+          content: Text('Apakah Anda yakin ingin menghapus iuran "${item.namaIuran}"?'),
           actions: [
             TextButton(
-              onPressed: () {
-                Navigator.of(ctx).pop(); // Tutup dialog
-              },
+              onPressed: () => Navigator.of(ctx).pop(),
               child: const Text('Batal'),
             ),
             TextButton(
-              onPressed: () {
-                // TODO: Tambahkan logika hapus data di sini
-                print('Menghapus item ${item.docId}');
-                Navigator.of(ctx).pop(); // Tutup dialog
+              onPressed: () async {
+                Navigator.of(ctx).pop();
+                try {
+                  // Panggil method deleteKategoriIuran di Repository
+                  await _repository.deleteKategoriIuran(item.docId);
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Data berhasil dihapus')),
+                    );
+                  }
+                } catch (e) {
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Gagal menghapus: $e')),
+                    );
+                  }
+                }
               },
               style: TextButton.styleFrom(foregroundColor: Colors.red),
               child: const Text('Hapus'),
@@ -340,95 +315,108 @@ class _KategoriIuranPageState extends State<KategoriIuranPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Column(
-        children: [
-          // Search Bar
-          Container(
-            margin: const EdgeInsets.all(16),
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey.shade300),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.1),
-                  blurRadius: 4,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Row(
-              children: [
-                const Icon(Icons.search, color: Colors.grey),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: TextField(
-                    controller: _searchController,
-                    onChanged: _onSearchChanged,
-                    decoration: const InputDecoration(
-                      hintText: 'Cari berdasarkan nama atau kategori...',
-                      border: InputBorder.none,
-                      hintStyle: TextStyle(color: Colors.grey),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+      body: StreamBuilder<List<KategoriIuranModel>>(
+        // Gunakan stream yang sudah mengembalikan List Model
+        stream: _repository.getKategoriIuranStream(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-          // Jumlah data ditemukan
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Text(
-              '${_filteredData.length} data ditemukan',
-              style: const TextStyle(color: Colors.grey, fontSize: 14),
-            ),
-          ),
+          final allData = snapshot.data ?? [];
+          final filteredData = _applyFilters(allData);
+          final uniqueCategories = allData.map((e) => e.kategoriIuran).toSet().toList();
 
-          // List Data
-          Expanded(
-            child: _filteredData.isEmpty
-                ? Center(
-                    child: Text(
-                      'Data tidak ditemukan',
-                      style: TextStyle(color: Colors.grey.shade500),
+          return Column(
+            children: [
+              // Search & Filter
+              Container(
+                margin: const EdgeInsets.all(16),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.grey.shade300),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.search, color: Colors.grey),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: TextField(
+                        controller: _searchController,
+                        onChanged: _onSearchChanged,
+                        decoration: const InputDecoration(
+                          hintText: 'Cari nama atau kategori...',
+                          border: InputBorder.none,
+                          hintStyle: TextStyle(color: Colors.grey),
+                        ),
+                      ),
                     ),
-                  )
-                : ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    itemCount: _filteredData.length,
-                    itemBuilder: (context, index) {
-                      final item = _filteredData[index];
-                      return _buildDataCard(item, index + 1);
-                    },
-                  ),
-          ),
-        ],
+                    IconButton(
+                      icon: Icon(
+                        Icons.filter_list,
+                        color: _selectedFilter == 'Semua' ? Colors.grey : const Color(0xFF6C63FF),
+                      ),
+                      onPressed: () => _showFilterDialog(uniqueCategories),
+                    ),
+                  ],
+                ),
+              ),
+              
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: Text(
+                  '${filteredData.length} data ditemukan' + (_selectedFilter != 'Semua' ? ' (Filter: $_selectedFilter)' : ''),
+                  style: const TextStyle(color: Colors.grey, fontSize: 14),
+                ),
+              ),
+
+              Expanded(
+                child: filteredData.isEmpty
+                    ? Center(
+                        child: Text(
+                          'Data tidak ditemukan',
+                          style: TextStyle(color: Colors.grey.shade500),
+                        ),
+                      )
+                    : ListView.builder(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        itemCount: filteredData.length,
+                        itemBuilder: (context, index) {
+                          final item = filteredData[index];
+                          return _buildDataCard(item, index + 1);
+                        },
+                      ),
+              ),
+            ],
+          );
+        },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _showTambahIuranDialog,
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (context) => TambahIuranDialog(repository: _repository),
+          );
+        },
         backgroundColor: const Color(0xFF6C63FF),
         child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }
 
-  Widget _buildDataCard(IuranModel item, int no) {
+  Widget _buildDataCard(KategoriIuranModel item, int no) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.grey.shade300),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
       ),
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -446,86 +434,39 @@ class _KategoriIuranPageState extends State<KategoriIuranPage> {
                         children: [
                           Text(
                             '$no.',
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                              color: Colors.grey,
-                            ),
+                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.grey),
                           ),
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
                               item.namaIuran,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
+                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                             ),
                           ),
                         ],
                       ),
                       const SizedBox(height: 4),
-                      Text(
-                        'Kategori: ${item.kategoriIuran}',
-                        style: const TextStyle(
-                          color: Colors.grey,
-                          fontSize: 14,
-                        ),
-                      ),
+                      Text('Kategori: ${item.kategoriIuran}', style: const TextStyle(color: Colors.grey, fontSize: 14)),
                       const SizedBox(height: 4),
-                      Text(
-                        'Nominal: Rp ${FormatterUtil.formatCurrency(item.jumlah)}',
-                        style: const TextStyle(
-                          color: Colors.grey,
-                          fontSize: 14,
-                        ),
-                      ),
+                      Text('Nominal: Rp ${FormatterUtil.formatCurrency(item.jumlah)}', style: const TextStyle(color: Colors.grey, fontSize: 14)),
                     ],
                   ),
                 ),
                 PopupMenuButton<String>(
                   icon: const Icon(Icons.more_vert, color: Colors.black54),
                   onSelected: (String value) {
-                    if (value == 'detail') {
-                      // TODO: Navigate to detail page
-                      print('Navigate to detail for ${item.docId}');
-                    } else if (value == 'edit') {
-                      _showEditIuranDialog(item);
+                    if (value == 'edit') {
+                      showDialog(
+                        context: context,
+                        builder: (context) => EditIuranDialog(item: item, repository: _repository),
+                      );
                     } else if (value == 'hapus') {
                       _showDeleteConfirmationDialog(context, item);
                     }
                   },
                   itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-                    const PopupMenuItem<String>(
-                      value: 'detail',
-                      child: Row(
-                        children: [
-                          Icon(Icons.visibility_outlined, color: Colors.blue, size: 20),
-                          SizedBox(width: 10),
-                          Text('Lihat Detail'),
-                        ],
-                      ),
-                    ),
-                    const PopupMenuItem<String>(
-                      value: 'edit',
-                      child: Row(
-                        children: [
-                          Icon(Icons.edit_outlined, color: Colors.green, size: 20),
-                          SizedBox(width: 10),
-                          Text('Edit'),
-                        ],
-                      ),
-                    ),
-                    const PopupMenuItem<String>(
-                      value: 'hapus',
-                      child: Row(
-                        children: [
-                          Icon(Icons.delete_outline, color: Colors.red, size: 20),
-                          SizedBox(width: 10),
-                          Text('Hapus'),
-                        ],
-                      ),
-                    ),
+                    const PopupMenuItem<String>(value: 'edit', child: Row(children: [Icon(Icons.edit_outlined, color: Colors.green, size: 20), SizedBox(width: 10), Text('Edit')])),
+                    const PopupMenuItem<String>(value: 'hapus', child: Row(children: [Icon(Icons.delete_outline, color: Colors.red, size: 20), SizedBox(width: 10), Text('Hapus')])),
                   ],
                 ),
               ],
@@ -537,17 +478,15 @@ class _KategoriIuranPageState extends State<KategoriIuranPage> {
   }
 }
 
+// ============================================================================
+// 4. DIALOG FILTER (TIDAK PERLU DIUBAH)
+// ============================================================================
 class FilterIuranDialog extends StatefulWidget {
   final String initialKategori;
   final List<String> kategoriList;
   final Function(String) onApplyFilter;
 
-  const FilterIuranDialog({
-    super.key,
-    required this.initialKategori,
-    required this.kategoriList,
-    required this.onApplyFilter,
-  });
+  const FilterIuranDialog({super.key, required this.initialKategori, required this.kategoriList, required this.onApplyFilter});
 
   @override
   State<FilterIuranDialog> createState() => _FilterIuranDialogState();
@@ -572,37 +511,17 @@ class _FilterIuranDialogState extends State<FilterIuranDialog> {
           DropdownButtonFormField<String>(
             value: _selectedKategori,
             hint: const Text('Pilih Kategori'),
-            decoration: InputDecoration(
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-            ),
+            decoration: InputDecoration(border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.0))),
             items: ['Semua', ...widget.kategoriList].map((String kategori) {
-              return DropdownMenuItem<String>(
-                value: kategori,
-                child: Text(kategori),
-              );
+              return DropdownMenuItem<String>(value: kategori, child: Text(kategori));
             }).toList(),
-            onChanged: (String? newValue) {
-              setState(() {
-                _selectedKategori = newValue!;
-              });
-            },
+            onChanged: (String? newValue) => setState(() => _selectedKategori = newValue!),
           ),
         ],
       ),
       actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Batal'),
-        ),
-        TextButton(
-          onPressed: () {
-            widget.onApplyFilter(_selectedKategori);
-            Navigator.of(context).pop();
-          },
-          child: const Text('Terapkan'),
-        ),
+        TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Batal')),
+        TextButton(onPressed: () { widget.onApplyFilter(_selectedKategori); Navigator.of(context).pop(); }, child: const Text('Terapkan')),
       ],
     );
   }

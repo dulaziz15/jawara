@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class AspirasiModels {
   final String docId;
   final String judul;
@@ -15,30 +17,31 @@ class AspirasiModels {
     required this.tanggal,
   });
 
-  // konversi dari map ke object
-  factory AspirasiModels.fromMap(Map<String, dynamic> map) {
+  // Konversi dari Firestore Map ke Object
+  factory AspirasiModels.fromMap(Map<String, dynamic> map, String id) {
     return AspirasiModels(
-      docId: map['docId'],
-      judul: map['judulBroadcast'],
-      deskripsi: map['isiPesan'],
-      status: map['kategoriBroadcast'],
-      pengirim: map['dibuatOlehId'], // Menggunakan ID
-      tanggal: DateTime.parse(map['tanggalPublikasi']).toIso8601String(),
+      docId: id, // ID diambil dari metadata dokumen
+      judul: map['judulBroadcast'] ?? '',
+      deskripsi: map['isiPesan'] ?? '',
+      status: map['kategoriBroadcast'] ?? 'Pending',
+      pengirim: map['dibuatOlehId'] ?? 'Anonim',
+      // Handle timestamp atau string tanggal
+      tanggal: map['tanggalPublikasi'] ?? DateTime.now().toIso8601String(),
     );
   }
 
-  // konversi dari object ke map
+  // Konversi dari Object ke Map untuk simpan ke Firestore
   Map<String, dynamic> toMap() {
     return {
-      'docId': docId,
       'judulBroadcast': judul,
       'isiPesan': deskripsi,
       'kategoriBroadcast': status,
-      'tanggalPublikasi': DateTime.parse(tanggal).toIso8601String(),
-      'dibuatOlehId': pengirim, 
-     };
+      'tanggalPublikasi': tanggal,
+      'dibuatOlehId': pengirim,
+    };
   }
 }
+
 
 final List<AspirasiModels> allAspirasi = [
   AspirasiModels(

@@ -1,6 +1,7 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:jawara/core/models/pengguna_models.dart';
+import 'package:jawara/core/repositories/pengguna_repository.dart'; // Pastikan import ini
 
 @RoutePage()
 class PenggunaEditPage extends StatefulWidget {
@@ -13,42 +14,56 @@ class PenggunaEditPage extends StatefulWidget {
 }
 
 class _PenggunaEditPageState extends State<PenggunaEditPage> {
+  // 1. Repository & State
+  final PenggunaRepository _repository = PenggunaRepository();
+  bool _isLoading = true; // Loading saat ambil data awal
+  bool _isSaving = false; // Loading saat simpan data
+
   late TextEditingController namaController;
   late TextEditingController emailController;
   late TextEditingController hpController;
   late TextEditingController passwordController;
   late TextEditingController confirmPasswordController;
 
-  late UserModel user;
+  // Model untuk menampung data user saat ini
+  UserModel? user;
 
   @override
   void initState() {
     super.initState();
-
-    // Ambil data user berdasarkan ID
-    user = daftarPengguna.firstWhere(
-      (u) => u.docId == widget.userId,
-      orElse: () => UserModel(
-        docId: widget.userId,
-        nama: '',
-        email: '',
-        statusDomisili: 'Diproses',
-        role: 'Warga',
-        nik: '',
-        noHp: '',
-        jenisKelamin: '',
-        idKeluarga: '',
-        statusHidup: '',
-        buktiIdentitas: '',
-      ),
-    );
-
-    // Inisialisasi controller
-    namaController = TextEditingController(text: user.nama);
-    emailController = TextEditingController(text: user.email);
-    hpController = TextEditingController(text: user.noHp);
+    // Inisialisasi controller kosong dulu
+    namaController = TextEditingController();
+    emailController = TextEditingController();
+    hpController = TextEditingController();
     passwordController = TextEditingController();
     confirmPasswordController = TextEditingController();
+
+    // 2. Ambil data dari Firebase
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    // widget.userId adalah NIK
+    final fetchedUser = await _repository.getUserByNik(widget.userId);
+    
+    if (fetchedUser != null) {
+      setState(() {
+        user = fetchedUser;
+        // Isi controller dengan data dari Firebase
+        namaController.text = user!.nama;
+        emailController.text = user!.email;
+        hpController.text = user!.noHp;
+        _isLoading = false;
+      });
+    } else {
+      // Handle jika user tidak ditemukan
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("User tidak ditemukan")),
+        );
+        context.router.pop();
+      }
+    }
   }
 
   @override
@@ -61,15 +76,72 @@ class _PenggunaEditPageState extends State<PenggunaEditPage> {
     super.dispose();
   }
 
-  void _simpanPerubahan() {
-    // Simpan data atau lakukan validasi di sini
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Perubahan disimpan')));
+  // 3. Fungsi Simpan ke Firebase
+  Future<void> _simpanPerubahan() async {
+    if (user == null) return;
+
+    setState(() => _isSaving = true);
+
+    try {
+      // Buat object baru dengan data yang diedit
+      // Kita pertahankan data lama (role, nik, dll) dan update yang diedit saja
+      final updatedUser = UserModel(
+        docId: user!.docId,
+        nama: namaController.text,
+        email: emailController.text,
+        noHp: hpController.text,
+        // Field di bawah ini tetap menggunakan data lama (tidak diedit di form ini)
+        role: user!.role,
+        nik: user!.nik,
+        idKeluarga: user!.idKeluarga,
+        jenisKelamin: user!.jenisKelamin,
+        statusDomisili: user!.statusDomisili,
+        statusHidup: user!.statusHidup,
+        buktiIdentitas: user!.buktiIdentitas,
+      );
+
+      // Panggil Repository untuk update
+      await _repository.updateUser(updatedUser, user!.nik);
+
+      // Catatan soal Password:
+      // Update password harus dilakukan via FirebaseAuth (currentUser.updatePassword)
+      // Tidak disarankan menyimpan password text di Firestore demi keamanan.
+      // Kode ini hanya mengupdate profil biodata.
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('✅ Data berhasil diperbarui'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        context.router.pop(); // Kembali ke halaman detail
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('❌ Gagal memperbarui: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isSaving = false);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    // Tampilkan Loading jika data belum siap
+    if (_isLoading) {
+      return Scaffold(
+        backgroundColor: Colors.grey.shade100,
+        appBar: AppBar(backgroundColor: Colors.grey.shade100),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
+
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
       appBar: AppBar(
@@ -148,30 +220,43 @@ class _PenggunaEditPageState extends State<PenggunaEditPage> {
                 const Text('Role (tidak dapat diubah)'),
                 const SizedBox(height: 6),
                 DropdownButtonFormField(
-                  value: user.role,
-                  items: [
-                    DropdownMenuItem(value: user.role, child: Text(user.role)),
-                  ],
-                  onChanged: null,
+                  value: user?.role, // Ambil dari data user yang sudah di-load
+                  items: user?.role != null
+                      ? [
+                          DropdownMenuItem(
+                              value: user!.role, child: Text(user!.role)),
+                        ]
+                      : [],
+                  onChanged: null, // Disable change
                   decoration: const InputDecoration(),
                 ),
 
                 const SizedBox(height: 24),
-                ElevatedButton(
-                  onPressed: _simpanPerubahan,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFF6C63FF),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 24,
-                      vertical: 12,
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: _isSaving ? null : _simpanPerubahan,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF6C63FF),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24,
+                        vertical: 12,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                     ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: const Text(
-                    'Perbarui',
-                    style: TextStyle(color: Colors.white),
+                    child: _isSaving
+                        ? const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(
+                                color: Colors.white, strokeWidth: 2),
+                          )
+                        : const Text(
+                            'Perbarui',
+                            style: TextStyle(color: Colors.white),
+                          ),
                   ),
                 ),
               ],

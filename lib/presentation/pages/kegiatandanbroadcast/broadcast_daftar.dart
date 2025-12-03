@@ -16,6 +16,7 @@ class _BroadcastDaftarPageState extends State<BroadcastDaftarPage> {
   final TextEditingController _searchController = TextEditingController();
 
   String _selectedFilter = 'Semua';
+  List<String> _availableCategories = [];
 
   @override
   void initState() {
