@@ -17,17 +17,14 @@ class _KegiatanDaftarPageState extends State<KegiatanDaftarPage> {
 
   String _selectedFilter = 'Semua';
 
-  // Menyimpan daftar kategori unik dari data yang dimuat (untuk Dialog Filter)
-  List<String> _availableCategories = [];
-
   @override
   void initState() {
     super.initState();
-    _searchController.addListener(() => setState(() {}));
+    _searchController.addListener(() => setState(() {})); // listener search
   }
 
-  // Update state saat ketik search
-  void _onSearchChanged(String value) {
+  // ================= FILTER =================
+  void _applyFilter(String kategori) {
     setState(() {
       _selectedFilter = kategori;
     });
@@ -84,6 +81,7 @@ class _KegiatanDaftarPageState extends State<KegiatanDaftarPage> {
     );
   }
 
+  // ================= BUILD =================
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -230,7 +228,7 @@ class _KegiatanDaftarPageState extends State<KegiatanDaftarPage> {
   }
 }
 
-
+// ================= FILTER DIALOG =================
 class FilterKegiatanDialog extends StatefulWidget {
   final String initialKategori;
   final List<String> kategoriList;
@@ -272,7 +270,13 @@ class _FilterKegiatanDialogState extends State<FilterKegiatanDialog> {
       ),
       actions: [
         TextButton(onPressed: () => Navigator.pop(context), child: const Text('Batal')),
-        TextButton(onPressed: () { widget.onApplyFilter(_selectedKategori); Navigator.pop(context); }, child: const Text('Terapkan')),
+        TextButton(
+          onPressed: () {
+            widget.onApplyFilter(_selectedKategori);
+            Navigator.pop(context);
+          },
+          child: const Text('Terapkan'),
+        ),
       ],
     );
   }

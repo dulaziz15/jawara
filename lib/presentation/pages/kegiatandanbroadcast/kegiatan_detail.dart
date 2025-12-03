@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:jawara/core/models/kegiatan_models.dart';
-import 'package:jawara/core/repositories/kegiatan_repository.dart'; // Import Repo
 
 @RoutePage()
 class KegiatanDetailPage extends StatefulWidget {
@@ -13,11 +12,17 @@ class KegiatanDetailPage extends StatefulWidget {
     @PathParam('id') required this.kegiatanId,
   });
 
-  // Ambil detail data dari Firestore
+  @override
+  State<KegiatanDetailPage> createState() => _KegiatanDetailPageState();
+}
+
+class _KegiatanDetailPageState extends State<KegiatanDetailPage> {
+
+  // ==================== FUTURE ====================
   Future<KegiatanModel> _getDetailKegiatan() async {
     final doc = await FirebaseFirestore.instance
         .collection('kegiatan')
-        .doc(kegiatanId)
+        .doc(widget.kegiatanId)
         .get();
 
     if (!doc.exists) throw Exception("Data tidak ditemukan");
@@ -26,7 +31,7 @@ class KegiatanDetailPage extends StatefulWidget {
     return KegiatanModel.fromMap({...data, 'docId': doc.id});
   }
 
-  // Format nama bulan
+  // ==================== UTILITY ====================
   String _getBulan(int bulan) {
     const namaBulan = [
       'Januari','Februari','Maret','April','Mei','Juni',
@@ -35,7 +40,6 @@ class KegiatanDetailPage extends StatefulWidget {
     return namaBulan[bulan - 1];
   }
 
-  // Widget baris detail — UI TETAP SAMA
   Widget _buildDetailRow(String label, String value) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
@@ -57,6 +61,7 @@ class KegiatanDetailPage extends StatefulWidget {
     );
   }
 
+  // ==================== BUILD ====================
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,12 +77,10 @@ class KegiatanDetailPage extends StatefulWidget {
       body: FutureBuilder<KegiatanModel>(
         future: _getDetailKegiatan(),
         builder: (context, snapshot) {
-          // loader tetap menyesuaikan UI
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
 
-          // jika error (docId tidak ditemukan)
           if (snapshot.hasError || !snapshot.hasData) {
             return const Center(
               child: Text("Data tidak ditemukan", style: TextStyle(color: Colors.grey)),
