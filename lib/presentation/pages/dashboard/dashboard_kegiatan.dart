@@ -1,7 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:jawara/core/models/catergory_data.dart';
-import 'package:jawara/core/models/finance_model.dart';
+import 'package:jawara/core/models/catergory_models.dart';
+import 'package:jawara/core/models/finance_models.dart';
 import 'package:jawara/core/models/kegiatan_models.dart';
 import 'package:jawara/presentation/pages/dashboard/widgets/stat_card.dart';
 import 'package:jawara/presentation/pages/dashboard/widgets/pie_chart.dart';
@@ -12,7 +12,7 @@ import 'package:jawara/presentation/widgets/sidebar/sidebar.dart';
 class DashboardKegiatanPage extends StatelessWidget {
   DashboardKegiatanPage({super.key});
 
-  // Generate data dari dummyPengeluaran
+  // Generate data dari dummyKegiatan
   EventData get eventData => _generateEventData();
 
   EventData _generateEventData() {
@@ -20,7 +20,7 @@ class DashboardKegiatanPage extends StatelessWidget {
     final currentYear = now.year;
 
     // Filter kegiatan untuk tahun ini
-    final kegiatanTahunIni = dummyPengeluaran
+    final kegiatanTahunIni = dummyKegiatan
         .where((kegiatan) => kegiatan.tanggalPelaksanaan.year == currentYear)
         .toList();
 
@@ -89,8 +89,8 @@ class DashboardKegiatanPage extends StatelessWidget {
     // Penanggung Jawab data
     final penanggungJawabMap = <String, int>{};
     for (var kegiatan in kegiatanTahunIni) {
-      penanggungJawabMap[kegiatan.penanggungJawab] =
-          (penanggungJawabMap[kegiatan.penanggungJawab] ?? 0) + 1;
+      penanggungJawabMap[kegiatan.penanggungJawabId.toString()] =
+          (penanggungJawabMap[kegiatan.penanggungJawabId.toString()] ?? 0) + 1;
     }
 
     final penanggungJawabData = penanggungJawabMap.entries.map((entry) {

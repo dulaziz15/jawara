@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
-import 'model_mutasi.dart'; // Import model baru
+import '../../../core/models/mutasi_model.dart'; // Import model baru
+import '../../../core/repositories/mutasi_repository.dart'; // Repository Firebase
 
 @RoutePage()
 class TambahMutasiPage extends StatefulWidget {
@@ -12,6 +13,7 @@ class TambahMutasiPage extends StatefulWidget {
 
 class _TambahMutasiPageState extends State<TambahMutasiPage> {
   final _formKey = GlobalKey<FormState>();
+  final MutasiRepository _repo = MutasiRepository(); // repo untuk Firebase
 
   // Data untuk dropdown - sekarang menggunakan data dari model
   final List<String> _jenisMutasiOptions = [
@@ -21,10 +23,10 @@ class _TambahMutasiPageState extends State<TambahMutasiPage> {
     'Pindah Negara',
   ];
 
-  // Ambil daftar keluarga dari data dummy
+  // Ambil daftar keluarga dari data dummy (provider menggunakan dummyDataMutasi)
   List<String> get _keluargaOptions {
     final keluargaSet = <String>{};
-    for (var data in MutasiDataProvider.dummyData) {
+    for (var data in MutasiDataProvider.dummyDataMutasi) {
       keluargaSet.add(data.keluarga);
     }
     return keluargaSet.toList();
@@ -66,8 +68,8 @@ class _TambahMutasiPageState extends State<TambahMutasiPage> {
     });
   }
 
-  // Fungsi submit form
-  void _submitForm() {
+  // Fungsi submit form — sekarang menyimpan ke Firebase (Firestore)
+  Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
       // Validasi tambahan
       if (_selectedKeluarga == null || _selectedJenisMutasi == null) {
@@ -81,14 +83,15 @@ class _TambahMutasiPageState extends State<TambahMutasiPage> {
       }
 
       // Cari data keluarga yang dipilih untuk mendapatkan alamat lama
-      final keluargaData = MutasiDataProvider.dummyData.firstWhere(
+      final keluargaData = MutasiDataProvider.dummyDataMutasi.firstWhere(
         (data) => data.keluarga == _selectedKeluarga,
-        orElse: () => MutasiDataProvider.dummyData.first,
+        orElse: () => MutasiDataProvider.dummyDataMutasi.first,
       );
 
       // Buat objek MutasiData baru
+      // docId dikosongkan karena Firestore akan buatkan ID saat add
       final newMutasi = MutasiData(
-        no: MutasiDataProvider.dummyData.length + 1, // Generate nomor baru
+        docId: '', // Firestore akan assign ID
         keluarga: _selectedKeluarga!,
         alamatLama: _alamatLamaController.text.isNotEmpty
             ? _alamatLamaController.text
@@ -99,31 +102,37 @@ class _TambahMutasiPageState extends State<TambahMutasiPage> {
         alasan: _alasanController.text,
       );
 
-      // Proses submit data (simulasi)
-      print('Data mutasi baru:');
-      print('No: ${newMutasi.no}');
-      print('Keluarga: ${newMutasi.keluarga}');
-      print('Alamat Lama: ${newMutasi.alamatLama}');
-      print('Alamat Baru: ${newMutasi.alamatBaru}');
-      print('Tanggal: ${newMutasi.tanggalMutasi}');
-      print('Jenis Mutasi: ${newMutasi.jenisMutasi}');
-      print('Alasan: ${newMutasi.alasan}');
+      try {
+        // Simpan ke Firebase melalui repository
+        await _repo.addMutasi(newMutasi);
 
-      // Tampilkan snackbar sukses
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Data mutasi berhasil ditambahkan'),
-          backgroundColor: Colors.green,
-        ),
-      );
+        // Tampilkan snackbar sukses
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Data mutasi berhasil ditambahkan'),
+            backgroundColor: Colors.green,
+          ),
+        );
 
-      // Reset form setelah submit
-      _resetForm();
+        // Reset form setelah submit
+        _resetForm();
 
-      // Optional: Navigasi kembali setelah delay
-      Future.delayed(const Duration(milliseconds: 1500), () {
-        context.router.pop();
-      });
+        // Navigasi kembali setelah delay singkat
+        Future.delayed(const Duration(milliseconds: 1500), () {
+          context.router.pop();
+        });
+      } catch (e) {
+        // Jika gagal menyimpan ke Firebase — tampilkan pesan error.
+        // (Jika ingin fallback ke dummy, perlu membuat dummy list menjadi mutable.)
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Gagal menyimpan ke Firebase: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        // debug print
+        debugPrint('Error addMutasi: $e');
+      }
     }
   }
 
@@ -135,9 +144,9 @@ class _TambahMutasiPageState extends State<TambahMutasiPage> {
 
     if (selectedKeluarga != null) {
       // Cari data keluarga yang dipilih
-      final keluargaData = MutasiDataProvider.dummyData.firstWhere(
+      final keluargaData = MutasiDataProvider.dummyDataMutasi.firstWhere(
         (data) => data.keluarga == selectedKeluarga,
-        orElse: () => MutasiDataProvider.dummyData.first,
+        orElse: () => MutasiDataProvider.dummyDataMutasi.first,
       );
 
       // Isi otomatis alamat lama

@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:intl/intl.dart';
 
+import 'package:jawara/core/models/kegiatan_models.dart';
+import 'package:jawara/core/repositories/kegiatan_repository.dart';
+
 @RoutePage()
 class KegiatanTambahPage extends StatefulWidget {
   const KegiatanTambahPage({super.key});
@@ -18,6 +21,8 @@ class _KegiatanTambahPageState extends State<KegiatanTambahPage> {
   final TextEditingController deskripsiController = TextEditingController();
   String? selectedKategori;
 
+  final repo = KegiatanRepository();
+
   @override
   void dispose() {
     namaController.dispose();
@@ -28,19 +33,57 @@ class _KegiatanTambahPageState extends State<KegiatanTambahPage> {
     super.dispose();
   }
 
+  Future<void> _submit() async {
+    if (selectedKategori == null ||
+        namaController.text.isEmpty ||
+        tanggalController.text.isEmpty ||
+        lokasiController.text.isEmpty ||
+        penanggungJawabController.text.isEmpty ||
+        deskripsiController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Semua field harus diisi')),
+      );
+      return;
+    }
+
+    DateTime tanggalParsed = DateFormat("dd/MM/yyyy").parse(tanggalController.text);
+
+    final kegiatan = KegiatanModel(
+      docId: "", // Firestore yang akan generate dulu
+      namaKegiatan: namaController.text,
+      kategoriKegiatan: selectedKategori!,
+      penanggungJawabId: penanggungJawabController.text,
+      deskripsi: deskripsiController.text,
+      tanggalPelaksanaan: tanggalParsed,
+      lokasi: lokasiController.text,
+      dibuatOlehId: "ADMIN_001",
+      dokumentasi: "",
+    );
+
+    await repo.addKegiatan(kegiatan);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Kegiatan berhasil ditambahkan')),
+    );
+
+    // Navigator.pop(context);
+  }
+
+  void _reset() {
+    setState(() {
+      namaController.clear();
+      tanggalController.clear();
+      lokasiController.clear();
+      penanggungJawabController.clear();
+      deskripsiController.clear();
+      selectedKategori = null;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey.shade200,
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF6C63FF),
-        elevation: 4,
-        iconTheme: const IconThemeData(color: Colors.white),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Container(
@@ -59,7 +102,6 @@ class _KegiatanTambahPageState extends State<KegiatanTambahPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Nama Kegiatan
               TextFormField(
                 controller: namaController,
                 decoration: InputDecoration(
@@ -75,7 +117,6 @@ class _KegiatanTambahPageState extends State<KegiatanTambahPage> {
               ),
               const SizedBox(height: 16),
 
-              // kategori dropdown
               DropdownButtonFormField<String>(
                 value: selectedKategori,
                 isExpanded: true,
@@ -91,40 +132,19 @@ class _KegiatanTambahPageState extends State<KegiatanTambahPage> {
                 ),
                 hint: const Text("-- Pilih Kategori --"),
                 items: const [
-                  DropdownMenuItem(
-                    value: "Komunitas & Sosial",
-                    child: Text("Komunitas & Sosial"),
-                  ),
-                  DropdownMenuItem(
-                    value: "Kebersihan & Keamanan",
-                    child: Text("Kebersihan & Keamanan"),
-                  ),
-                  DropdownMenuItem(
-                    value: "Keagamaan",
-                    child: Text("Keagamaan"),
-                  ),
-                  DropdownMenuItem(
-                    value: "Pendidikan",
-                    child: Text("Pendidikan"),
-                  ),
-                  DropdownMenuItem(
-                    value: "Kesehatan & Olah Raga",
-                    child: Text("Kesehatan & Olah Raga"),
-                  ),
-                  DropdownMenuItem(
-                    value: "Lainnya",
-                    child: Text("Lainnya"),
-                  ),
+                  DropdownMenuItem(value: "Komunitas & Sosial", child: Text("Komunitas & Sosial")),
+                  DropdownMenuItem(value: "Kebersihan & Keamanan", child: Text("Kebersihan & Keamanan")),
+                  DropdownMenuItem(value: "Keagamaan", child: Text("Keagamaan")),
+                  DropdownMenuItem(value: "Pendidikan", child: Text("Pendidikan")),
+                  DropdownMenuItem(value: "Kesehatan & Olah Raga", child: Text("Kesehatan & Olah Raga")),
+                  DropdownMenuItem(value: "Lainnya", child: Text("Lainnya")),
                 ],
                 onChanged: (String? newValue) {
-                  setState(() {
-                    selectedKategori = newValue;
-                  });
+                  setState(() => selectedKategori = newValue);
                 },
               ),
               const SizedBox(height: 16),
 
-              // Tanggal
               TextFormField(
                 controller: tanggalController,
                 readOnly: true,
@@ -155,7 +175,6 @@ class _KegiatanTambahPageState extends State<KegiatanTambahPage> {
               ),
               const SizedBox(height: 16),
 
-              // Lokasi
               TextFormField(
                 controller: lokasiController,
                 decoration: InputDecoration(
@@ -171,7 +190,6 @@ class _KegiatanTambahPageState extends State<KegiatanTambahPage> {
               ),
               const SizedBox(height: 16),
 
-              // Penanggung jawab
               TextFormField(
                 controller: penanggungJawabController,
                 decoration: InputDecoration(
@@ -187,7 +205,6 @@ class _KegiatanTambahPageState extends State<KegiatanTambahPage> {
               ),
               const SizedBox(height: 16),
 
-              //deskripsi
               TextFormField(
                 controller: deskripsiController,
                 maxLines: 3,
@@ -204,13 +221,12 @@ class _KegiatanTambahPageState extends State<KegiatanTambahPage> {
               ),
               const SizedBox(height: 24),
 
-              // Tombol Submit dan Reset
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: _submit,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF6C63FF),
                         padding: const EdgeInsets.symmetric(vertical: 14),
@@ -220,17 +236,14 @@ class _KegiatanTambahPageState extends State<KegiatanTambahPage> {
                       ),
                       child: const Text(
                         "Submit",
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.white,
-                        ),
+                        style: TextStyle(fontSize: 16, color: Colors.white),
                       ),
                     ),
                   ),
                   const SizedBox(width: 10),
                   Expanded(
                     child: OutlinedButton(
-                      onPressed: () {},
+                      onPressed: _reset,
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         shape: RoundedRectangleBorder(
@@ -239,10 +252,7 @@ class _KegiatanTambahPageState extends State<KegiatanTambahPage> {
                       ),
                       child: const Text(
                         "Reset",
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.black,
-                        ),
+                        style: TextStyle(fontSize: 16, color: Colors.black),
                       ),
                     ),
                   ),

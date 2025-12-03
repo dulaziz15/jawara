@@ -3,8 +3,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:jawara/core/routes/app_router.dart';
 import 'package:jawara/core/models/pengguna_models.dart';
 import 'package:jawara/presentation/pages/ManajemenPengguna/filter_pengguna.dart';
-import 'package:jawara/presentation/pages/ManajemenPengguna/pengguna_edit.dart';
-import 'package:jawara/presentation/pages/ManajemenPengguna/pengguna_detail.dart';
+import 'package:jawara/core/repositories/pengguna_repository.dart';
 
 @RoutePage()
 class DaftarPenggunaPage extends StatefulWidget {
@@ -15,9 +14,27 @@ class DaftarPenggunaPage extends StatefulWidget {
 }
 
 class _DaftarPenggunaPageState extends State<DaftarPenggunaPage> {
-  List<UserModel> displayedUsers = daftarPengguna;
+  final PenggunaRepository _penggunaRepository = PenggunaRepository();
+
+  List<UserModel> allUsers = [];
+  List<UserModel> displayedUsers = [];
+
   int currentPage = 1;
   final int itemsPerPage = 10;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Ambil data realtime dari Firestore
+    _penggunaRepository.getAllUsers().listen((users) {
+      setState(() {
+        allUsers = users;
+        displayedUsers = users;
+        currentPage = 1;
+      });
+    });
+  }
 
   List<UserModel> get paginatedUsers {
     int startIndex = (currentPage - 1) * itemsPerPage;
@@ -33,10 +50,10 @@ class _DaftarPenggunaPageState extends State<DaftarPenggunaPage> {
       builder: (context) => FilterPengguna(
         onFilter: (nama, status) {
           setState(() {
-            displayedUsers = daftarPengguna.where((user) {
+            displayedUsers = allUsers.where((user) {
               final matchNama = nama.trim().isEmpty ||
                   user.nama.toLowerCase().contains(nama.toLowerCase());
-              final matchStatus = status == null || user.status == status;
+              final matchStatus = status == null || user.statusHidup == status;
               return matchNama && matchStatus;
             }).toList();
             currentPage = 1;
@@ -81,75 +98,20 @@ class _DaftarPenggunaPageState extends State<DaftarPenggunaPage> {
         color: backgroundColor,
         borderRadius: BorderRadius.circular(20),
       ),
-      child: Text(status, style: const TextStyle(fontWeight: FontWeight.bold,
-          color: Colors.white)),
-    );
-  }
-
-  Widget _buildPagination() {
-    int totalPages = (displayedUsers.length / itemsPerPage).ceil();
-
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Container(
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey.shade400),
-            borderRadius: BorderRadius.circular(100),
-            color: Colors.white,
-          ),
-          child: IconButton(
-            onPressed: _prevPage,
-            icon: const Icon(Icons.chevron_left),
-          ),
-        ),
-        const SizedBox(width: 8),
-        for (int i = 1; i <= totalPages; i++)
-          GestureDetector(
-            onTap: () => setState(() => currentPage = i),
-            child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 4),
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-              decoration: BoxDecoration(
-                color: i == currentPage ? Color(0xFF6C63FF) : Colors.white,
-                border: Border.all(color: Colors.grey, width: 0.5),
-                borderRadius: BorderRadius.circular(4.0),
-              ),
-              child: Text(
-                '$i',
-                style: TextStyle(
-                  color: i == currentPage ? Colors.white : Colors.black,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ),
-        const SizedBox(width: 8),
-        Container(
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey.shade400),
-            borderRadius: BorderRadius.circular(100),
-            color: Colors.white,
-          ),
-          child: IconButton(
-            onPressed: _nextPage,
-            icon: const Icon(Icons.chevron_right),
-          ),
-        ),
-      ],
+      child: Text(
+        status,
+        style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+      ),
     );
   }
 
   void _showDetailDialog(UserModel user) {
-    context.router.push(PenggunaDetailRoute(userId: user.id));
+    context.router.push(PenggunaDetailRoute(userId: user.nik));
   }
 
   void _navigateToEdit(UserModel user) {
-    context.router.push(PenggunaEditRoute(userId: user.id));
+    context.router.push(PenggunaEditRoute(userId: user.nik));
   }
-
-  
-  
 
   Widget _buildActionButton(UserModel user) {
     return PopupMenuButton<String>(
@@ -163,7 +125,6 @@ class _DaftarPenggunaPageState extends State<DaftarPenggunaPage> {
           value: 'detail',
           child: Row(
             children: [
-              // Icon(Icons.visibility, size: 18, color: Colors.blue),
               SizedBox(width: 8),
               Text('Detail'),
             ],
@@ -173,13 +134,11 @@ class _DaftarPenggunaPageState extends State<DaftarPenggunaPage> {
           value: 'edit',
           child: Row(
             children: [
-              // Icon(Icons.edit, size: 18, color: Colors.orange),
               SizedBox(width: 8),
               Text('Edit'),
             ],
           ),
         ),
-        
       ],
     );
   }
@@ -214,9 +173,13 @@ class _DaftarPenggunaPageState extends State<DaftarPenggunaPage> {
                   child: TextField(
                     onChanged: (value) {
                       setState(() {
-                        displayedUsers = daftarPengguna.where((user) {
-                          final matchNama = user.nama.toLowerCase().contains(value.toLowerCase());
-                          final matchEmail = user.email.toLowerCase().contains(value.toLowerCase());
+                        displayedUsers = allUsers.where((user) {
+                          final matchNama = user.nama
+                              .toLowerCase()
+                              .contains(value.toLowerCase());
+                          final matchEmail = user.email
+                              .toLowerCase()
+                              .contains(value.toLowerCase());
                           return matchNama || matchEmail;
                         }).toList();
                         currentPage = 1;
@@ -233,7 +196,7 @@ class _DaftarPenggunaPageState extends State<DaftarPenggunaPage> {
             ),
           ),
 
-          // Jumlah data ditemukan
+          // Jumlah Data ditemukan
           Container(
             width: double.infinity,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -265,7 +228,7 @@ class _DaftarPenggunaPageState extends State<DaftarPenggunaPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _openFilterDialog,
-        backgroundColor:  Color(0xFF6C63FF),
+        backgroundColor: const Color(0xFF6C63FF),
         child: const Icon(Icons.filter_list, color: Colors.white),
       ),
     );
@@ -288,49 +251,44 @@ class _DaftarPenggunaPageState extends State<DaftarPenggunaPage> {
       ),
       child: Padding(
         padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        user.nama,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Email: ${user.email}',
-                        style: const TextStyle(
-                          color: Colors.grey,
-                          fontSize: 14,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Role: ${user.role}',
-                        style: const TextStyle(
-                          color: Colors.grey,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ],
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    user.nama,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
                   ),
-                ),
-                Column(
-                  children: [
-                    _buildStatusBadge(user.status),
-                    const SizedBox(height: 8),
-                    _buildActionButton(user),
-                  ],
-                ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Email: ${user.email}',
+                    style: const TextStyle(
+                      color: Colors.grey,
+                      fontSize: 14,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  // Text(
+                  //   'Role: ${user.role}',
+                  //   style: const TextStyle(
+                  //     color: Colors.grey,
+                  //     fontSize: 14,
+                  //   ),
+                  // ),
+                ],
+              ),
+            ),
+            Column(
+              children: [
+                _buildStatusBadge(user.statusHidup),
+                const SizedBox(height: 8),
+                _buildActionButton(user),
               ],
             ),
           ],

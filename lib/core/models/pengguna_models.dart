@@ -1,125 +1,146 @@
 class UserModel {
-  final int id;
-  final String nama;
+  final String docId; // Primary Key
+  final String nama; // Nama Warga
+  final String nik; // Unique Key
   final String email;
-  final String status;
-  final String role;
-  final String nik;
-  final String noHp;
+  final String idKeluarga;
   final String jenisKelamin;
+  final String statusDomisili; // Aktif / Nonaktif
+  final String statusHidup; // Hidup / Meninggal
+  final String buktiIdentitas; // Path gambar KTP
+  final String role;
+  final String noHp;
 
   const UserModel({
-    required this.id,
+    required this.docId,
     required this.nama,
-    required this.email,
-    required this.status,
-    required this.role,
     required this.nik,
-    required this.noHp,
+    required this.email,
+    required this.idKeluarga,
     required this.jenisKelamin,
+    required this.statusDomisili,
+    required this.statusHidup,
+    required this.buktiIdentitas,
+    required this.role,
+    required this.noHp,
   });
+
+  // ===============================================
+  // 📥 Konversi dari Map (Firestore/JSON) ke Object
+  // ===============================================
+  factory UserModel.fromMap(Map<String, dynamic> map) {
+    return UserModel(
+      docId: map['docId'] as String,
+      nama: map['nama'] as String,
+      nik: map['nik'] as String,
+      email: map['email'] as String,
+      idKeluarga: map['idKeluarga'] as String,
+      jenisKelamin: map['jenisKelamin'] as String,
+      statusDomisili: map['statusDomisili'] as String,
+      statusHidup: map['statusHidup'] as String,
+      buktiIdentitas: map['buktiIdentitas'] as String,
+      role: map['role'] as String,
+      noHp: map['noHp'] as String,
+    );
+  }
+
+  // ===============================================
+  // 📤 Konversi dari Object ke Map (Firestore Write)
+  // ===============================================
+  Map<String, dynamic> toMap() {
+    return {
+      'docId': docId,
+      'nama': nama,
+      'nik': nik,
+      'email': email,
+      'idKeluarga': idKeluarga,
+      'jenisKelamin': jenisKelamin,
+      'statusDomisili': statusDomisili,
+      'statusHidup': statusHidup,
+      'buktiIdentitas': buktiIdentitas,
+      'role': role,
+      'noHp': noHp,
+    };
+  }
 }
 
-/// === DATA DUMMY ===
 final List<UserModel> daftarPengguna = const [
   UserModel(
-    id: 1,
-    nama: 'dewqedwddw',
-    email: 'admiwewen1@gmail.com',
-    status: 'Diterima',
-    role: 'Admin',
+    docId: '101',
+    nama: 'Admin Jawara',
+    email: 'admin@jawara.com',
     nik: '1234567890123451',
-    noHp: '081234567891',
+    idKeluarga: 'F001',
     jenisKelamin: 'Laki-laki',
+    statusDomisili: 'Aktif',
+    statusHidup: 'Hidup',
+    buktiIdentitas: 'assets/images/ktp_admin.jpg',
+    role: 'admin',
+    noHp: '085123123123',
   ),
   UserModel(
-    id: 2,
-    nama: 'Rendha Putra Rahmadya',
-    email: 'rendhazuper@gmail.com',
-    status: 'Diproses',
-    role: 'Admin',
-    nik: '1234567890123452',
-    noHp: '081234567892',
+    docId: '102',
+    nama: 'Ahmad Surya',
+    email: 'ahmad@warga.com',
+    nik: '1111111111111111',
+    idKeluarga: 'F111',
     jenisKelamin: 'Laki-laki',
+    statusDomisili: 'Aktif',
+    statusHidup: 'Hidup',
+    buktiIdentitas: 'assets/images/ktp_ahmad.jpg',
+    role: 'warga',
+    noHp: '085123123124',
   ),
   UserModel(
-    id: 3,
-    nama: 'bla',
-    email: 'y@gmail.com',
-    status: 'Ditolak',
-    role: 'Admin',
-    nik: '1234567890123453',
-    noHp: '081234567893',
+    docId: '103',
+    nama: 'Budi Santoso',
+    email: 'budi@warga.com',
+    nik: '2222222222222222',
+    idKeluarga: 'F222',
     jenisKelamin: 'Laki-laki',
+    statusDomisili: 'Aktif',
+    statusHidup: 'Hidup',
+    buktiIdentitas: 'assets/images/ktp_budi.jpg',
+    role: 'warga',
+    noHp: '085123123125',
   ),
   UserModel(
-    id: 4,
-    nama: 'Anti Micin',
-    email: 'antimicin3@gmail.com',
-    status: 'Diterima',
-    role: 'Admin',
-    nik: '1234567890123454',
-    noHp: '081234567894',
+    docId: '104',
+    nama: 'Citra Dewi',
+    email: 'citra@warga.com',
+    nik: '3333333333333333',
+    idKeluarga: 'F333',
     jenisKelamin: 'Perempuan',
+    statusDomisili: 'Aktif',
+    statusHidup: 'Hidup',
+    buktiIdentitas: 'assets/images/ktp_citra.jpg',
+    role: 'warga',
+    noHp: '0851231231236',
   ),
   UserModel(
-    id: 5,
-    nama: 'ijat4',
-    email: 'ijat4@gmail.com',
-    status: 'Diproses',
-    role: 'Admin',
-    nik: '1234567890123455',
-    noHp: '081234567895',
+    docId: '105',
+    nama: 'Dedi Rahman',
+    email: 'dedi@warga.com',
+    nik: '4444444444444444',
+    idKeluarga: 'F444',
     jenisKelamin: 'Laki-laki',
+    statusDomisili: 'Aktif',
+    statusHidup: 'Hidup',
+    buktiIdentitas: 'assets/images/ktp_dedi.jpg',
+    role: 'warga',
+    noHp: '085123123127',
   ),
   UserModel(
-    id: 6,
-    nama: 'ijat3',
-    email: 'ijat3@gmail.com',
-    status: 'Diterima',
-    role: 'Admin',
-    nik: '1234567890123456',
-    noHp: '081234567896',
-    jenisKelamin: 'Laki-laki',
-  ),
-  UserModel(
-    id: 7,
-    nama: 'ijat2',
-    email: 'ijat2@gmail.com',
-    status: 'Ditolak',
-    role: 'Admin',
-    nik: '1234567890123457',
-    noHp: '081234567897',
-    jenisKelamin: 'Laki-laki',
-  ),
-  UserModel(
-    id: 8,
-    nama: 'AFIFAH KHOIRUNNISA',
-    email: 'afi@gmail.com',
-    status: 'Diterima',
-    role: 'Warga',
-    nik: '1234567890123458',
-    noHp: '081234567898',
+    docId: '106',
+    nama: 'Eka Putri',
+    email: 'eka@warga.com',
+    nik: '5555555555555555',
+    idKeluarga: 'F555',
     jenisKelamin: 'Perempuan',
-  ),
-  UserModel(
-    id: 9,
-    nama: 'Raudhil Firdaus Naufal',
-    email: 'raudhilfirdausn@gmail.com',
-    status: 'Diproses',
-    role: 'Warga',
-    nik: '1234567890123459',
-    noHp: '081234567899',
-    jenisKelamin: 'Laki-laki',
-  ),
-  UserModel(
-    id: 10,
-    nama: 'varizky naldiba rimra',
-    email: 'zelectra1011@gmail.com',
-    status: 'Diterima',
-    role: 'Warga',
-    nik: '1234567890123460',
-    noHp: '081234567890',
-    jenisKelamin: 'Laki-laki',
+    statusDomisili: 'Aktif',
+    statusHidup: 'Hidup',
+    buktiIdentitas: 'assets/images/ktp_eka.jpg',
+    role: 'warga',
+    noHp: '085123123128',
   ),
 ];

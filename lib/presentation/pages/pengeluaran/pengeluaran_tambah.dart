@@ -1,8 +1,12 @@
-import 'package:flutter/gestures.dart';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:jawara/presentation/pages/pengeluaran/widgets/image_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:jawara/core/models/pengeluaran_model.dart';
+import 'package:jawara/core/repositories/pengeluaran_repository.dart';
+import 'package:path/path.dart' as path;
 
 @RoutePage()
 class PengeluaranTambahPage extends StatefulWidget {
@@ -13,10 +17,22 @@ class PengeluaranTambahPage extends StatefulWidget {
 }
 
 class _PengeluaranTambahPageState extends State<PengeluaranTambahPage> {
+  // Repository & Auth
+  final PengeluaranRepository _repository = PengeluaranRepository();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  // Controllers
   final TextEditingController namaController = TextEditingController();
   final TextEditingController tanggalController = TextEditingController();
   final TextEditingController nominalController = TextEditingController();
+  
+  // State
   String? selectedKategori;
+  String _buktiPath = ''; // Path lokal gambar
+  bool _isLoading = false;
+  
+  // Variabel bantu untuk menyimpan tanggal asli (DateTime)
+  DateTime? _selectedDate;
 
   @override
   void dispose() {
@@ -24,6 +40,102 @@ class _PengeluaranTambahPageState extends State<PengeluaranTambahPage> {
     tanggalController.dispose();
     nominalController.dispose();
     super.dispose();
+  }
+
+  // Fungsi Reset
+  void _resetForm() {
+    namaController.clear();
+    tanggalController.clear();
+    nominalController.clear();
+    setState(() {
+      selectedKategori = null;
+      _buktiPath = '';
+      _selectedDate = null;
+    });
+  }
+
+  // Fungsi Pilih Gambar
+  Future<void> _pickImage() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      setState(() {
+        _buktiPath = image.path;
+      });
+    }
+  }
+
+  // Fungsi Simpan Data
+  Future<void> _submitData() async {
+    // 1. Validasi Input
+    if (namaController.text.isEmpty ||
+        _selectedDate == null ||
+        nominalController.text.isEmpty ||
+        selectedKategori == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Semua field harus diisi!')),
+      );
+      return;
+    }
+
+    if (_buktiPath.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Harap upload bukti pengeluaran!')),
+      );
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    try {
+      // 2. Upload Gambar ke Storage
+      String buktiUrl = await _repository.uploadBukti(File(_buktiPath));
+
+      // 3. Ambil UID User yang sedang Login (sebagai Verifikator)
+      String currentUserId = _auth.currentUser?.uid ?? 'unknown_user';
+
+      // 4. Konversi Nominal (String ke Double)
+      // Hapus karakter non-digit jika ada (misal Rp atau titik)
+      String cleanNominal = nominalController.text.replaceAll(RegExp(r'[^0-9]'), '');
+      double nominal = double.tryParse(cleanNominal) ?? 0.0;
+
+      // 5. Buat Model
+      PengeluaranModel newPengeluaran = PengeluaranModel(
+        docId: '', // Akan digenerate di repo
+        namaPengeluaran: namaController.text,
+        kategoriPengeluaran: selectedKategori!,
+        verifikatorId: currentUserId, // Otomatis ID yang login
+        buktiPengeluaran: buktiUrl,   // URL dari Firebase Storage
+        jumlahPengeluaran: nominal,
+        tanggalPengeluaran: _selectedDate!,
+        tanggalTerverifikasi: DateTime.now(), // Default saat dibuat
+      );
+
+      // 6. Simpan ke Firestore
+      await _repository.addPengeluaran(newPengeluaran);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('✅ Pengeluaran berhasil disimpan!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        _resetForm();
+      }
+
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('❌ Gagal menyimpan: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 
   @override
@@ -78,24 +190,9 @@ class _PengeluaranTambahPageState extends State<PengeluaranTambahPage> {
                       controller: namaController,
                       decoration: const InputDecoration(
                         labelText: "Nama Pengeluaran",
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(8)),
-                          borderSide: BorderSide(
-                            color: Color.fromARGB(255, 216, 216, 216),
-                            width: 0,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(8)),
-                          borderSide: BorderSide(
-                            color: Color(0xFF6C63FF),
-                            width: 1.5,
-                          ),
-                        ),
-                        contentPadding: EdgeInsets.symmetric(
-                          horizontal: 15,
-                          vertical: 12,
-                        ),
+                        hintText: "Contoh: Beli ATK",
+                        border: OutlineInputBorder(),
+                        contentPadding: EdgeInsets.symmetric(horizontal: 15, vertical: 12),
                       ),
                     ),
                     const SizedBox(height: 15),
@@ -107,24 +204,8 @@ class _PengeluaranTambahPageState extends State<PengeluaranTambahPage> {
                       decoration: const InputDecoration(
                         labelText: "Tanggal Pengeluaran",
                         suffixIcon: Icon(Icons.calendar_today_outlined),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(8)),
-                          borderSide: BorderSide(
-                            color: Color.fromARGB(255, 216, 216, 216),
-                            width: 0,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(8)),
-                          borderSide: BorderSide(
-                            color: Color(0xFF6C63FF),
-                            width: 1.5,
-                          ),
-                        ),
-                        contentPadding: EdgeInsets.symmetric(
-                          horizontal: 15,
-                          vertical: 12,
-                        ),
+                        border: OutlineInputBorder(),
+                        contentPadding: EdgeInsets.symmetric(horizontal: 15, vertical: 12),
                       ),
                       onTap: () async {
                         DateTime? pickedDate = await showDatePicker(
@@ -135,6 +216,7 @@ class _PengeluaranTambahPageState extends State<PengeluaranTambahPage> {
                         );
                         if (pickedDate != null) {
                           setState(() {
+                            _selectedDate = pickedDate;
                             tanggalController.text = DateFormat('dd/MM/yyyy').format(pickedDate);
                           });
                         }
@@ -148,44 +230,17 @@ class _PengeluaranTambahPageState extends State<PengeluaranTambahPage> {
                       isExpanded: true,
                       decoration: const InputDecoration(
                         labelText: "Kategori Pengeluaran",
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(8)),
-                          borderSide: BorderSide(
-                            color: Color.fromARGB(255, 216, 216, 216),
-                            width: 0,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(8)),
-                          borderSide: BorderSide(
-                            color: Color(0xFF6C63FF),
-                            width: 1.5,
-                          ),
-                        ),
-                        contentPadding: EdgeInsets.symmetric(
-                          horizontal: 15,
-                          vertical: 12,
-                        ),
+                        border: OutlineInputBorder(),
+                        contentPadding: EdgeInsets.symmetric(horizontal: 15, vertical: 12),
                       ),
                       hint: const Text("-- Pilih Kategori --"),
                       items: const [
-                        DropdownMenuItem(
-                          value: "Operasional",
-                          child: Text("Operasional"),
-                        ),
-                        DropdownMenuItem(
-                          value: "Logistik",
-                          child: Text("Logistik"),
-                        ),
-                        DropdownMenuItem(
-                          value: "Lainnya",
-                          child: Text("Lainnya"),
-                        ),
+                        DropdownMenuItem(value: "Operasional", child: Text("Operasional")),
+                        DropdownMenuItem(value: "Logistik", child: Text("Logistik")),
+                        DropdownMenuItem(value: "Lainnya", child: Text("Lainnya")),
                       ],
                       onChanged: (String? newValue) {
-                        setState(() {
-                          selectedKategori = newValue;
-                        });
+                        setState(() => selectedKategori = newValue);
                       },
                     ),
                     const SizedBox(height: 15),
@@ -195,31 +250,45 @@ class _PengeluaranTambahPageState extends State<PengeluaranTambahPage> {
                       controller: nominalController,
                       keyboardType: TextInputType.number,
                       decoration: const InputDecoration(
-                        labelText: "Nominal",
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(8)),
-                          borderSide: BorderSide(
-                            color: Color.fromARGB(255, 216, 216, 216),
-                            width: 0,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(8)),
-                          borderSide: BorderSide(
-                            color: Color(0xFF6C63FF),
-                            width: 1.5,
-                          ),
-                        ),
-                        contentPadding: EdgeInsets.symmetric(
-                          horizontal: 15,
-                          vertical: 12,
-                        ),
+                        labelText: "Nominal (Rp)",
+                        border: OutlineInputBorder(),
+                        contentPadding: EdgeInsets.symmetric(horizontal: 15, vertical: 12),
                       ),
                     ),
                     const SizedBox(height: 15),
 
-                    // Bukti Pengeluaran
-                    ImagePickerPreview(),
+                    // === AREA UPLOAD BUKTI (MENGGANTIKAN ImagePickerPreview) ===
+                    const Text("Bukti Pengeluaran", style: TextStyle(fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 8),
+                    InkWell(
+                      onTap: _pickImage,
+                      child: Container(
+                        width: double.infinity,
+                        height: 150,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[100],
+                          border: Border.all(color: Colors.grey.shade300),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: _buktiPath.isEmpty
+                            ? const Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.cloud_upload_outlined, size: 40, color: Colors.grey),
+                                  SizedBox(height: 8),
+                                  Text("Ketuk untuk upload gambar", style: TextStyle(color: Colors.grey)),
+                                ],
+                              )
+                            : ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: Image.file(
+                                  File(_buktiPath),
+                                  fit: BoxFit.cover,
+                                  width: double.infinity,
+                                ),
+                              ),
+                      ),
+                    ),
 
                     const SizedBox(height: 20),
 
@@ -229,7 +298,7 @@ class _PengeluaranTambahPageState extends State<PengeluaranTambahPage> {
                       children: [
                         Expanded(
                           child: ElevatedButton(
-                            onPressed: () {},
+                            onPressed: _isLoading ? null : _submitData,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFF6C63FF),
                               padding: const EdgeInsets.symmetric(vertical: 14),
@@ -237,19 +306,22 @@ class _PengeluaranTambahPageState extends State<PengeluaranTambahPage> {
                                 borderRadius: BorderRadius.circular(8.0),
                               ),
                             ),
-                            child: const Text(
-                              "Submit",
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.white,
-                              ),
-                            ),
+                            child: _isLoading 
+                                ? const SizedBox(
+                                    width: 20, 
+                                    height: 20, 
+                                    child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)
+                                  )
+                                : const Text(
+                                    "Submit",
+                                    style: TextStyle(fontSize: 16, color: Colors.white),
+                                  ),
                           ),
                         ),
                         const SizedBox(width: 10),
                         Expanded(
                           child: OutlinedButton(
-                            onPressed: () {},
+                            onPressed: _isLoading ? null : _resetForm,
                             style: OutlinedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 14),
                               shape: RoundedRectangleBorder(
@@ -258,10 +330,7 @@ class _PengeluaranTambahPageState extends State<PengeluaranTambahPage> {
                             ),
                             child: const Text(
                               "Reset",
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.black,
-                              ),
+                              style: TextStyle(fontSize: 16, color: Colors.black),
                             ),
                           ),
                         ),

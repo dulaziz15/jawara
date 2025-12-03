@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
-import 'package:jawara/core/models/iuran_model.dart';
-import 'package:jawara/core/models/family_model.dart';
+import 'package:jawara/core/models/iuran_models.dart';
+import 'package:jawara/core/models/family_models.dart';
 import 'package:jawara/core/utils/formatter_util.dart';
 
 @RoutePage()

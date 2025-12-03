@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:jawara/core/models/pemasukan_model.dart'; // pastikan path sesuai struktur project-mu
+import 'package:jawara/core/models/pemasukan_model.dart';
+import 'package:jawara/core/repositories/pemasukan_repository.dart';
 
 @RoutePage()
 class LaporanPemasukanPage extends StatefulWidget {
@@ -11,118 +12,63 @@ class LaporanPemasukanPage extends StatefulWidget {
 }
 
 class _LaporanPemasukanPageState extends State<LaporanPemasukanPage> {
-  List<PemasukanModel> _filteredData = dummyPemasukan;
+  // 1. Inisialisasi Repository
+  final PemasukanRepository _repository = PemasukanRepository();
+
   final TextEditingController _searchController = TextEditingController();
   String _selectedFilter = 'Semua';
 
   @override
-  void initState() {
-    super.initState();
-    _filteredData = dummyPemasukan;
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
-  void _applyFilter(String kategori) {
-    setState(() {
-      _selectedFilter = kategori;
-      List<PemasukanModel> kategoriFilteredData;
-      if (kategori == 'Semua') {
-        kategoriFilteredData = dummyPemasukan;
-      } else {
-        kategoriFilteredData = dummyPemasukan
-            .where((data) => data.kategoriPemasukan == kategori)
-            .toList();
-      }
-      if (_searchController.text.isNotEmpty) {
-        _filteredData = kategoriFilteredData
-            .where(
-              (data) =>
-                  data.namaPemasukan.toLowerCase().contains(
-                    _searchController.text.toLowerCase(),
-                  ) ||
-                  data.kategoriPemasukan.toLowerCase().contains(
-                    _searchController.text.toLowerCase(),
-                  ),
-            )
-            .toList();
-      } else {
-        _filteredData = kategoriFilteredData;
-      }
-    });
+  // 2. Logic Filter dipindahkan ke fungsi helper agar bisa dipakai di dalam StreamBuilder
+  List<PemasukanModel> _filterList(List<PemasukanModel> allData) {
+    return allData.where((data) {
+      // Filter Kategori
+      final matchKategori =
+          _selectedFilter == 'Semua' ||
+          data.kategoriPemasukan == _selectedFilter;
+
+      // Filter Search
+      final query = _searchController.text.toLowerCase();
+      final matchSearch =
+          query.isEmpty ||
+          data.namaPemasukan.toLowerCase().contains(query) ||
+          data.kategoriPemasukan.toLowerCase().contains(query);
+
+      return matchKategori && matchSearch;
+    }).toList();
   }
 
+  // Saat search berubah, cukup setState kosong agar build ulang & filter ulang
   void _onSearchChanged(String value) {
-    setState(() {
-      List<PemasukanModel> searchFilteredData;
-      if (value.isEmpty) {
-        searchFilteredData = dummyPemasukan;
-      } else {
-        searchFilteredData = dummyPemasukan
-            .where(
-              (data) =>
-                  data.namaPemasukan.toLowerCase().contains(
-                    value.toLowerCase(),
-                  ) ||
-                  data.kategoriPemasukan.toLowerCase().contains(
-                    value.toLowerCase(),
-                  ),
-            )
-            .toList();
-      }
-      if (_selectedFilter != 'Semua') {
-        _filteredData = searchFilteredData
-            .where((data) => data.kategoriPemasukan == _selectedFilter)
-            .toList();
-      } else {
-        _filteredData = searchFilteredData;
-      }
-    });
+    setState(() {});
   }
 
-  void _showFilterDialog() {
-    final List<String> kategoriList = dummyPemasukan
+  // Helper untuk Dialog Filter (Data diambil dari Stream di parent)
+  void _showFilterDialog(List<PemasukanModel> currentData) {
+    final List<String> kategoriList = currentData
         .map((e) => e.kategoriPemasukan)
         .toSet()
         .toList();
+
     showDialog(
       context: context,
       builder: (context) => FilterPemasukanDialog(
         initialKategori: _selectedFilter,
         kategoriList: kategoriList,
-        onApplyFilter: _applyFilter,
+        onApplyFilter: (kategori) {
+          setState(() {
+            _selectedFilter = kategori;
+          });
+        },
       ),
     );
   }
 
-  // --- Widget untuk menampilkan badge status verifikasi ---
-  Widget _buildVerifikasiBadge(DateTime tanggalTerverifikasi) {
-    final now = DateTime.now();
-    final diff = now.difference(tanggalTerverifikasi).inDays;
-
-    String status;
-    Color backgroundColor;
-
-    if (diff < 2) {
-      status = 'Baru Diverifikasi';
-      backgroundColor = Colors.green.shade200;
-    } else {
-      status = 'Terverifikasi';
-      backgroundColor = Colors.blue.shade200;
-    }
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: BorderRadius.circular(6),
-      ),
-      child: Text(
-        status,
-        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
-      ),
-    );
-  }
-
-  // --- Helper format bulan ---
   String _getBulan(int bulan) {
     const namaBulan = [
       'Januari',
@@ -145,77 +91,110 @@ class _LaporanPemasukanPageState extends State<LaporanPemasukanPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Column(
-        children: [
-          // Search Bar
-          Container(
-            margin: const EdgeInsets.all(16),
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey.shade300),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.1),
-                  blurRadius: 4,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Row(
-              children: [
-                const Icon(Icons.search, color: Colors.grey),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: TextField(
-                    controller: _searchController,
-                    onChanged: _onSearchChanged,
-                    decoration: const InputDecoration(
-                      hintText: 'Cari berdasarkan nama atau kategori...',
-                      border: InputBorder.none,
-                      hintStyle: TextStyle(color: Colors.grey),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+      // 3. Gunakan StreamBuilder sebagai root body
+      body: StreamBuilder<List<PemasukanModel>>(
+        stream: _repository.getPemasukan(),
+        builder: (context, snapshot) {
+          // A. Handle Loading
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-          // Jumlah data ditemukan
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Text(
-              '${_filteredData.length} data ditemukan',
-              style: const TextStyle(color: Colors.grey, fontSize: 14),
-            ),
-          ),
+          // B. Handle Error
+          if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
 
-          // List Data
-          Expanded(
-            child: _filteredData.isEmpty
-                ? Center(
-                    child: Text(
-                      'Data tidak ditemukan',
-                      style: TextStyle(color: Colors.grey.shade500),
+          // C. Ambil Data
+          final List<PemasukanModel> allData = snapshot.data ?? [];
+
+          // D. Terapkan Filter pada Data Stream
+          final List<PemasukanModel> filteredData = _filterList(allData);
+
+          return Column(
+            children: [
+              // Search Bar
+              Container(
+                margin: const EdgeInsets.all(16),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.grey.shade300),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.1),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
                     ),
-                  )
-                : ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    itemCount: _filteredData.length,
-                    itemBuilder: (context, index) {
-                      final item = _filteredData[index];
-                      return _buildDataCard(item);
-                    },
-                  ),
-          ),
-        ],
+                  ],
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.search, color: Colors.grey),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: TextField(
+                        controller: _searchController,
+                        onChanged: _onSearchChanged,
+                        decoration: const InputDecoration(
+                          hintText: 'Cari berdasarkan nama atau kategori...',
+                          border: InputBorder.none,
+                          hintStyle: TextStyle(color: Colors.grey),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // Jumlah data ditemukan
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
+                child: Text(
+                  '${filteredData.length} data ditemukan',
+                  style: const TextStyle(color: Colors.grey, fontSize: 14),
+                ),
+              ),
+
+              // List Data
+              Expanded(
+                child: filteredData.isEmpty
+                    ? Center(
+                        child: Text(
+                          'Data tidak ditemukan',
+                          style: TextStyle(color: Colors.grey.shade500),
+                        ),
+                      )
+                    : ListView.builder(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        itemCount: filteredData.length,
+                        itemBuilder: (context, index) {
+                          final item = filteredData[index];
+                          return _buildDataCard(item);
+                        },
+                      ),
+              ),
+            ],
+          );
+        },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _showFilterDialog,
-        backgroundColor: const Color(0xFF6C63FF),
-        child: const Icon(Icons.filter_list, color: Colors.white),
+      // Floating Action Button juga dibungkus StreamBuilder (atau ambil data dari parent jika distruktur ulang)
+      // agar list kategori di filter dinamis sesuai data yang ada
+      floatingActionButton: StreamBuilder<List<PemasukanModel>>(
+        stream: _repository.getPemasukan(),
+        builder: (context, snapshot) {
+          final data = snapshot.data ?? [];
+          return FloatingActionButton(
+            onPressed: () => _showFilterDialog(data),
+            backgroundColor: const Color(0xFF6C63FF),
+            child: const Icon(Icons.filter_list, color: Colors.white),
+          );
+        },
       ),
     );
   }
@@ -281,22 +260,25 @@ class _LaporanPemasukanPageState extends State<LaporanPemasukanPage> {
                     ],
                   ),
                 ),
+
+                // Di dalam _buildDataCard, gantikan PopupMenuButton dengan ini:
                 Column(
                   children: [
                     // _buildVerifikasiBadge(item.tanggalTerverifikasi),
-                    const SizedBox(height: 8),
-                    PopupMenuButton<String>(
-                      onSelected: (value) {
-                        if (value == 'detail_pemasukan') {
-                          context.router.pushNamed(
-                            '/laporan/detail_pemasukan/${item.id}',
-                          );
-                        }
+                    // const SizedBox(height: 8), // SizedBox mungkin tidak perlu jika pakai IconButton karena sudah ada padding bawaan
+                    IconButton(
+                      // Gunakan ikon mata
+                      icon: const Icon(Icons.visibility, color: Colors.grey),
+
+                      // Atau Icons.visibility_outlined
+                      tooltip:
+                          'Lihat Detail', // Muncul teks kecil jika ikon ditahan
+                      // LANGSUNG PINDAH HALAMAN SAAT DIKLIK
+                      onPressed: () {
+                        context.router.pushNamed(
+                          '/laporan/detail_pemasukan/${item.docId}',
+                        );
                       },
-                      itemBuilder: (context) => const [
-                        PopupMenuItem(value: 'detail_pemasukan', child: Text('Detail')),
-                      ],
-                      icon: const Icon(Icons.more_vert, color: Colors.grey),
                     ),
                   ],
                 ),
@@ -309,6 +291,7 @@ class _LaporanPemasukanPageState extends State<LaporanPemasukanPage> {
   }
 }
 
+// === DIALOG TETAP SAMA SEPERTI KODE ANDA ===
 class FilterPemasukanDialog extends StatefulWidget {
   final String initialKategori;
   final List<String> kategoriList;
@@ -322,8 +305,7 @@ class FilterPemasukanDialog extends StatefulWidget {
   });
 
   @override
-  State<FilterPemasukanDialog> createState() =>
-      _FilterPemasukanDialogState();
+  State<FilterPemasukanDialog> createState() => _FilterPemasukanDialogState();
 }
 
 class _FilterPemasukanDialogState extends State<FilterPemasukanDialog> {

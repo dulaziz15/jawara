@@ -5,7 +5,7 @@ import 'package:jawara/core/utils/formatter_util.dart';
 
 @RoutePage()
 class LaporanPemasukanLainDetailPage extends StatelessWidget {
-  final int laporanPemasukanId;
+  final String laporanPemasukanId;
 
   const LaporanPemasukanLainDetailPage({
     super.key,
@@ -97,7 +97,7 @@ class LaporanPemasukanLainDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Ambil data pemasukan yang sesuai berdasarkan ID
-    final pemasukan = dummyPemasukan.firstWhere((item) => item.id == laporanPemasukanId);
+    final pemasukan = dummyPemasukan.firstWhere((item) => item.docId == laporanPemasukanId);
 
     // Format tanggal pemasukan
     final String tanggalPemasukanFormatted =
@@ -145,10 +145,10 @@ class LaporanPemasukanLainDetailPage extends StatelessWidget {
                     _buildDetailRow("Kategori Pemasukan:", pemasukan.kategoriPemasukan),
                     _buildDetailRow("Jumlah Pemasukan:", 'Rp $jumlahFormatted'),
                     _buildDetailRow("Tanggal Pemasukan:", tanggalPemasukanFormatted),
-                    _buildDetailRow("Verifikator:", pemasukan.verifikator),
+                    _buildDetailRow("Verifikator:", pemasukan.verifikatorId.toString()),
                     _buildDetailRow("Tanggal Terverifikasi:", tanggalTerverifikasiFormatted),
                     const Divider(height: 24),
-                    _buildAttachmentRow("Bukti:", pemasukan.bukti),
+                    _buildAttachmentRow("Bukti:", pemasukan.buktiPemasukan),
                   ],
                 ),
               ),

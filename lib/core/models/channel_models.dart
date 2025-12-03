@@ -1,6 +1,5 @@
-class Channel {
-  final int id;
-  final int no;
+class ChannelModel {
+  final String docId;
   final String nama;
   final String tipe;
   final String an;
@@ -8,9 +7,8 @@ class Channel {
   final String qr;
   final String catatan;
 
-  const Channel({
-    required this.id,
-    required this.no,
+  const ChannelModel({
+    required this.docId,
     required this.nama,
     required this.tipe,
     required this.an,
@@ -18,12 +16,41 @@ class Channel {
     required this.qr,
     required this.catatan,
   });
+
+  // ===============================================
+  // 📥 Konversi dari Map (Firestore/JSON) ke Object
+  // ===============================================
+  factory ChannelModel.fromMap(Map<String, dynamic> map) {
+    return ChannelModel(
+      docId: map['docId'] as String,
+      nama: map['nama'] as String,
+      tipe: map['tipe'] as String,
+      an: map['an'] as String,
+      thumbnail: map['thumbnail'] as String,
+      qr: map['qr'] as String,
+      catatan: map['catatan'] as String,
+    );
+  }
+
+  // ===============================================
+  // 📤 Konversi dari Object ke Map (Untuk Firestore Write)
+  // ===============================================
+  Map<String, dynamic> toMap() {
+    return {
+      'docId': docId,
+      'nama': nama,
+      'tipe': tipe,
+      'an': an,
+      'thumbnail': thumbnail,
+      'qr': qr,
+      'catatan': catatan,
+    };
+  }
 }
 
-const List<Channel> dummyChannels = [
-  Channel(
-    id: 1,
-    no: 1,
+const List<ChannelModel> dummyChannels = [
+  ChannelModel(
+    docId: "1",
     nama: 'Transfer via BCA',
     tipe: 'Bank',
     an: 'RT Jawara Karangploso',
@@ -31,9 +58,8 @@ const List<Channel> dummyChannels = [
     qr: 'assets/channel/qr/default_qr.jpg',
     catatan: 'Gunakan transfer BCA untuk iuran warga.',
   ),
-  Channel(
-    id: 2,
-    no: 2,
+  ChannelModel(
+    docId: "2",
     nama: 'Copay Ketua RT',
     tipe: 'E-Wallet',
     an: 'Budi Santoso',
@@ -41,9 +67,8 @@ const List<Channel> dummyChannels = [
     qr: 'assets/channel/qr/default_qr.jpg',
     catatan: 'Bayar langsung ke Ketua RT.',
   ),
-  Channel(
-    id: 3,
-    no: 3,
+  ChannelModel(
+    docId: "3",
     nama: 'QRIS Resmi RT 08',
     tipe: 'QRIS',
     an: 'RW 08 Karangploso',
