@@ -1,7 +1,12 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+// Ganti import ini dengan path routing Anda yang benar
 import 'package:jawara/core/models/tagihan_model.dart';
-import 'package:jawara/core/models/family_models.dart'; // pastikan path sesuai struktur project-mu
+import 'package:jawara/core/repositories/tagihan_repository.dart';
+import 'package:jawara/core/utils/formatter_util.dart';
+import 'package:jawara/core/routes/app_router.dart';
+
+
 
 @RoutePage()
 class TagihanDaftarPage extends StatefulWidget {
@@ -12,233 +17,178 @@ class TagihanDaftarPage extends StatefulWidget {
 }
 
 class _TagihanDaftarPageState extends State<TagihanDaftarPage> {
-  List<TagihanModel> _filteredData = dummyTagihan;
+  final TagihanRepository _repository = TagihanRepository();
+  
   final TextEditingController _searchController = TextEditingController();
   String _selectedFilter = 'Semua';
 
-  @override
-  void initState() {
-    super.initState();
-    _filteredData = dummyTagihan;
+  // --- LOGIC FILTER DATA (SAFE MODE) ---
+  List<TagihanModel> _processData(List<TagihanModel> allData) {
+    if (allData.isEmpty) return [];
+
+    return allData.where((data) {
+      // 1. Filter Kategori
+      bool matchKategori = _selectedFilter == 'Semua' || data.kategori == _selectedFilter;
+
+      // 2. Filter Search (Safe Null Check)
+      String query = _searchController.text.toLowerCase();
+      
+      // Pastikan field tidak null sebelum toLowerCase()
+      String namaIuran = (data.namaIuran ?? '').toLowerCase();
+      String namaWarga = (data.namaWarga ?? '').toLowerCase();
+      String kategori = (data.kategori ?? '').toLowerCase();
+
+      bool matchSearch = query.isEmpty ||
+          namaIuran.contains(query) ||
+          namaWarga.contains(query) ||
+          kategori.contains(query);
+
+      return matchKategori && matchSearch;
+    }).toList();
   }
 
-  void _applyFilter(String kategori) {
-    setState(() {
-      _selectedFilter = kategori;
-      List<TagihanModel> kategoriFilteredData;
-      if (kategori == 'Semua') {
-        kategoriFilteredData = dummyTagihan;
-      } else {
-        kategoriFilteredData = dummyTagihan
-            .where((data) => data.kategori == kategori)
-            .toList();
-      }
-      if (_searchController.text.isNotEmpty) {
-        _filteredData = kategoriFilteredData
-            .where(
-              (data) =>
-                  data.namaIuran.toLowerCase().contains(
-                    _searchController.text.toLowerCase(),
-                  ) ||
-                  data.kategori.toLowerCase().contains(
-                    _searchController.text.toLowerCase(),
-                  ) ||
-                  data.nik.toLowerCase().contains(
-                    _searchController.text.toLowerCase(),
-                  ),
-            )
-            .toList();
-      } else {
-        _filteredData = kategoriFilteredData;
-      }
-    });
-  }
-
-  void _onSearchChanged(String value) {
-    setState(() {
-      List<TagihanModel> searchFilteredData;
-      if (value.isEmpty) {
-        searchFilteredData = dummyTagihan;
-      } else {
-        searchFilteredData = dummyTagihan
-            .where(
-              (data) =>
-                  data.namaIuran.toLowerCase().contains(
-                    value.toLowerCase(),
-                  ) ||
-                  data.kategori.toLowerCase().contains(
-                    value.toLowerCase(),
-                  ) ||
-                  data.nik.toLowerCase().contains(
-                    value.toLowerCase(),
-                  ),
-            )
-            .toList();
-      }
-      if (_selectedFilter != 'Semua') {
-        _filteredData = searchFilteredData
-            .where((data) => data.kategori == _selectedFilter)
-            .toList();
-      } else {
-        _filteredData = searchFilteredData;
-      }
-    });
-  }
-
-  void _showFilterDialog() {
-    final List<String> kategoriList = dummyTagihan
-        .map((e) => e.kategori)
-        .toSet()
-        .toList();
+  void _showFilterDialog(List<String> kategoriList) {
     showDialog(
       context: context,
       builder: (context) => FilterTagihanDialog(
         initialKategori: _selectedFilter,
         kategoriList: kategoriList,
-        onApplyFilter: _applyFilter,
+        onApplyFilter: (val) {
+          setState(() {
+            _selectedFilter = val;
+          });
+        },
       ),
     );
-  }
-  
-
-  // --- Widget untuk menampilkan badge status verifikasi ---
-  Widget _buildVerifikasiBadge(DateTime tanggalTerverifikasi) {
-    final now = DateTime.now();
-    final diff = now.difference(tanggalTerverifikasi).inDays;
-
-    String status;
-    Color backgroundColor;
-
-    if (diff < 2) {
-      status = 'Baru Diverifikasi';
-      backgroundColor = Colors.green.shade200;
-    } else {
-      status = 'Terverifikasi';
-      backgroundColor = Colors.blue.shade200;
-    }
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: BorderRadius.circular(6),
-      ),
-      child: Text(
-        status,
-        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
-      ),
-    );
-  }
-
-  // --- Helper format bulan ---
-  String _getBulan(int bulan) {
-    const namaBulan = [
-      'Januari',
-      'Februari',
-      'Maret',
-      'April',
-      'Mei',
-      'Juni',
-      'Juli',
-      'Agustus',
-      'September',
-      'Oktober',
-      'November',
-      'Desember',
-    ];
-    return namaBulan[bulan - 1];
-  }
-
-
-  String _getNamaKeluarga(String nikKepalaKeluarga) {
-    final family = FamilyModel.dummyFamilies.firstWhere(
-      (f) => f.nikKepalaKeluarga == nikKepalaKeluarga,
-      orElse: () => FamilyModel.dummyFamilies.first,
-    );
-    return family.namaKeluarga;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Column(
-        children: [
-          // Search Bar
-          Container(
-            margin: const EdgeInsets.all(16),
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey.shade300),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.1),
-                  blurRadius: 4,
-                  offset: const Offset(0, 2),
+      // StreamBuilder memanggil Repository
+      body: StreamBuilder<List<TagihanModel>>(
+        stream: _repository.getTagihanWithWargaStream(), 
+        builder: (context, snapshot) {
+          // 1. Handle Loading
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          
+          // 2. Handle Error
+          if (snapshot.hasError) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  'Error: ${snapshot.error}',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(color: Colors.red),
                 ),
-              ],
-            ),
-            child: Row(
-              children: [
-                const Icon(Icons.search, color: Colors.grey),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: TextField(
-                    controller: _searchController,
-                    onChanged: _onSearchChanged,
-                    decoration: const InputDecoration(
-                      hintText: 'Cari berdasarkan nama atau kategori...',
-                      border: InputBorder.none,
-                      hintStyle: TextStyle(color: Colors.grey),
+              ),
+            );
+          }
+
+          // 3. Ambil Data
+          final allData = snapshot.data ?? [];
+          final filteredData = _processData(allData);
+          
+          // Ambil kategori unik untuk filter
+          final uniqueCategories = allData.map((e) => e.kategori).toSet().toList();
+
+          return Column(
+            children: [
+              // --- SEARCH BAR ---
+              Container(
+                margin: const EdgeInsets.all(16),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.grey.shade300),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.1),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
                     ),
-                  ),
+                  ],
                 ),
-              ],
-            ),
-          ),
-
-          // Jumlah data ditemukan
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Text(
-              '${_filteredData.length} data ditemukan',
-              style: const TextStyle(color: Colors.grey, fontSize: 14),
-            ),
-          ),
-
-          // List Data
-          Expanded(
-            child: _filteredData.isEmpty
-                ? Center(
-                    child: Text(
-                      'Data tidak ditemukan',
-                      style: TextStyle(color: Colors.grey.shade500),
+                child: Row(
+                  children: [
+                    const Icon(Icons.search, color: Colors.grey),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: TextField(
+                        controller: _searchController,
+                        onChanged: (v) => setState(() {}), 
+                        decoration: const InputDecoration(
+                          hintText: 'Cari nama iuran atau warga...',
+                          border: InputBorder.none,
+                          hintStyle: TextStyle(color: Colors.grey),
+                        ),
+                      ),
                     ),
-                  )
-                : ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    itemCount: _filteredData.length,
-                    itemBuilder: (context, index) {
-                      final item = _filteredData[index];
-                      return _buildDataCard(item);
-                    },
-                  ),
-          ),
-        ],
+                  ],
+                ),
+              ),
+
+              // --- INFO JUMLAH DATA ---
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: Text(
+                  '${filteredData.length} data ditemukan' + 
+                  (_selectedFilter != 'Semua' ? ' (Filter: $_selectedFilter)' : ''),
+                  style: const TextStyle(color: Colors.grey, fontSize: 14),
+                ),
+              ),
+
+              // --- LIST DATA ---
+              Expanded(
+                child: filteredData.isEmpty
+                    ? Center(
+                        child: Text(
+                          'Data tidak ditemukan', 
+                          style: TextStyle(color: Colors.grey.shade500),
+                        ),
+                      )
+                    : ListView.builder(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        itemCount: filteredData.length,
+                        itemBuilder: (context, index) {
+                          return _buildDataCard(filteredData[index]);
+                        },
+                      ),
+              ),
+            ],
+          );
+        },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _showFilterDialog,
-        backgroundColor: const Color(0xFF6C63FF),
-        child: const Icon(Icons.filter_list, color: Colors.white),
+      
+      // Floating Action Button untuk Filter
+      floatingActionButton: StreamBuilder<List<TagihanModel>>(
+        stream: _repository.getTagihanWithWargaStream(),
+        builder: (context, snapshot) {
+          // Ambil kategori hanya jika data tersedia
+          final categories = (snapshot.data ?? []).map((e) => e.kategori).toSet().toList();
+          return FloatingActionButton(
+            onPressed: () => _showFilterDialog(categories),
+            backgroundColor: const Color(0xFF6C63FF),
+            child: const Icon(Icons.filter_list, color: Colors.white),
+          );
+        }
       ),
     );
   }
 
   Widget _buildDataCard(TagihanModel item) {
-    final namaKK = _getNamaKeluarga(item.nik);
+    // Logic warna status (Safe check)
+    bool isLunas = (item.status ?? '').toLowerCase() == 'lunas' || 
+                   (item.status ?? '').toLowerCase() == 'paid';
+                   
+    Color statusColor = isLunas ? Colors.green.shade100 : Colors.red.shade100;
+    String statusText = isLunas ? 'Lunas' : 'Belum Lunas';
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -254,106 +204,89 @@ class _TagihanDaftarPageState extends State<TagihanDaftarPage> {
           ),
         ],
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(12),
+          onTap: () {
+            // NAVIGASI KE HALAMAN DETAIL
+            // Pastikan Anda sudah menjalankan: dart run build_runner build
+            context.router.push(TagihanDetailRoute(tagihanId: item.docId ?? ''));
+          },
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        item.namaIuran,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Kategori: ${item.kategori}',
-                        style: const TextStyle(
-                          color: Colors.grey,
-                          fontSize: 14,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Nominal: Rp ${item.nominal.toStringAsFixed(0)}',
-                        style: const TextStyle(
-                          color: Colors.grey,
-                          fontSize: 14,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Status: ${item.status}',
-                        style: const TextStyle(
-                          color: Colors.grey,
-                          fontSize: 14,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Nama KK: ${namaKK}',
-                        style: const TextStyle(
-                          color: Colors.grey,
-                          fontSize: 14,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Periode: ${item.periode}',
-                        style: const TextStyle(
-                          color: Colors.grey,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Column(
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: item.status == 'paid' ? Colors.green.shade200 : Colors.red.shade200,
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Text(
-                        item.status == 'paid' ? 'Lunas' : 'Belum Lunas',
-                        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            item.namaIuran, 
+                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Kategori: ${item.kategori}', 
+                            style: const TextStyle(color: Colors.grey, fontSize: 14)
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Nominal: Rp ${FormatterUtil.formatCurrency(item.nominal)}', 
+                            style: const TextStyle(color: Colors.grey, fontSize: 14)
+                          ),
+                          const SizedBox(height: 8),
+                          
+                          // Tampilkan Nama Warga (Hasil Join)
+                          Row(
+                            children: [
+                              const Icon(Icons.person, size: 16, color: Colors.blueGrey),
+                              const SizedBox(width: 4),
+                              Text(
+                                item.namaWarga, 
+                                style: const TextStyle(
+                                  color: Colors.black87, 
+                                  fontWeight: FontWeight.w600
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 8),
-                    PopupMenuButton<String>(
-                      onSelected: (value) {
-                        if (value == 'detail') {
-                          context.router.pushNamed(
-                            'tagihan_detail/${item.docId}',
-                          );
-                        }
-                      },
-                      itemBuilder: (context) => const [
-                        PopupMenuItem(value: 'detail', child: Text('Detail')),
+                    Column(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: statusColor, 
+                            borderRadius: BorderRadius.circular(6)
+                          ),
+                          child: Text(
+                            statusText, 
+                            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500)
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        const Icon(Icons.chevron_right, color: Colors.grey),
                       ],
-                      icon: const Icon(Icons.more_vert, color: Colors.grey),
                     ),
                   ],
                 ),
               ],
             ),
-          ],
+          ),
         ),
       ),
     );
   }
 }
 
+// ... (FilterTagihanDialog tetap sama seperti kode Anda)
 class FilterTagihanDialog extends StatefulWidget {
   final String initialKategori;
   final List<String> kategoriList;
@@ -367,8 +300,7 @@ class FilterTagihanDialog extends StatefulWidget {
   });
 
   @override
-  State<FilterTagihanDialog> createState() =>
-      _FilterTagihanDialogState();
+  State<FilterTagihanDialog> createState() => _FilterTagihanDialogState();
 }
 
 class _FilterTagihanDialogState extends State<FilterTagihanDialog> {
@@ -391,9 +323,7 @@ class _FilterTagihanDialogState extends State<FilterTagihanDialog> {
             value: _selectedKategori,
             hint: const Text('Pilih Kategori'),
             decoration: InputDecoration(
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8.0),
-              ),
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.0)),
             ),
             items: ['Semua', ...widget.kategoriList].map((String kategori) {
               return DropdownMenuItem<String>(

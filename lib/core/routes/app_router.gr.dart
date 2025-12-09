@@ -15,23 +15,20 @@ abstract class _$AppRouter extends RootStackRouter {
 
   @override
   final Map<String, PageFactory> pagesMap = {
-    AspirasiRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: AspirasiPage(),
-      );
-    },
     AspirasiEditRoute.name: (routeData) {
-      final pathParams = routeData.inheritedPathParams;
-      final args = routeData.argsAs<AspirasiEditRouteArgs>(
-          orElse: () =>
-              AspirasiEditRouteArgs(aspirasiId: pathParams.getString('id')));
+      final args = routeData.argsAs<AspirasiEditRouteArgs>();
       return AutoRoutePage<dynamic>(
         routeData: routeData,
         child: AspirasiEditPage(
           key: args.key,
           aspirasiId: args.aspirasiId,
         ),
+      );
+    },
+    AspirasiRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const AspirasiPage(),
       );
     },
     BroadcastDaftarRoute.name: (routeData) {
@@ -122,10 +119,10 @@ abstract class _$AppRouter extends RootStackRouter {
         child: const DaftarPenggunaPage(),
       );
     },
-    WargaDaftarRoute.name: (routeData) {
+    DaftarWargaRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const DaftarWargaPage(),
+        child: const WargaDaftarPage(),
       );
     },
     DashboardKegiatanRoute.name: (routeData) {
@@ -495,20 +492,6 @@ abstract class _$AppRouter extends RootStackRouter {
 }
 
 /// generated route for
-/// [AspirasiPage]
-class AspirasiRoute extends PageRouteInfo<void> {
-  const AspirasiRoute({List<PageRouteInfo>? children})
-      : super(
-          AspirasiRoute.name,
-          initialChildren: children,
-        );
-
-  static const String name = 'AspirasiRoute';
-
-  static const PageInfo<void> page = PageInfo<void>(name);
-}
-
-/// generated route for
 /// [AspirasiEditPage]
 class AspirasiEditRoute extends PageRouteInfo<AspirasiEditRouteArgs> {
   AspirasiEditRoute({
@@ -521,7 +504,6 @@ class AspirasiEditRoute extends PageRouteInfo<AspirasiEditRouteArgs> {
             key: key,
             aspirasiId: aspirasiId,
           ),
-          rawPathParams: {'id': aspirasiId},
           initialChildren: children,
         );
 
@@ -545,6 +527,20 @@ class AspirasiEditRouteArgs {
   String toString() {
     return 'AspirasiEditRouteArgs{key: $key, aspirasiId: $aspirasiId}';
   }
+}
+
+/// generated route for
+/// [AspirasiPage]
+class AspirasiRoute extends PageRouteInfo<void> {
+  const AspirasiRoute({List<PageRouteInfo>? children})
+      : super(
+          AspirasiRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'AspirasiRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
 }
 
 /// generated route for
@@ -801,14 +797,14 @@ class DaftarPenggunaRoute extends PageRouteInfo<void> {
 
 /// generated route for
 /// [DaftarWargaPage]
-class WargaDaftarRoute extends PageRouteInfo<void> {
-  const WargaDaftarRoute({List<PageRouteInfo>? children})
+class DaftarWargaRoute extends PageRouteInfo<void> {
+  const DaftarWargaRoute({List<PageRouteInfo>? children})
       : super(
-          WargaDaftarRoute.name,
+          DaftarWargaRoute.name,
           initialChildren: children,
         );
 
-  static const String name = 'WargaDaftarRoute';
+  static const String name = 'DaftarWargaRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }

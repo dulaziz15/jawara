@@ -114,53 +114,212 @@ class _DaftarMutasiPageState extends State<DaftarMutasiPage> {
   }
 
   void _showDetail(MutasiData d) {
-    showDialog(
-      context: context,
-      builder: (c) => Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+  showDialog(
+    context: context,
+    barrierDismissible: true, // Memungkinkan klik di luar untuk menutup
+    builder: (c) => Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      elevation: 5,
+      backgroundColor: Colors.white,
+      child: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // --- HEADER ---
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text("Detail Mutasi Keluarga",
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Detail Mutasi",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.blueGrey[800],
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        // Badge Status dipindah ke dekat judul agar langsung terlihat
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: _badgeColor(d.jenisMutasi).withOpacity(0.15),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                                color: _badgeColor(d.jenisMutasi), width: 1),
+                          ),
+                          child: Text(
+                            d.jenisMutasi,
+                            style: TextStyle(
+                              color: _badgeColor(d.jenisMutasi),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                   IconButton(
                     onPressed: () => Navigator.pop(c),
-                    icon: const Icon(Icons.close),
+                    icon: Icon(Icons.close, color: Colors.grey[600]),
+                    splashRadius: 20,
                   )
                 ],
               ),
-              const Divider(),
-              const SizedBox(height: 12),
-              Text("Keluarga: ${d.keluarga}"),
-              Text("Alamat Lama: ${d.alamatLama}"),
-              Text("Alamat Baru: ${d.alamatBaru}"),
-              Text("Tanggal Mutasi: ${d.tanggalMutasi}"),
-              const SizedBox(height: 8),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  color: _badgeColor(d.jenisMutasi),
-                ),
-                child:
-                    Text(d.jenisMutasi, style: const TextStyle(color: Colors.white)),
+              const SizedBox(height: 20),
+              const Divider(thickness: 1, height: 1),
+              const SizedBox(height: 20),
+
+              // --- CONTENT ---
+
+              // 1. Informasi Keluarga
+              _buildInfoRow(
+                Icons.family_restroom_rounded,
+                "Nama Keluarga",
+                d.keluarga,
               ),
-              const SizedBox(height: 8),
-              Text("Alasan: ${d.alasan}"),
+              const SizedBox(height: 16),
+
+              // 2. Tanggal
+              _buildInfoRow(
+                Icons.calendar_today_rounded,
+                "Tanggal Mutasi",
+                d.tanggalMutasi,
+              ),
+              const SizedBox(height: 16),
+
+              // 3. Alur Perpindahan (Visualisasi Dari -> Ke)
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.grey[50],
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.grey[200]!),
+                ),
+                child: Column(
+                  children: [
+                    _buildAddressRow(
+                      Icons.location_off_outlined,
+                      "Dari (Alamat Lama)",
+                      d.alamatLama,
+                      Colors.grey,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: Row(
+                        children: [
+                          const SizedBox(width: 13), // Align arrow with icons
+                          Icon(Icons.arrow_downward_rounded,
+                              size: 18, color: Colors.blue[300]),
+                        ],
+                      ),
+                    ),
+                    _buildAddressRow(
+                      Icons.location_on_rounded,
+                      "Ke (Alamat Baru)",
+                      d.alamatBaru,
+                      Colors.blue,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              // 4. Alasan
+              _buildInfoRow(
+                Icons.note_alt_outlined,
+                "Keterangan / Alasan",
+                d.alasan.isNotEmpty ? d.alasan : "-",
+              ),
+              
+              const SizedBox(height: 10),
             ],
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
+// --- Helper Widgets untuk merapikan kode ---
+
+// Widget untuk baris info standar
+Widget _buildInfoRow(IconData icon, String label, String value) {
+  return Row(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Icon(icon, size: 20, color: Colors.grey[600]),
+      const SizedBox(width: 12),
+      Expanded(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey[600],
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              value,
+              style: const TextStyle(
+                fontSize: 15,
+                color: Colors.black87,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+      ),
+    ],
+  );
+}
+
+// Widget khusus untuk alamat agar lebih rapi
+Widget _buildAddressRow(IconData icon, String label, String value, Color iconColor) {
+  return Row(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Icon(icon, size: 20, color: iconColor),
+      const SizedBox(width: 12),
+      Expanded(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 11,
+                color: Colors.grey[500],
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              value,
+              style: const TextStyle(
+                fontSize: 14,
+                color: Colors.black87,
+                height: 1.3,
+              ),
+            ),
+          ],
+        ),
+      ),
+    ],
+  );
+}
+  
   // Helper untuk menangani snapshot baru secara aman (tidak memanggil setState di build)
   void _handleNewSnapshot(List<MutasiData> incoming) {
     // bandingkan referensi atau panjang untuk mencegah loop tak berujung
@@ -222,7 +381,7 @@ class _DaftarMutasiPageState extends State<DaftarMutasiPage> {
             onApplyFilter: _applyFilter,
           ),
         ),
-        child: const Icon(Icons.filter_list),
+        child: const Icon(Icons.filter_list, color: Colors.white),
       ),
       body: StreamBuilder<List<MutasiData>>(
         stream: _stream,

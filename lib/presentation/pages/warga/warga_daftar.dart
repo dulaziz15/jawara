@@ -1,32 +1,33 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'dart:async'; // Untuk StreamSubscription
-import 'package:jawara/presentation/widgets/sidebar/sidebar.dart';
-import 'package:jawara/core/models/family_models.dart'; 
-import 'keluarga_detail.dart'; 
-import 'keluarga_edit.dart'; 
-import 'package:jawara/core/repositories/family_repository.dart'; 
+import 'dart:async';
+import 'package:jawara/core/models/warga_models.dart';
+import 'package:jawara/core/repositories/warga_repository.dart';
+import 'package:jawara/presentation/widgets/sidebar/sidebar.dart'; // Pastikan import Sidebar ada
+import 'warga_detail.dart';
+import 'warga_edit.dart';
+
 @RoutePage()
-class KeluargaPage extends StatefulWidget {
-  const KeluargaPage({super.key});
+class WargaDaftarPage extends StatefulWidget {
+  const WargaDaftarPage({super.key});
 
   @override
-  State<KeluargaPage> createState() => _KeluargaPageState();
+  State<WargaDaftarPage> createState() => _WargaDaftarPageState();
 }
 
-class _KeluargaPageState extends State<KeluargaPage> {
-  // Repository Instance
-  final FamilyRepository _repo = FamilyRepository();
-  StreamSubscription<List<FamilyModel>>? _familySubscription;
+class _WargaDaftarPageState extends State<WargaDaftarPage> {
+  // Repository
+  final CitizenRepository _repo = CitizenRepository();
+  StreamSubscription<List<WargaModel>>? _subscription;
 
-  // State Variables
-  List<FamilyModel> _allKeluarga = [];
-  List<FamilyModel> _filteredKeluarga = [];
-  List<FamilyModel> _currentPageData = [];
+  // Data
+  List<WargaModel> _allWarga = [];
+  List<WargaModel> _filteredWarga = [];
+  List<WargaModel> _currentPageData = [];
   
   final TextEditingController _searchController = TextEditingController();
   String _selectedFilter = 'Semua';
-
+  
   // Pagination variables
   int _currentPage = 1;
   final int _itemsPerPage = 5;
@@ -40,41 +41,40 @@ class _KeluargaPageState extends State<KeluargaPage> {
 
   @override
   void dispose() {
-    _familySubscription?.cancel();
+    _subscription?.cancel();
     _searchController.dispose();
     super.dispose();
   }
 
-  // 1. LISTEN DATA DARI REPOSITORY
+  // LISTENER: Mendengarkan perubahan data dari Firestore realtime
   void _initDataListener() {
-    _familySubscription = _repo.getAllFamilies().listen((families) {
+    _subscription = _repo.getAllCitizens().listen((data) {
       if (mounted) {
         setState(() {
-          _allKeluarga = families;
-          // Re-apply filter setiap ada data baru dari Firestore
-          _applyFilter(_selectedFilter); 
+          _allWarga = data;
+          _applyFilter(_selectedFilter); // Refresh filter & pagination saat data berubah
         });
       }
-    }, onError: (e) {
-      print("Error fetching families: $e");
     });
   }
 
-  // 2. LOGIKA PAGINATION (Sama seperti sebelumnya)
+  // --- LOGIC PAGINATION & FILTER ---
+
   void _updatePagination() {
     try {
       setState(() {
-        final filteredList = _filteredKeluarga;
+        final filteredList = _filteredWarga;
+        
         _totalPages = (filteredList.length / _itemsPerPage).ceil();
         if (_totalPages == 0) _totalPages = 1;
-
+        
         if (_currentPage > _totalPages) {
           _currentPage = _totalPages;
         }
-
+        
         final startIndex = (_currentPage - 1) * _itemsPerPage;
         final endIndex = startIndex + _itemsPerPage;
-
+        
         _currentPageData = filteredList.sublist(
           startIndex,
           endIndex > filteredList.length ? filteredList.length : endIndex,
@@ -82,11 +82,6 @@ class _KeluargaPageState extends State<KeluargaPage> {
       });
     } catch (e) {
       print('Error in pagination: $e');
-      setState(() {
-        _currentPageData = [];
-        _totalPages = 1;
-        _currentPage = 1;
-      });
     }
   }
 
@@ -107,53 +102,45 @@ class _KeluargaPageState extends State<KeluargaPage> {
     if (_currentPage > 1) _goToPage(_currentPage - 1);
   }
 
-  // 3. LOGIKA FILTER & SEARCH
   void _applyFilter(String filter) {
-    try {
-      setState(() {
-        _selectedFilter = filter;
-        _currentPage = 1;
-        
-        final allData = _allKeluarga;
-        List<FamilyModel> filteredData;
+    setState(() {
+      _selectedFilter = filter;
+      _currentPage = 1;
 
-        // Filter Dropdown
-        if (filter == 'Semua') {
-          filteredData = List.from(allData);
-        } else {
-          filteredData = allData.where((k) => 
-            k.statusDomisiliKeluarga == filter || 
-            k.statusKepemilikanRumah == filter
-          ).toList();
-        }
+      final allData = _allWarga;
+      List<WargaModel> filteredData;
+      
+      if (filter == 'Semua') {
+        filteredData = List.from(allData);
+      } else {
+        filteredData = allData
+            .where((w) => w.statusDomisili == filter || w.statusHidup == filter)
+            .toList();
+      }
 
-        // Search Text
-        final searchText = _searchController.text;
-        if (searchText.isNotEmpty) {
-          _filteredKeluarga = filteredData.where((k) =>
-              (k.namaKeluarga).toLowerCase().contains(searchText.toLowerCase()) ||
-              (k.nikKepalaKeluarga).toLowerCase().contains(searchText.toLowerCase()) ||
-              (k.alamatRumah).toLowerCase().contains(searchText.toLowerCase())).toList();
-        } else {
-          _filteredKeluarga = List.from(filteredData);
-        }
-        _updatePagination();
-      });
-    } catch (e) {
-      print('Error applying filter: $e');
-    }
+      final searchText = _searchController.text;
+      if (searchText.isNotEmpty) {
+        _filteredWarga = filteredData.where((w) =>
+                (w.nama).toLowerCase().contains(searchText.toLowerCase()) ||
+                (w.nik).contains(searchText) ||
+                (w.keluarga).toLowerCase().contains(searchText.toLowerCase()))
+            .toList();
+      } else {
+        _filteredWarga = List.from(filteredData);
+      }
+      
+      _updatePagination();
+    });
   }
 
   void _onSearchChanged(String value) {
-    // Memanggil _applyFilter ulang karena logic search sudah ada di sana
     _applyFilter(_selectedFilter);
   }
 
   void _showFilterDialog() {
-    // Ambil unique status dari data real
-    final uniqueStatus = _allKeluarga.map((k) => k.statusDomisiliKeluarga).toSet().toList();
-    uniqueStatus.addAll(_allKeluarga.map((k) => k.statusKepemilikanRumah).toSet());
-    uniqueStatus.remove(''); // Hapus string kosong jika ada
+    final uniqueStatus = _allWarga.map((w) => w.statusDomisili).toSet().toList();
+    uniqueStatus.addAll(_allWarga.map((w) => w.statusHidup).toSet());
+    uniqueStatus.remove(''); 
     uniqueStatus.insert(0, 'Semua');
 
     showModalBottomSheet(
@@ -166,50 +153,24 @@ class _KeluargaPageState extends State<KeluargaPage> {
     );
   }
 
-  // 4. CRUD ACTIONS VIA REPOSITORY
+  // --- CRUD ACTIONS ---
 
-  // Update Data
-  void _updateKeluarga(FamilyModel updatedItem) async {
-    try {
-      await _repo.updateFamily(updatedItem);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Data keluarga "${updatedItem.namaKeluarga}" berhasil diupdate'), backgroundColor: Colors.green),
-      );
-      // Note: Data akan auto-refresh karena kita listen stream di _initDataListener
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Gagal update: $e'), backgroundColor: Colors.red),
-      );
-    }
-  }
-
-  // Delete Data
-  void _deleteKeluarga(FamilyModel item) async {
-    try {
-      await _repo.deleteFamily(item.noKk); // Menggunakan NoKK sebagai ID sesuai Repo
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Data keluarga "${item.namaKeluarga}" berhasil dihapus'), backgroundColor: Colors.green),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Gagal hapus: $e'), backgroundColor: Colors.red),
-      );
-    }
-  }
-
-  void _showDeleteConfirmation(FamilyModel item) {
+  void _showDeleteConfirmation(WargaModel item) {
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
         return AlertDialog(
           title: const Text('Konfirmasi Hapus'),
-          content: Text('Apakah Anda yakin ingin menghapus data keluarga "${item.namaKeluarga}"?'),
+          content: Text('Apakah Anda yakin ingin menghapus data warga "${item.nama}"?'),
           actions: [
-            TextButton(onPressed: () => Navigator.of(dialogContext).pop(), child: const Text('Batal')),
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: const Text('Batal'),
+            ),
             ElevatedButton(
               onPressed: () {
                 Navigator.of(dialogContext).pop();
-                _deleteKeluarga(item);
+                _deleteWarga(item);
               },
               style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
               child: const Text('Hapus', style: TextStyle(color: Colors.white)),
@@ -220,23 +181,58 @@ class _KeluargaPageState extends State<KeluargaPage> {
     );
   }
 
-  // 5. MODAL TRIGGERS
-  void _showDetailModal(FamilyModel item) {
+  Future<void> _deleteWarga(WargaModel item) async {
+    try {
+      await _repo.deleteCitizen(item.docId);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Data warga "${item.nama}" berhasil dihapus'), backgroundColor: Colors.green),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Gagal menghapus: $e'), backgroundColor: Colors.red),
+        );
+      }
+    }
+  }
+
+  Future<void> _updateWarga(WargaModel item) async {
+    try {
+      await _repo.updateCitizen(item);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Data warga "${item.nama}" berhasil diupdate'), backgroundColor: Colors.green),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Gagal update: $e'), backgroundColor: Colors.red),
+        );
+      }
+    }
+  }
+
+  // --- SHOW DIALOGS ---
+
+  void _showDetailModal(WargaModel item) {
     showDialog(
       context: context,
-      builder: (context) => KeluargaDetailDialog(
+      builder: (context) => WargaDetailDialog(
         item: item,
         onEditPressed: () => _showEditModal(item),
       ),
     );
   }
 
-  void _showEditModal(FamilyModel item) {
+  void _showEditModal(WargaModel item) {
     showDialog(
       context: context,
-      builder: (context) => KeluargaEditDialog(
+      builder: (context) => WargaEditDialog(
         item: item,
-        onSave: (updatedFamily) => _updateKeluarga(updatedFamily),
+        onSave: (updated) => _updateWarga(updated),
       ),
     );
   }
@@ -244,15 +240,8 @@ class _KeluargaPageState extends State<KeluargaPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: const Sidebar(),
+      drawer: const Sidebar(), // UI UPDATE: Added Sidebar
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: const Text('Data Keluarga', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white)),
-        backgroundColor: const Color(0xFF6C63FF),
-        foregroundColor: Colors.white,
-        centerTitle: false,
-        elevation: 0,
-      ),
       body: Column(
         children: [
           // Search Bar
@@ -263,7 +252,9 @@ class _KeluargaPageState extends State<KeluargaPage> {
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: Colors.grey.shade300),
-              boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.1), blurRadius: 4, offset: const Offset(0, 2))],
+              boxShadow: [
+                BoxShadow(color: Colors.grey.withOpacity(0.1), blurRadius: 4, offset: const Offset(0, 2)),
+              ],
             ),
             child: Row(
               children: [
@@ -273,13 +264,17 @@ class _KeluargaPageState extends State<KeluargaPage> {
                   child: TextField(
                     controller: _searchController,
                     onChanged: _onSearchChanged,
-                    decoration: const InputDecoration(hintText: 'Cari Nama Keluarga, NIK, atau Alamat...', border: InputBorder.none, hintStyle: TextStyle(color: Colors.grey)),
+                    decoration: const InputDecoration(
+                      hintText: 'Cari berdasarkan Nama, NIK, atau Keluarga...',
+                      border: InputBorder.none,
+                      hintStyle: TextStyle(color: Colors.grey),
+                    ),
                   ),
                 ),
               ],
             ),
           ),
-          
+
           // Info Data
           Container(
             width: double.infinity,
@@ -287,13 +282,14 @@ class _KeluargaPageState extends State<KeluargaPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('${_filteredKeluarga.length} data ditemukan', style: const TextStyle(color: Colors.grey, fontSize: 14)),
-                if (_totalPages > 1) Text('Halaman $_currentPage dari $_totalPages', style: const TextStyle(color: Colors.grey, fontSize: 14)),
+                Text('${_filteredWarga.length} data ditemukan', style: const TextStyle(color: Colors.grey, fontSize: 14)),
+                if (_totalPages > 1)
+                  Text('Halaman $_currentPage dari $_totalPages', style: const TextStyle(color: Colors.grey, fontSize: 14)),
               ],
             ),
           ),
 
-          // List View
+          // List Data
           Expanded(
             child: _currentPageData.isEmpty
                 ? Center(child: Text('Data tidak ditemukan', style: TextStyle(color: Colors.grey.shade500)))
@@ -302,12 +298,11 @@ class _KeluargaPageState extends State<KeluargaPage> {
                     itemCount: _currentPageData.length,
                     itemBuilder: (context, index) {
                       final item = _currentPageData[index];
-                      return _buildKeluargaCard(item);
+                      return _buildWargaCard(item);
                     },
                   ),
           ),
 
-          // Pagination
           if (_totalPages > 1) _buildPaginationControls(),
         ],
       ),
@@ -319,12 +314,15 @@ class _KeluargaPageState extends State<KeluargaPage> {
     );
   }
 
-  // WIDGETS PENDUKUNG (Pagination & Card)
+  // --- WIDGETS KECIL (Pagination, Card, Filter) ---
 
   Widget _buildPaginationControls() {
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: Colors.white, border: Border(top: BorderSide(color: Colors.grey.shade300))),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border(top: BorderSide(color: Colors.grey.shade300)),
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -336,7 +334,6 @@ class _KeluargaPageState extends State<KeluargaPage> {
           ...List.generate(_totalPages, (index) {
             final pageNumber = index + 1;
             final isCurrentPage = pageNumber == _currentPage;
-            // Simple logic untuk menampilkan page number
             if (_totalPages <= 7 || pageNumber == 1 || pageNumber == _totalPages || (pageNumber >= _currentPage - 1 && pageNumber <= _currentPage + 1)) {
               return Container(
                 margin: const EdgeInsets.symmetric(horizontal: 4),
@@ -369,7 +366,7 @@ class _KeluargaPageState extends State<KeluargaPage> {
     );
   }
 
-  Widget _buildKeluargaCard(FamilyModel item) {
+  Widget _buildWargaCard(WargaModel item) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
@@ -387,18 +384,18 @@ class _KeluargaPageState extends State<KeluargaPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(item.namaKeluarga, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16), maxLines: 2, overflow: TextOverflow.ellipsis),
+                  Text(item.nama, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16), maxLines: 2, overflow: TextOverflow.ellipsis),
                   const SizedBox(height: 8),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('No KK: ${item.noKk}', style: const TextStyle(color: Colors.grey, fontSize: 14)),
+                      Text('NIK: ${item.nik}', style: const TextStyle(color: Colors.grey, fontSize: 14)),
                       const SizedBox(height: 4),
-                      Text('Kepala: ${item.nikKepalaKeluarga}', style: const TextStyle(color: Colors.grey, fontSize: 14)), // Idealnya ini Nama, bukan NIK
+                      Text('Keluarga: ${item.keluarga}', style: const TextStyle(color: Colors.grey, fontSize: 14)),
                       const SizedBox(height: 4),
-                      Text('Alamat: ${item.alamatRumah}', style: const TextStyle(color: Colors.grey, fontSize: 14)),
-                      const SizedBox(height: 4),
-                      Text('Status: ${item.statusKepemilikanRumah}', style: const TextStyle(color: Colors.grey, fontSize: 14)),
+                      Text('Gender: ${item.jenisKelamin}', style: const TextStyle(color: Colors.grey, fontSize: 14)),
+                       const SizedBox(height: 4),
+                      Text('Status Hidup: ${item.statusHidup}', style: const TextStyle(color: Colors.grey, fontSize: 14)),
                     ],
                   ),
                 ],
@@ -408,8 +405,11 @@ class _KeluargaPageState extends State<KeluargaPage> {
               children: [
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(color: _getStatusColor(item.statusDomisiliKeluarga), borderRadius: BorderRadius.circular(20)),
-                  child: Text(item.statusDomisiliKeluarga, style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600)),
+                  decoration: BoxDecoration(
+                    color: _getStatusColor(item.statusDomisili),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(item.statusDomisili, style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600)),
                 ),
                 const SizedBox(width: 8),
                 PopupMenuButton<String>(
@@ -437,12 +437,11 @@ class _KeluargaPageState extends State<KeluargaPage> {
 
   Color _getStatusColor(String status) {
     if (status.toLowerCase() == 'aktif') return Colors.green;
-    if (status.toLowerCase() == 'nonaktif') return Colors.grey;
-    return Colors.blueGrey;
+    return Colors.grey;
   }
 }
 
-// 5. FILTER BOTTOM SHEET (Bisa dipisah file juga jika mau)
+// Filter Bottom Sheet
 class _FilterBottomSheet extends StatefulWidget {
   final List<String> uniqueStatus;
   final String selectedFilter;

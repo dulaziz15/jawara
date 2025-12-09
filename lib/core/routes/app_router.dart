@@ -19,8 +19,8 @@ import 'package:jawara/presentation/pages/report/report_finance.dart';
 
 // Warga & Keluarga & Rumah
 import 'package:jawara/presentation/pages/warga/warga.dart';
-import 'package:jawara/presentation/pages/warga/daftar_warga.dart';
-import 'package:jawara/presentation/pages/warga/tambah_warga.dart';
+import 'package:jawara/presentation/pages/warga/warga_daftar.dart';
+import 'package:jawara/presentation/pages/warga/warga_tambah.dart';
 import 'package:jawara/presentation/pages/warga/keluarga.dart';
 import 'package:jawara/presentation/pages/warga/rumah.dart';
 import 'package:jawara/presentation/pages/warga/daftar_rumah.dart';
@@ -121,7 +121,7 @@ class AppRouter extends _$AppRouter {
       page: WargaRoute.page,
       path: '/warga',
       children: [
-        AutoRoute(page: WargaDaftarRoute.page, path: 'daftar'),
+        AutoRoute(page: DaftarWargaRoute.page, path: 'daftar'),
         AutoRoute(page: WargaTambahRoute.page, path: 'tambah'),
       ],
     ),
