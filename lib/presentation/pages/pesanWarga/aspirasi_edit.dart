@@ -219,7 +219,7 @@ class _AspirasiEditPageState extends State<AspirasiEditPage> {
                       const SizedBox(height: 20),
 
                       // STATUS (Editable)
-                      const Text("Status Aspirasi", style: TextStyle(fontWeight: FontWeight.bold)),
+                      // const Text("Status Aspirasi", style: TextStyle(fontWeight: FontWeight.bold)),
                       const SizedBox(height: 8),
                       DropdownButtonFormField<String>(
                         decoration: _inputDecoration("Pilih status"),

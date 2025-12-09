@@ -127,13 +127,11 @@ class _PenggunaDetailPageState extends State<PenggunaDetailPage> {
                   CircleAvatar(
                     radius: 55,
                     backgroundColor: const Color(0xFF6C63FF),
-                    backgroundImage: (user.buktiIdentitas.isNotEmpty &&
-                            user.buktiIdentitas.startsWith('http'))
-                        ? NetworkImage(user.buktiIdentitas) as ImageProvider
-                        : const AssetImage('assets/images/placeholder_user.png'), // Default asset jika kosong/error
-                    child: (user.buktiIdentitas.isEmpty) 
-                        ? const Icon(Icons.person, size: 65, color: Colors.white)
-                        : null,
+                    child: const Icon(
+                      Icons.person,
+                      size: 65,
+                      color: Colors.white,
+                    ),
                   ),
 
                   const SizedBox(height: 16),
@@ -190,12 +188,12 @@ class _PenggunaDetailPageState extends State<PenggunaDetailPage> {
                             user.statusDomisili,
                             valueColor: _getStatusColor(user.statusDomisili),
                           ),
-                           const SizedBox(height: 16),
-                          _buildInfoItem(
-                            Icons.favorite, // Icon untuk status hidup
-                            'Status Hidup',
-                            user.statusHidup,
-                          ),
+                          //  const SizedBox(height: 16),
+                          // _buildInfoItem(
+                          //   Icons.favorite, // Icon untuk status hidup
+                          //   'Status Hidup',
+                          //   user.statusHidup,
+                          // ),
                         ],
                       ),
                     ),

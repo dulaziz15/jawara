@@ -9,8 +9,6 @@ class ChannelDetailPage extends StatefulWidget {
 
   const ChannelDetailPage({
     super.key,
-    // Jika menggunakan AutoRoute dengan parameter path, tambahkan @PathParam
-    // @PathParam('id') required this.channelId, 
     required this.channelId,
   });
 
@@ -19,77 +17,107 @@ class ChannelDetailPage extends StatefulWidget {
 }
 
 class _ChannelDetailPageState extends State<ChannelDetailPage> {
-  // 1. Panggil Repository
+  // 1. Panggil Repository (TIDAK BERUBAH)
   final ChannelRepository _repository = ChannelRepository();
   late Future<ChannelModel?> _detailFuture;
 
   @override
   void initState() {
     super.initState();
-    // 2. Inisialisasi pengambilan data saat halaman dibuka
-    // Pastikan fungsi getChannelByDocId ada di Repository Anda
+    // 2. Inisialisasi (TIDAK BERUBAH)
     _detailFuture = _repository.getChannelByDocId(widget.channelId);
   }
 
-  // Helper untuk menampilkan gambar (Support Network & Asset)
-  Widget _buildImage(String imagePath) {
+  // Helper Image (Logika TETAP, hanya menambahkan parameter size untuk styling UI)
+  Widget _buildImage(String imagePath, {double? width, double? height, BoxFit fit = BoxFit.cover}) {
     if (imagePath.isEmpty) {
       return Container(
-        width: 100,
-        height: 100,
-        color: Colors.grey.shade200,
+        width: width ?? 100,
+        height: height ?? 100,
+        decoration: BoxDecoration(
+          color: Colors.grey.shade200,
+          borderRadius: BorderRadius.circular(12),
+        ),
         child: const Icon(Icons.image_not_supported, color: Colors.grey),
       );
     }
 
+    Widget imageWidget;
     // Cek apakah URL (http/https) atau Asset Lokal
     if (imagePath.startsWith('http')) {
-      return Image.network(
+      imageWidget = Image.network(
         imagePath,
-        width: 100,
-        height: 100,
-        fit: BoxFit.cover,
+        width: width,
+        height: height,
+        fit: fit,
         errorBuilder: (context, error, stackTrace) => Container(
-          width: 100,
-          height: 100,
+          width: width,
+          height: height,
           color: Colors.grey.shade200,
           child: const Icon(Icons.broken_image, color: Colors.grey),
         ),
       );
     } else {
-      return Image.asset(
+      imageWidget = Image.asset(
         imagePath,
-        width: 100,
-        height: 100,
-        fit: BoxFit.cover,
+        width: width,
+        height: height,
+        fit: fit,
         errorBuilder: (context, error, stackTrace) => Container(
-          width: 100,
-          height: 100,
+          width: width,
+          height: height,
           color: Colors.grey.shade200,
           child: const Icon(Icons.image_not_supported, color: Colors.grey),
         ),
       );
     }
+
+    // Membungkus dengan ClipRRect agar sudutnya tumpul (Rounded)
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12),
+      child: imageWidget,
+    );
   }
 
-  // Helper widget detail item (Sesuai UI Channel)
-  Widget _buildDetailItem(String label, String? value) {
+  // Helper widget detail item (Dipercantik dengan Icon)
+  Widget _buildDetailItem(IconData icon, String label, String? value) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12.0),
-      child: Column(
+      padding: const EdgeInsets.only(bottom: 16.0),
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            label,
-            style: const TextStyle(
-              fontWeight: FontWeight.w600,
-              color: Colors.black87,
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: const Color(0xFF6C63FF).withOpacity(0.1),
+              borderRadius: BorderRadius.circular(10),
             ),
+            child: Icon(icon, color: const Color(0xFF6C63FF), size: 22),
           ),
-          const SizedBox(height: 4),
-          Text(
-            (value != null && value.isNotEmpty) ? value : '-',
-            style: const TextStyle(fontSize: 15, color: Colors.black87),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.grey.shade600,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  (value != null && value.isNotEmpty) ? value : '-',
+                  style: const TextStyle(
+                    fontSize: 16, 
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -99,16 +127,21 @@ class _ChannelDetailPageState extends State<ChannelDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey.shade100,
+      backgroundColor: const Color(0xFFF8F9FE), // Background lebih soft
       appBar: AppBar(
-        backgroundColor: Colors.grey.shade100,
+        // title: const Text(
+        //   "Detail Channel",
+        //   style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
+        // ),
+        centerTitle: true,
+        backgroundColor: const Color(0xFFF8F9FE),
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black87),
+          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black87, size: 20),
           onPressed: () => context.router.pop(),
         ),
       ),
-      // 3. Gunakan FutureBuilder untuk menunggu data dari Firebase
+      // 3. FutureBuilder (LOGIKA TIDAK BERUBAH)
       body: FutureBuilder<ChannelModel?>(
         future: _detailFuture,
         builder: (context, snapshot) {
@@ -119,83 +152,179 @@ class _ChannelDetailPageState extends State<ChannelDetailPage> {
 
           // B. Error State
           if (snapshot.hasError) {
-            return Center(child: Text("Terjadi kesalahan: ${snapshot.error}"));
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.error_outline, color: Colors.red, size: 48),
+                    const SizedBox(height: 10),
+                    Text("Terjadi kesalahan: ${snapshot.error}", textAlign: TextAlign.center),
+                  ],
+                ),
+              ),
+            );
           }
 
-          // C. Data Kosong / Tidak Ditemukan
+          // C. Data Kosong
           if (!snapshot.hasData || snapshot.data == null) {
-            return const Center(child: Text("Data channel tidak ditemukan"));
+            return const Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.inbox, color: Colors.grey, size: 48),
+                  SizedBox(height: 10),
+                  Text("Data channel tidak ditemukan"),
+                ],
+              ),
+            );
           }
 
           // D. Data Ditemukan
           final channel = snapshot.data!;
 
           return SingleChildScrollView(
-            padding: const EdgeInsets.all(24.0),
-            child: Card(
-              elevation: 3,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12.0),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Detail Transfer Channel',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF6C63FF),
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // === SECTION 1: TEXT INFO ===
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 15,
+                        offset: const Offset(0, 5),
                       ),
-                    ),
-                    const SizedBox(height: 24),
-
-                    _buildDetailItem('Nama Channel', channel.nama),
-                    _buildDetailItem('Tipe Channel', channel.tipe),
-                    _buildDetailItem('Nama Pemilik', channel.an),
-
-                    const SizedBox(height: 12),
-                    const Text(
-                      'QR Code Pembayaran',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        color: Colors.black87,
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Informasi Channel',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF2D3142),
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 8),
-
-                    // Tampilkan QR
-                    Center(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: _buildImage(channel.qr),
-                      ),
-                    ),
-                    
-                    const SizedBox(height: 12),
-                    const Text(
-                      'Thumbnail',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        color: Colors.black87,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-
-                    // Tampilkan Thumbnail
-                    Center(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: _buildImage(channel.thumbnail),
-                      ),
-                    ),
-                  ],
+                      const Divider(height: 30),
+                      // Urutan Data Sesuai Request: Nama -> Tipe -> Pemilik
+                      _buildDetailItem(Icons.tv, 'Nama Channel', channel.nama),
+                      _buildDetailItem(Icons.category, 'Tipe Channel', channel.tipe),
+                      _buildDetailItem(Icons.person, 'Nama Pemilik (A/N)', channel.an),
+                    ],
+                  ),
                 ),
-              ),
+
+                const SizedBox(height: 20),
+
+                // === SECTION 2: QR CODE ===
+                // Urutan Data Sesuai Request: QR
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 15,
+                        offset: const Offset(0, 5),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          const Icon(Icons.qr_code_2, color: Color(0xFF6C63FF)),
+                          const SizedBox(width: 10),
+                          const Text(
+                            'QR Code Pembayaran',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF2D3142),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      Container(
+                        padding: const EdgeInsets.all(15),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF4F4F8),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: Colors.grey.shade200),
+                        ),
+                        child: _buildImage(
+                          channel.qr, 
+                          width: 200, 
+                          height: 200,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                // === SECTION 3: THUMBNAIL ===
+                // Urutan Data Sesuai Request: Thumbnail
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 15,
+                        offset: const Offset(0, 5),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          const Icon(Icons.image, color: Color(0xFF6C63FF)),
+                          const SizedBox(width: 10),
+                          const Text(
+                            'Thumbnail Channel',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF2D3142),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 200, // Membuat thumbnail lebih besar/lebar
+                        child: _buildImage(
+                          channel.thumbnail, 
+                          width: double.infinity,
+                          height: 200,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 30),
+              ],
             ),
           );
         },

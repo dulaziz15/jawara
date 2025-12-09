@@ -53,8 +53,8 @@ class _DaftarPenggunaPageState extends State<DaftarPenggunaPage> {
             displayedUsers = allUsers.where((user) {
               final matchNama = nama.trim().isEmpty ||
                   user.nama.toLowerCase().contains(nama.toLowerCase());
-              final matchStatus = status == null || user.statusHidup == status;
-              return matchNama && matchStatus;
+              // final matchStatus = status == null || user.statusHidup == status;
+              return matchNama;
             }).toList();
             currentPage = 1;
           });
@@ -286,7 +286,7 @@ class _DaftarPenggunaPageState extends State<DaftarPenggunaPage> {
             ),
             Column(
               children: [
-                _buildStatusBadge(user.statusHidup),
+                // _buildStatusBadge(user.statusHidup),
                 const SizedBox(height: 8),
                 _buildActionButton(user),
               ],
