@@ -1,47 +1,64 @@
+import 'dart:io'; // Tambahkan ini
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart'; // Tambahkan ini
 import 'package:jawara/core/models/kegiatan_models.dart';
+import 'package:path/path.dart' as path; // Pastikan path terinstall
 
 class KegiatanRepository {
   final CollectionReference _kegiatanCollection =
       FirebaseFirestore.instance.collection('kegiatan');
+  
+  // 1. Instance Storage
+  final FirebaseStorage _storage = FirebaseStorage.instance;
+
+  // 2. Fungsi Upload File
+  Future<String> uploadFile(File file) async {
+    try {
+      String fileName = path.basename(file.path);
+      String uniqueName = "${DateTime.now().millisecondsSinceEpoch}_$fileName";
+      
+      // Simpan di folder kegiatan_dokumentasi
+      Reference ref = _storage.ref().child('kegiatan_dokumentasi/$uniqueName');
+      
+      UploadTask uploadTask = ref.putFile(file);
+      TaskSnapshot snapshot = await uploadTask;
+      
+      return await snapshot.ref.getDownloadURL();
+    } catch (e) {
+      throw Exception('Gagal upload dokumentasi: $e');
+    }
+  }
 
   // ==========================================================
   // ADD (C)
   // ==========================================================
   Future<void> addKegiatan(KegiatanModel kegiatan) async {
-  try {
-    // 1️⃣ siapkan data tanpa docId agar Firestore generate ID otomatis
-    final data = kegiatan.toMap();
-    data.remove('docId');
-
-    // 2️⃣ add dulu ke Firestore dan dapatkan document reference
-    final docRef = await _kegiatanCollection.add(data);
-
-    // 3️⃣ update field docId pada dokumen yang baru dibuat
-    await docRef.update({'docId': docRef.id});
-
-  } catch (e) {
-    throw Exception("Gagal menambahkan kegiatan: $e");
+    try {
+      final data = kegiatan.toMap();
+      data.remove('docId');
+      final docRef = await _kegiatanCollection.add(data);
+      await docRef.update({'docId': docRef.id});
+    } catch (e) {
+      throw Exception("Gagal menambahkan kegiatan: $e");
+    }
   }
-}
 
   // ==========================================================
   // READ (R)
   // ==========================================================
-
   Stream<List<KegiatanModel>> getKegiatan() {
     return _kegiatanCollection
         .orderBy('tanggal_pelaksanaan', descending: true)
         .snapshots()
         .map((snapshot) {
-          return snapshot.docs.map((doc) {
-            final data = doc.data() as Map<String, dynamic>;
-            return KegiatanModel.fromMap({
-              ...data,
-              'docId': doc.id, // docId disisipkan manual dari Firestore
-            });
-          }).toList();
+      return snapshot.docs.map((doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        return KegiatanModel.fromMap({
+          ...data,
+          'docId': doc.id,
         });
+      }).toList();
+    });
   }
 
   // R: Get Kegiatan by DocId
@@ -65,13 +82,9 @@ class KegiatanRepository {
   // UPDATE (U)
   // ==========================================================
   Future<void> updateKegiatan(KegiatanModel kegiatan) async {
-    try {
       final data = kegiatan.toMap();
-      data.remove('docId'); // docId tidak ikut diupdate ke Firestore
+      data.remove('docId'); 
       await _kegiatanCollection.doc(kegiatan.docId).update(data);
-    } catch (e) {
-      throw Exception("Gagal mengupdate kegiatan: $e");
-    }
   }
 
   // ==========================================================

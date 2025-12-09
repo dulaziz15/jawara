@@ -1,69 +1,96 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:file_picker/file_picker.dart';
 
 class ImagePickerPreview extends StatefulWidget {
-  const ImagePickerPreview({super.key});
+  final String type; // "gambar" atau "dokumen"
+  const ImagePickerPreview({super.key, this.type = "gambar"});
+
+  // --- STATIC VARIABLE AGAR BISA DIAKSES DARI BroadcastTambahPage ---
+  static Map<String, File?> selectedFiles = {
+    "gambar": null,
+    "dokumen": null,
+  };
+
+  static void clearAll() {
+    selectedFiles["gambar"] = null;
+    selectedFiles["dokumen"] = null;
+  }
 
   @override
   State<ImagePickerPreview> createState() => _ImagePickerPreviewState();
 }
 
 class _ImagePickerPreviewState extends State<ImagePickerPreview> {
-  File? _image;
-  final ImagePicker _picker = ImagePicker();
+  File? _localFile; // Untuk display di widget ini saja
 
-  Future<void> _pickImage() async {
-    final XFile? picked = await _picker.pickImage(source: ImageSource.gallery);
-    if (picked != null) {
+  Future<void> _pickFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: widget.type == "gambar" ? FileType.image : FileType.custom,
+      allowedExtensions: widget.type == "dokumen" ? ['pdf', 'doc', 'docx', 'xls', 'xlsx'] : null,
+    );
+
+    if (result != null && result.files.single.path != null) {
+      File file = File(result.files.single.path!);
+      
       setState(() {
-        _image = File(picked.path);
+        _localFile = file;
       });
+
+      // SIMPAN KE STATIC VARIABLE
+      ImagePickerPreview.selectedFiles[widget.type] = file;
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final bool isImage = widget.type == "gambar";
+    
+    // Cek apakah ada file tersimpan (agar saat setState di parent tidak hilang)
+    File? fileToShow = _localFile ?? ImagePickerPreview.selectedFiles[widget.type];
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Maksimal 10 file, ukuran 5MB per file',
-          style: TextStyle(fontWeight: FontWeight.w500, color: Colors.grey),
+        Text(
+          isImage ? "Maksimal ukuran 5MB" : "Dukungan PDF/DOC/XLS",
+          style: const TextStyle(fontWeight: FontWeight.w500, color: Colors.grey),
         ),
         const SizedBox(height: 8),
 
-        // Preview gambar
         Center(
-          child: _image == null
-              ? const Text(
-                  'Belum ada file dipilih',
-                  style: TextStyle(color: Colors.black54),
-                )
-              : ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: Image.file(
-                    _image!,
-                    width: 200,
-                    height: 200,
-                    fit: BoxFit.cover,
-                  ),
-                ),
+          child: fileToShow == null
+              ? const Text("Belum ada file dipilih", style: TextStyle(color: Colors.black54))
+              : isImage
+                  ? ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Image.file(fileToShow, width: 200, height: 200, fit: BoxFit.cover),
+                    )
+                  : Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.description, color: Colors.blue),
+                          const SizedBox(width: 8),
+                          Flexible(child: Text(fileToShow.path.split('/').last)),
+                        ],
+                      ),
+                    ),
         ),
         const SizedBox(height: 10),
 
-        // Tombol pilih gambar
         Center(
           child: OutlinedButton.icon(
-            onPressed: _pickImage,
-            icon: const Icon(Icons.image, color: Color(0xFF6C63FF)),
-            label: const Text(
-              "Pilih file",
-              style: TextStyle(color: Color(0xFF6C63FF)),
-            ),
+            onPressed: _pickFile,
+            icon: const Icon(Icons.file_present, color: Color(0xFF6C63FF)),
+            label: const Text("Pilih file", style: TextStyle(color: Color(0xFF6C63FF))),
             style: OutlinedButton.styleFrom(
               side: const BorderSide(color: Color(0xFF6C63FF)),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             ),
           ),
         ),

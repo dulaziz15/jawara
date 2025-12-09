@@ -1,9 +1,10 @@
+import 'dart:io'; // Import File
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:intl/intl.dart';
-
 import 'package:jawara/core/models/kegiatan_models.dart';
 import 'package:jawara/core/repositories/kegiatan_repository.dart';
+import 'package:jawara/presentation/pages/kegiatandanbroadcast/widgets/image_picker.dart'; 
 
 @RoutePage()
 class KegiatanTambahPage extends StatefulWidget {
@@ -20,6 +21,7 @@ class _KegiatanTambahPageState extends State<KegiatanTambahPage> {
   final TextEditingController penanggungJawabController = TextEditingController();
   final TextEditingController deskripsiController = TextEditingController();
   String? selectedKategori;
+  bool _isLoading = false; // Tambahan loading state
 
   final repo = KegiatanRepository();
 
@@ -30,6 +32,7 @@ class _KegiatanTambahPageState extends State<KegiatanTambahPage> {
     lokasiController.dispose();
     penanggungJawabController.dispose();
     deskripsiController.dispose();
+    ImagePickerPreview.clearAll(); // Bersihkan file saat keluar
     super.dispose();
   }
 
@@ -46,27 +49,49 @@ class _KegiatanTambahPageState extends State<KegiatanTambahPage> {
       return;
     }
 
-    DateTime tanggalParsed = DateFormat("dd/MM/yyyy").parse(tanggalController.text);
+    setState(() => _isLoading = true); // Mulai loading
 
-    final kegiatan = KegiatanModel(
-      docId: "", // Firestore yang akan generate dulu
-      namaKegiatan: namaController.text,
-      kategoriKegiatan: selectedKategori!,
-      penanggungJawabId: penanggungJawabController.text,
-      deskripsi: deskripsiController.text,
-      tanggalPelaksanaan: tanggalParsed,
-      lokasi: lokasiController.text,
-      dibuatOlehId: "ADMIN_001",
-      dokumentasi: "",
-    );
+    try {
+      DateTime tanggalParsed = DateFormat("dd/MM/yyyy").parse(tanggalController.text);
+      
+      // 1. Cek & Upload Gambar
+      String urlDokumentasi = "";
+      File? fileGambar = ImagePickerPreview.selectedFiles['gambar']; // Ambil dari Static Var
+      
+      if (fileGambar != null) {
+        urlDokumentasi = await repo.uploadFile(fileGambar);
+      }
 
-    await repo.addKegiatan(kegiatan);
+      // 2. Buat Model
+      final kegiatan = KegiatanModel(
+        docId: "", 
+        namaKegiatan: namaController.text,
+        kategoriKegiatan: selectedKategori!,
+        penanggungJawabId: penanggungJawabController.text,
+        deskripsi: deskripsiController.text,
+        tanggalPelaksanaan: tanggalParsed,
+        lokasi: lokasiController.text,
+        dibuatOlehId: "ADMIN_001",
+        dokumentasi: urlDokumentasi, // Simpan URL hasil upload
+      );
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Kegiatan berhasil ditambahkan')),
-    );
+      // 3. Simpan ke Firestore
+      await repo.addKegiatan(kegiatan);
 
-    // Navigator.pop(context);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Kegiatan berhasil ditambahkan')),
+      );
+      
+      Navigator.pop(context); // Kembali ke halaman sebelumnya
+
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Gagal simpan: $e")),
+      );
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 
   void _reset() {
@@ -77,6 +102,7 @@ class _KegiatanTambahPageState extends State<KegiatanTambahPage> {
       penanggungJawabController.clear();
       deskripsiController.clear();
       selectedKategori = null;
+      ImagePickerPreview.clearAll(); // Reset picker juga
     });
   }
 
@@ -84,6 +110,7 @@ class _KegiatanTambahPageState extends State<KegiatanTambahPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey.shade200,
+      appBar: AppBar(title: const Text("Tambah Kegiatan")),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Container(
@@ -106,13 +133,8 @@ class _KegiatanTambahPageState extends State<KegiatanTambahPage> {
                 controller: namaController,
                 decoration: InputDecoration(
                   labelText: "Nama Kegiatan",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 15,
-                    vertical: 12,
-                  ),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
                 ),
               ),
               const SizedBox(height: 16),
@@ -122,13 +144,8 @@ class _KegiatanTambahPageState extends State<KegiatanTambahPage> {
                 isExpanded: true,
                 decoration: InputDecoration(
                   labelText: "Kategori Kegiatan",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 15,
-                    vertical: 12,
-                  ),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
                 ),
                 hint: const Text("-- Pilih Kategori --"),
                 items: const [
@@ -151,13 +168,8 @@ class _KegiatanTambahPageState extends State<KegiatanTambahPage> {
                 decoration: InputDecoration(
                   labelText: "Tanggal Kegiatan",
                   suffixIcon: const Icon(Icons.calendar_today_outlined),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 15,
-                    vertical: 12,
-                  ),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
                 ),
                 onTap: () async {
                   DateTime? pickedDate = await showDatePicker(
@@ -179,13 +191,8 @@ class _KegiatanTambahPageState extends State<KegiatanTambahPage> {
                 controller: lokasiController,
                 decoration: InputDecoration(
                   labelText: "Lokasi",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 15,
-                    vertical: 12,
-                  ),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
                 ),
               ),
               const SizedBox(height: 16),
@@ -194,13 +201,8 @@ class _KegiatanTambahPageState extends State<KegiatanTambahPage> {
                 controller: penanggungJawabController,
                 decoration: InputDecoration(
                   labelText: "Penanggung Jawab",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 15,
-                    vertical: 12,
-                  ),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
                 ),
               ),
               const SizedBox(height: 16),
@@ -210,15 +212,19 @@ class _KegiatanTambahPageState extends State<KegiatanTambahPage> {
                 maxLines: 3,
                 decoration: InputDecoration(
                   labelText: "Deskripsi",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 15,
-                    vertical: 12,
-                  ),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
                 ),
               ),
+              const SizedBox(height: 16),
+              
+              // --- BAGIAN DOKUMENTASI (FOTO) ---
+              const Text("Dokumentasi / Foto Kegiatan", 
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 8),
+              // Menggunakan Widget yang sama dengan Broadcast
+              // Tambahkan Key agar bisa direfresh saat reset
+              const ImagePickerPreview(key: ValueKey('kegiatanImg'), type: "gambar"), 
               const SizedBox(height: 24),
 
               Row(
@@ -226,7 +232,7 @@ class _KegiatanTambahPageState extends State<KegiatanTambahPage> {
                 children: [
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: _submit,
+                      onPressed: _isLoading ? null : _submit,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF6C63FF),
                         padding: const EdgeInsets.symmetric(vertical: 14),
@@ -234,16 +240,21 @@ class _KegiatanTambahPageState extends State<KegiatanTambahPage> {
                           borderRadius: BorderRadius.circular(8.0),
                         ),
                       ),
-                      child: const Text(
-                        "Submit",
-                        style: TextStyle(fontSize: 16, color: Colors.white),
-                      ),
+                      child: _isLoading 
+                        ? const SizedBox(
+                            width: 20, height: 20, 
+                            child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)
+                          )
+                        : const Text(
+                            "Submit",
+                            style: TextStyle(fontSize: 16, color: Colors.white),
+                          ),
                     ),
                   ),
                   const SizedBox(width: 10),
                   Expanded(
                     child: OutlinedButton(
-                      onPressed: _reset,
+                      onPressed: _isLoading ? null : _reset,
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         shape: RoundedRectangleBorder(
