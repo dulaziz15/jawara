@@ -16,7 +16,12 @@ class BarChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double maxValue = data.map((e) => e.amount).reduce((a, b) => a > b ? a : b);
+    // ============================================
+    // Hitung nilai maksimum (hindari nilai 0)
+    // ============================================
+    final double maxValue = data.isEmpty
+        ? 1
+        : data.map((e) => e.amount).reduce((a, b) => a > b ? a : b);
 
     return Card(
       elevation: 4,
@@ -33,53 +38,59 @@ class BarChart extends StatelessWidget {
                   ),
             ),
             const SizedBox(height: 16),
+
+            // ============================================
+            // CHART
+            // ============================================
             SizedBox(
               height: 200,
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: data.map((item) {
-                  double height = (item.amount / maxValue) * 150;
+                  // ============================================
+                  // Kalkulasi tinggi batang secara aman (no NaN)
+                  // ============================================
+                  double height = (maxValue == 0)
+                      ? 0
+                      : (item.amount / maxValue) * 150;
+
+                  if (height.isNaN || height.isInfinite) {
+                    height = 0;
+                  }
+
                   return Expanded(
-                    child: Stack(
-                      alignment: Alignment.bottomCenter,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        // GARIS LATAR BELAKANG (opsional)
+                        // BATANG
                         Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 4),
-                          color: Colors.grey[100],
+                          height: height,
                           width: 20,
+                          decoration: BoxDecoration(
+                            color: color,
+                            borderRadius: const BorderRadius.vertical(
+                              top: Radius.circular(8),
+                            ),
+                          ),
                         ),
-                        // BATANG GRAFIK
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Container(
-                              height: height,
-                              width: 20,
-                              decoration: BoxDecoration(
-                                color: color,
-                                borderRadius: const BorderRadius.vertical(
-                                  top: Radius.circular(8),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              item.month,
-                              style: const TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              FormatterUtil.formatCompactCurrency(item.amount),
-                              style: const TextStyle(
-                                fontSize: 10,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
+                        const SizedBox(height: 6),
+
+                        // BULAN
+                        Text(
+                          item.month,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+
+                        // NOMINAL
+                        Text(
+                          FormatterUtil.formatCompactCurrency(item.amount),
+                          style: const TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                       ],
                     ),
