@@ -280,6 +280,12 @@ abstract class _$AppRouter extends RootStackRouter {
         child: const ListAktivitasPage(),
       );
     },
+    MachineLearningRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const EtnicPredictionPage(),
+      );
+    },
     LogAktivitasRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
@@ -1032,6 +1038,20 @@ class KegiatanEditRouteArgs {
 }
 
 /// generated route for
+/// [EtnicPredictionPage]
+class EtnicPredictionRoute extends PageRouteInfo<void> {
+  const EtnicPredictionRoute({List<PageRouteInfo>? children})
+      : super(
+          EtnicPredictionRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'EtnicPredictionRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
 /// [KegiatanTambahPage]
 class KegiatanTambahRoute extends PageRouteInfo<void> {
   const KegiatanTambahRoute({List<PageRouteInfo>? children})
@@ -1749,6 +1769,20 @@ class TambahMutasiRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'TambahMutasiRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [MachineLearningPage]
+class MachineLearningRoute extends PageRouteInfo<void> {
+  const MachineLearningRoute({List<PageRouteInfo>? children})
+      : super(
+          MachineLearningRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'MachineLearningRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }
