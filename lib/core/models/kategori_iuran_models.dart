@@ -32,6 +32,17 @@ class KategoriIuranModel {
       'kategori_iuran': kategoriIuran,
     };
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+  
+    return other is KategoriIuranModel &&
+      other.docId == docId; 
+  }
+
+  @override
+  int get hashCode => docId.hashCode;
 }
 
 // ==========================================

@@ -7,51 +7,32 @@ class IuranRepository {
   // ========================================================================
   // PERBAIKAN DI SINI: SESUAIKAN DENGAN NAMA DI FIREBASE ANDA
   // ========================================================================
-  final String _colMasterIuran = 'iuran';            // Collection Data Utama
-  final String _colLabelKategori = 'kategori_iuran'; // Collection Data Dropdown
+  final String _collection = 'iuran'; // Collection Data Utama
+  // ========================================================================
+  // CREATE: MEMBUAT TAGIHAN BARU
+  // ========================================================================
+  // Method ini dipanggil oleh _tagihIuran() di UI
+  Future<void> addTagihanIuran(KategoriIuranModel masterData) async {
+    await _firestore.collection(_collection).add({
+      // 1. Ambil data dari Master (yang dipilih di dropdown)
+      'nama_iuran': masterData.namaIuran,
+      'kategori_iuran': masterData.kategoriIuran,
+      'jumlah': masterData.jumlah,
+      'sumber_master_id': masterData.docId, // (Opsional) Menyimpan ID masternya
+      // 2. Tambahkan Data Tambahan untuk Tagihan
+      'status': 'Belum Lunas', // Default status tagihan
+      'created_at': FieldValue.serverTimestamp(), // Tanggal tagihan dibuat
+    });
+  }
 
-  // 1. BAGIAN DROPDOWN (Label Kategori)
-  Stream<List<String>> getLabelKategori() {
+  // ========================================================================
+  // READ: MELIHAT DAFTAR TAGIHAN (Opsional/Untuk halaman List Tagihan nanti)
+  // ========================================================================
+  Stream<QuerySnapshot> getDaftarTagihan() {
     return _firestore
-        .collection(_colLabelKategori)
-        .orderBy('nama') // Pastikan field di Firebase namanya 'nama'
-        .snapshots()
-        .map((snapshot) {
-      return snapshot.docs.map((doc) => doc['nama'] as String).toList();
-    });
+        .collection(_collection)
+        .orderBy('created_at', descending: true)
+        .snapshots();
   }
 
-  // 2. BAGIAN CRUD DATA IURAN
-  Stream<List<KategoriIuranModel>> getMasterIuran() {
-    return _firestore.collection(_colMasterIuran).snapshots().map((snapshot) {
-      // DEBUGGING: Cek data masuk di Console
-      print("🔥 Mengambil data dari collection: $_colMasterIuran");
-      print("🔥 Jumlah dokumen ditemukan: ${snapshot.docs.length}");
-      
-      return snapshot.docs.map((doc) {
-        final data = doc.data();
-        print("   📄 Data Dokumen ID ${doc.id}: $data"); // Lihat isi data mentah
-        
-        return KategoriIuranModel.fromMap(data, doc.id);
-      }).toList();
-    });
-  }
-
-  // CREATE
-  Future<void> addMasterKategoriIuran(KategoriIuranModel data) async {
-    await _firestore.collection(_colMasterIuran).add(data.toMap());
-  }
-
-  // UPDATE
-  Future<void> updateMasterIuran(KategoriIuranModel data) async {
-    await _firestore
-        .collection(_colMasterIuran)
-        .doc(data.docId)
-        .update(data.toMap());
-  }
-
-  // DELETE
-  Future<void> deleteMasterIuran(String docId) async {
-    await _firestore.collection(_colMasterIuran).doc(docId).delete();
-  }
 }
