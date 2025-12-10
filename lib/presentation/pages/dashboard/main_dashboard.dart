@@ -1,7 +1,11 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:jawara/core/models/dashboard_kegiatan_model.dart';
 import 'package:jawara/core/models/finance_models.dart';
 import 'package:jawara/core/models/population_model.dart';
+import 'package:jawara/core/repositories/dashboard_kegiatan_reposiotry.dart';
+import 'package:jawara/core/repositories/dashboard_penduduk_repository.dart';
 import 'package:jawara/core/services/dashboard_keuangan_service.dart';
 import 'package:jawara/presentation/pages/dashboard/dashboard_kegiatan.dart';
 import 'package:jawara/presentation/pages/dashboard/widgets/stat_card.dart';
@@ -18,10 +22,15 @@ class MainDashboardPage extends StatefulWidget {
 class _MainDashboardPageState extends State<MainDashboardPage> {
   late FinanceData financeData;
   late PopulationData populationData;
+  // late DashboardKegiatanModel kegiatanData;
   // late EventData eventData;
   bool _isLoading = true;
 
   final DashboardKeuanganService _financeService = DashboardKeuanganService();
+  // final DashboardKegiatanRepository _kegiatanRepository =
+  //     DashboardKegiatanRepository();
+  final DashboardKependudukanRepository _pendudukRepository =
+      DashboardKependudukanRepository();
 
   @override
   void initState() {
@@ -33,9 +42,13 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
     final finance = await _financeService
         .getDashboardData(DateTime.now().year)
         .first;
+    final population = await _pendudukRepository.fetchDashboardData().first;
+    // final kegiatan = await _kegiatanRepository.getRecentActivities();
     setState(() {
       financeData = finance;
-      populationData = PopulationData.dummy();
+      populationData = population;
+      // kegiatanData = kegiatan
+      // kegiatanData = kegiatan;
       // eventData = EventData(
       //   totalKegiatan: 15,
       //   kategoriData: [],
