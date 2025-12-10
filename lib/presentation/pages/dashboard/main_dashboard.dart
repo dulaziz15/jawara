@@ -1,7 +1,12 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:jawara/core/models/dashboard_kegiatan_model.dart';
 import 'package:jawara/core/models/finance_models.dart';
 import 'package:jawara/core/models/population_model.dart';
+import 'package:jawara/core/repositories/dashboard_kegiatan_reposiotry.dart';
+import 'package:jawara/core/repositories/dashboard_penduduk_repository.dart';
+import 'package:jawara/core/services/dashboard_keuangan_service.dart';
 import 'package:jawara/presentation/pages/dashboard/dashboard_kegiatan.dart';
 import 'package:jawara/presentation/pages/dashboard/widgets/stat_card.dart';
 import 'package:jawara/presentation/widgets/sidebar/sidebar.dart';
@@ -15,12 +20,17 @@ class MainDashboardPage extends StatefulWidget {
 }
 
 class _MainDashboardPageState extends State<MainDashboardPage> {
-  // Dummy data
   late FinanceData financeData;
   late PopulationData populationData;
-  late EventData eventData;
-
+  // late DashboardKegiatanModel kegiatanData;
+  // late EventData eventData;
   bool _isLoading = true;
+
+  final DashboardKeuanganService _financeService = DashboardKeuanganService();
+  // final DashboardKegiatanRepository _kegiatanRepository =
+  //     DashboardKegiatanRepository();
+  final DashboardKependudukanRepository _pendudukRepository =
+      DashboardKependudukanRepository();
 
   @override
   void initState() {
@@ -29,46 +39,50 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
   }
 
   void _initializeData() async {
-    // Simulate data loading delay
-    await Future.delayed(const Duration(milliseconds: 500));
-
+    final finance = await _financeService
+        .getDashboardData(DateTime.now().year)
+        .first;
+    final population = await _pendudukRepository.fetchDashboardData().first;
+    // final kegiatan = await _kegiatanRepository.getRecentActivities();
     setState(() {
-      financeData = FinanceData.dummy();
-      populationData = PopulationData.dummy();
-      eventData = EventData(
-        totalKegiatan: 15,
-        kategoriData: [],
-        waktuData: [],
-        penanggungJawabData: [],
-        bulananData: [],
-      );
+      financeData = finance;
+      populationData = population;
+      // kegiatanData = kegiatan
+      // kegiatanData = kegiatan;
+      // eventData = EventData(
+      //   totalKegiatan: 15,
+      //   kategoriData: [],
+      //   waktuData: [],
+      //   penanggungJawabData: [],
+      //   bulananData: [],
+      // );
       _isLoading = false;
     });
   }
 
   void _refreshData() async {
-    setState(() {
-      _isLoading = true;
-    });
+    setState(() => _isLoading = true);
 
-    await Future.delayed(const Duration(seconds: 1));
+    final finance = await _financeService
+        .getDashboardData(DateTime.now().year)
+        .first;
 
-    setState(() {
-      financeData = FinanceData.dummy();
-      populationData = PopulationData.dummy();
-      eventData = EventData(
-        totalKegiatan: 15 + DateTime.now().second % 5, // Random change for demo
-        kategoriData: [],
-        waktuData: [],
-        penanggungJawabData: [],
-        bulananData: [],
-      );
-      _isLoading = false;
-    });
+    // setState(() {
+    //   financeData = finance;
+    //   populationData = PopulationData.dummy();
+    //   eventData = EventData(
+    //     totalKegiatan: 15 + DateTime.now().second % 5,
+    //     kategoriData: [],
+    //     waktuData: [],
+    //     penanggungJawabData: [],
+    //     bulananData: [],
+    //   );
+    //   _isLoading = false;
+    // });
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: const Text('Data berhasil diperbarui'),
+        content: const Text('Data keuangan berhasil diperbarui'),
         backgroundColor: Colors.green.shade600,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
@@ -109,28 +123,18 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
                 builder: (context, constraints) {
                   return CustomScrollView(
                     slivers: [
-                      // Header Section
-                      
-                      // Content Section
                       SliverPadding(
                         padding: const EdgeInsets.all(16),
                         sliver: SliverToBoxAdapter(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // Welcome Section
                               _buildWelcomeSection(),
                               const SizedBox(height: 24),
-
-                              // Quick Stats Grid
                               _buildStatsGrid(crossAxisCount, constraints),
                               const SizedBox(height: 24),
-
-                              // Recent Activity Section
                               _buildRecentActivitySection(),
-                              const SizedBox(
-                                height: 24,
-                              ), // Extra bottom padding
+                              const SizedBox(height: 24),
                             ],
                           ),
                         ),
@@ -261,13 +265,13 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
 
               // === Kegiatan === (hanya untuk tablet)
               if (crossAxisCount > 2) ...[
-                StatCard(
-                  title: 'Total Kegiatan',
-                  value: eventData.totalKegiatan.toDouble(),
-                  valueColor: Colors.teal,
-                  icon: Icons.event_available_rounded,
-                  isCurrency: false,
-                ),
+                // StatCard(
+                //   title: 'Total Kegiatan',
+                //   value: eventData.totalKegiatan.toDouble(),
+                //   valueColor: Colors.teal,
+                //   icon: Icons.event_available_rounded,
+                //   isCurrency: false,
+                // ),
                 StatCard(
                   title: 'Kegiatan Aktif',
                   value: 3,

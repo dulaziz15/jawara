@@ -1,272 +1,158 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:jawara/core/models/catergory_models.dart';
+import 'package:async/async.dart';
 import 'package:jawara/core/models/finance_models.dart';
-import 'package:jawara/core/models/kegiatan_models.dart';
-import 'package:jawara/presentation/pages/dashboard/widgets/stat_card.dart';
-import 'package:jawara/presentation/pages/dashboard/widgets/pie_chart.dart';
+import 'package:jawara/core/repositories/dashboard_kegiatan_reposiotry.dart';
 import 'package:jawara/presentation/pages/dashboard/widgets/bar_chart.dart';
+import 'package:jawara/presentation/pages/dashboard/widgets/stat_card.dart';
 import 'package:jawara/presentation/widgets/sidebar/sidebar.dart';
 
 @RoutePage()
 class DashboardKegiatanPage extends StatelessWidget {
   DashboardKegiatanPage({super.key});
 
-  // Generate data dari dummyKegiatan
-  EventData get eventData => _generateEventData();
+  final DashboardKegiatanRepository repo = DashboardKegiatanRepository();
 
-  EventData _generateEventData() {
-    final now = DateTime.now();
-    final currentYear = now.year;
-
-    // Filter kegiatan untuk tahun ini
-    final kegiatanTahunIni = dummyKegiatan
-        .where((kegiatan) => kegiatan.tanggalPelaksanaan.year == currentYear)
-        .toList();
-
-    // Hitung total kegiatan
-    final totalKegiatan = kegiatanTahunIni.length;
-
-    // Kategori data
-    final kategoriMap = <String, int>{};
-    for (var kegiatan in kegiatanTahunIni) {
-      kategoriMap[kegiatan.kategoriKegiatan] =
-          (kategoriMap[kegiatan.kategoriKegiatan] ?? 0) + 1; // Diperbaik
-    }
-
-    final kategoriData = kategoriMap.entries.map((entry) {
-      return CategoryData(
-        category: entry.key,
-        percentage: totalKegiatan > 0 ? (entry.value / totalKegiatan * 100) : 0,
-        color: _getColorForCategory(entry.key),
-      );
-    }).toList();
-
-    // Waktu data
-    final sudahLewat = kegiatanTahunIni
-        .where(
-          (k) => k.tanggalPelaksanaan.isBefore(
-            DateTime(currentYear, now.month, now.day),
-          ),
-        )
-        .length;
-
-    final hariIni = kegiatanTahunIni
-        .where(
-          (k) =>
-              k.tanggalPelaksanaan.year == now.year &&
-              k.tanggalPelaksanaan.month == now.month &&
-              k.tanggalPelaksanaan.day == now.day,
-        )
-        .length;
-
-    final akanDatang = kegiatanTahunIni
-        .where(
-          (k) => k.tanggalPelaksanaan.isAfter(
-            DateTime(currentYear, now.month, now.day),
-          ),
-        )
-        .length;
-
-    final waktuData = [
-      CategoryData(
-        category: 'Sudah Lewat',
-        percentage: totalKegiatan > 0 ? (sudahLewat / totalKegiatan * 100) : 0,
-        color: Colors.orange,
-      ),
-      CategoryData(
-        category: 'Hari Ini',
-        percentage: totalKegiatan > 0 ? (hariIni / totalKegiatan * 100) : 0,
-        color: Colors.green,
-      ),
-      CategoryData(
-        category: 'Akan Datang',
-        percentage: totalKegiatan > 0 ? (akanDatang / totalKegiatan * 100) : 0,
-        color: Colors.blue,
-      ),
-    ];
-
-    // Penanggung Jawab data
-    final penanggungJawabMap = <String, int>{};
-    for (var kegiatan in kegiatanTahunIni) {
-      penanggungJawabMap[kegiatan.penanggungJawabId.toString()] =
-          (penanggungJawabMap[kegiatan.penanggungJawabId.toString()] ?? 0) + 1;
-    }
-
-    final penanggungJawabData = penanggungJawabMap.entries.map((entry) {
-      return CategoryData(
-        category: entry.key,
-        percentage: totalKegiatan > 0 ? (entry.value / totalKegiatan * 100) : 0,
-        color: _getColorForPenanggungJawab(entry.key),
-      );
-    }).toList();
-
-    // Data bulanan
-    final bulananMap = <String, int>{};
-    final bulanLabels = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'Mei',
-      'Jun',
-      'Jul',
-      'Agu',
-      'Sep',
-      'Okt',
-      'Nov',
-      'Des',
-    ];
-
-    for (var label in bulanLabels) {
-      bulananMap[label] = 0;
-    }
-
-    for (var kegiatan in kegiatanTahunIni) {
-      final bulanIndex = kegiatan.tanggalPelaksanaan.month - 1;
-      if (bulanIndex >= 0 && bulanIndex < bulanLabels.length) {
-        final bulanLabel = bulanLabels[bulanIndex];
-        bulananMap[bulanLabel] = (bulananMap[bulanLabel] ?? 0) + 1;
-      }
-    }
-
-    final bulananData = bulananMap.entries.map((entry) {
-      return MonthlyData(month: entry.key, amount: entry.value.toDouble());
-    }).toList();
-
-    return EventData(
-      totalKegiatan: totalKegiatan,
-      kategoriData: kategoriData,
-      waktuData: waktuData,
-      penanggungJawabData: penanggungJawabData,
-      bulananData: bulananData,
-    );
-  }
-
-  Color _getColorForCategory(String category) {
-    final colors = {
-      'Pelatihan': Colors.blue,
-      'Seminar': Colors.green,
-      'Kompetisi': Colors.orange,
-      'Webinar': Colors.purple,
-    };
-    return colors[category] ?? Colors.grey;
-  }
-
-  Color _getColorForPenanggungJawab(String penanggungJawab) {
-    final colors = [
-      Colors.blue,
-      Colors.green,
-      Colors.orange,
-      Colors.purple,
-      Colors.red,
-      Colors.teal,
-      Colors.indigo,
-      Colors.pink,
-    ];
-    final index = penanggungJawab.hashCode % colors.length;
-    return colors[index];
-  }
+  final List<String> bulanLabels = const [
+    'Jan','Feb','Mar','Apr','Mei','Jun',
+    'Jul','Agu','Sep','Okt','Nov','Des',
+  ];
 
   @override
   Widget build(BuildContext context) {
+    final currentYear = DateTime.now().year;
+
     return Scaffold(
-      drawer: Sidebar(),
+      drawer: const Sidebar(),
       appBar: AppBar(
         title: const Text(
           'Dashboard Kegiatan',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-            color: Colors.white,
-          ),
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
         ),
         backgroundColor: const Color(0xFF6C63FF),
         foregroundColor: Colors.white,
-        centerTitle: false,
-        elevation: 0,
       ),
       backgroundColor: Colors.grey[50],
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // === Total Kegiatan Card ===
-            StatCard(
-              title: 'Total Kegiatan',
-              value: eventData.totalKegiatan.toDouble(),
-              valueColor: Colors.blue,
-              icon: Icons.event,
-              isCurrency: false,
+            
+            /// TOTAL KEGIATAN
+            StreamBuilder<int>(
+              stream: repo.getTotalActivities(),
+              builder: (_, snap) {
+                final total = snap.data ?? 0;
+                return StatCard(
+                  title: 'Total Kegiatan',
+                  value: total.toDouble(),
+                  valueColor: Colors.blue,
+                  icon: Icons.event,
+                  isCurrency: false,
+                );
+              },
             ),
 
             const SizedBox(height: 24),
 
-            // === Kegiatan per Kategori ===
-            if (eventData.kategoriData.isNotEmpty)
-              PieChart(
-                title: 'Kegiatan per Kategori',
-                data: eventData.kategoriData,
-              ),
+            /// WAKTU KEGIATAN
+            StreamBuilder<List<int>>(
+              stream: StreamZip([
+                repo.getActivityLewat(),
+                repo.getActivityHariIni(),
+                repo.getActivityAkanDatang(),
+              ]),
+              builder: (_, snap) {
+                if (!snap.hasData) return const SizedBox();
 
-            if (eventData.kategoriData.isNotEmpty) const SizedBox(height: 24),
-
-            // === Kegiatan berdasarkan Waktu ===
-            _buildWaktuSection(context),
-
-            const SizedBox(height: 24),
-
-            // === Penanggung Jawab Terbanyak ===
-            if (eventData.penanggungJawabData.isNotEmpty)
-              PieChart(
-                title: 'Penanggung Jawab Terbanyak',
-                data: eventData.penanggungJawabData,
-              ),
-
-            if (eventData.penanggungJawabData.isNotEmpty)
-              const SizedBox(height: 24),
-
-            // === Kegiatan per Bulan ===
-            BarChart(
-              title: 'Kegiatan per Bulan (Tahun Ini)',
-              data: eventData.bulananData,
-              color: Colors.blue,
+                final data = snap.data!;
+                return _buildWaktuSection(
+                  context,
+                  data[0], data[1], data[2],
+                );
+              },
             ),
 
             const SizedBox(height: 24),
+
+            /// CHART PER BULAN
+            _buildBarChartPerBulan(currentYear),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildWaktuSection(BuildContext context) {
-    final waktuData = eventData.waktuData;
+  Widget _buildBarChartPerBulan(int year) {
+    final streams = List.generate(
+      12,
+      (i) => repo.getActivitiesPerMonth(i + 1, year),
+    );
 
+    return StreamBuilder<List<int>>(
+      stream: StreamZip(streams),
+      builder: (_, snap) {
+        if (!snap.hasData) return const SizedBox();
+
+        final monthly = snap.data!;
+        final data = List.generate(12, (i) {
+          return MonthlyData(
+            month: bulanLabels[i],
+            amount: monthly[i].toDouble(),
+          );
+        });
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Agenda Per Bulan ($year)",
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 12),
+            BarChart(
+              title: '',
+              data: data,
+              color: Colors.blue,
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildWaktuSection(
+    BuildContext context,
+    int lewat,
+    int hariIni,
+    int akanDatang,
+  ) {
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Kegiatan berdasarkan Waktu',
-              style: Theme.of(
-                context,
-              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+              'Kegiatan Berdasarkan Waktu',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
             const SizedBox(height: 16),
 
-            // Grid untuk cards waktu
             Row(
               children: [
                 Expanded(
                   child: _buildWaktuCard(
                     'Sudah Lewat',
-                    _getCountFromPercentage(waktuData, 'Sudah Lewat'),
+                    lewat,
                     Colors.orange,
                     Icons.event_busy,
                   ),
@@ -275,7 +161,7 @@ class DashboardKegiatanPage extends StatelessWidget {
                 Expanded(
                   child: _buildWaktuCard(
                     'Hari Ini',
-                    _getCountFromPercentage(waktuData, 'Hari Ini'),
+                    hariIni,
                     Colors.green,
                     Icons.today,
                   ),
@@ -284,7 +170,7 @@ class DashboardKegiatanPage extends StatelessWidget {
                 Expanded(
                   child: _buildWaktuCard(
                     'Akan Datang',
-                    _getCountFromPercentage(waktuData, 'Akan Datang'),
+                    akanDatang,
                     Colors.blue,
                     Icons.event_available,
                   ),
@@ -297,22 +183,18 @@ class DashboardKegiatanPage extends StatelessWidget {
     );
   }
 
-  int _getCountFromPercentage(List<CategoryData> data, String category) {
-    final item = data.firstWhere(
-      (item) => item.category == category,
-      orElse: () =>
-          CategoryData(category: category, percentage: 0, color: Colors.grey),
-    );
-    return (eventData.totalKegiatan * item.percentage / 100).round();
-  }
-
-  Widget _buildWaktuCard(String title, int value, Color color, IconData icon) {
+  Widget _buildWaktuCard(
+    String title,
+    int value,
+    Color color,
+    IconData icon,
+  ) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withOpacity(.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withOpacity(.3)),
       ),
       child: Column(
         children: [
@@ -340,21 +222,4 @@ class DashboardKegiatanPage extends StatelessWidget {
       ),
     );
   }
-}
-
-// Model untuk data event
-class EventData {
-  final int totalKegiatan;
-  final List<CategoryData> kategoriData;
-  final List<CategoryData> waktuData;
-  final List<CategoryData> penanggungJawabData;
-  final List<MonthlyData> bulananData;
-
-  EventData({
-    required this.totalKegiatan,
-    required this.kategoriData,
-    required this.waktuData,
-    required this.penanggungJawabData,
-    required this.bulananData,
-  });
 }

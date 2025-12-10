@@ -488,6 +488,13 @@ abstract class _$AppRouter extends RootStackRouter {
         child: const WargaTambahPage(),
       );
     },
+
+    MachineLearningRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const EtnicPredictionPage(),
+      );
+    },
   };
 }
 
@@ -511,6 +518,22 @@ class AspirasiEditRoute extends PageRouteInfo<AspirasiEditRouteArgs> {
 
   static const PageInfo<AspirasiEditRouteArgs> page =
       PageInfo<AspirasiEditRouteArgs>(name);
+}
+
+
+
+    /// generated route for
+/// [MachineLearningPage]
+class MachineLearningRoute extends PageRouteInfo<void> {
+  const MachineLearningRoute({List<PageRouteInfo>? children})
+      : super(
+          MachineLearningRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'MachineLearningRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
 }
 
 class AspirasiEditRouteArgs {
@@ -683,6 +706,18 @@ class ChannelDetailRoute extends PageRouteInfo<ChannelDetailRouteArgs> {
 
   static const PageInfo<ChannelDetailRouteArgs> page =
       PageInfo<ChannelDetailRouteArgs>(name);
+}
+
+class EtnicPredictionRoute extends PageRouteInfo<void> {
+  const EtnicPredictionRoute({List<PageRouteInfo>? children})
+      : super(
+          EtnicPredictionRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'EtnicPredictionRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
 }
 
 class ChannelDetailRouteArgs {

@@ -11,6 +11,7 @@ import 'package:jawara/presentation/pages/dashboard/dashboard_kependudukan.dart'
 import 'package:jawara/presentation/pages/dashboard/dashboard_keuangan.dart';
 import 'package:jawara/presentation/pages/dashboard/dashboard_kegiatan.dart';
 import 'package:jawara/presentation/pages/dashboard/main_dashboard.dart';
+import 'package:jawara/presentation/pages/ml/etnic_prediction_page.dart';
 import 'package:jawara/presentation/pages/pesanWarga/aspirasi_edit.dart';
 
 // Report
@@ -86,6 +87,11 @@ import 'package:jawara/presentation/pages/channel/channel_daftar.dart';
 import 'package:jawara/presentation/pages/channel/channel_tambah.dart';
 import 'package:jawara/presentation/pages/channel/channel_detail.dart';
 import 'package:jawara/presentation/pages/channel/channel_edit.dart';
+
+// machine learning
+import 'package:jawara/presentation/pages/ml/mechine_learning.dart';
+import 'package:jawara/presentation/pages/ml/etnic_prediction_page.dart';
+
 
 part 'app_router.gr.dart';
 
@@ -250,6 +256,14 @@ class AppRouter extends _$AppRouter {
         AutoRoute(page: ChannelEditRoute.page, path: 'edit/:id'),
         AutoRoute(page: ChannelDaftarRoute.page, path: 'daftar'),
       ],
+    ),
+
+    AutoRoute(
+      page: MachineLearningRoute.page,
+      path: '/ml',
+      children: [
+        AutoRoute(page: EtnicPredictionRoute.page, path: 'etnic')
+        ],
     ),
   ];
 }

@@ -312,6 +312,20 @@ class _SidebarState extends State<Sidebar> {
             ],
           ),
 
+           // ML
+          ExpansionTile(
+            title: const Text("Machine Learning"),
+            leading: const Icon(Icons.swap_vert_outlined),
+            initiallyExpanded: channelExpanded,
+            onExpansionChanged: (v) => setState(() => channelExpanded = v),
+            children: [
+              ListTile(
+                title: const Text("Etnic Prediction"),
+                onTap: () => context.router.pushNamed('/ml/etnic'),
+              ),
+            ],
+          ),
+
           const Divider(),
           ListTile(
             leading: const Icon(Icons.logout),
