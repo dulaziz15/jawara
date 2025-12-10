@@ -11,24 +11,46 @@ class PenggunaRepository {
   // USER (Data Profil & Otentikasi)
   // ==========================================================
 
-  // C: Create User Profile
+// ==========================================================
+  // C: Create User Profile (Simpan pakai NIK sebagai ID)
+  // ==========================================================
   Future<void> createUserProfile(UserModel user) async {
-    // Di sini kita pastikan Document ID yang dipakai adalah properti docId dari user
-    // (yang nanti akan kita isi dengan NIK di halaman Tambah)
+    // Sesuai permintaan: Document ID menggunakan NIK
     await _userCollection.doc(user.nik).set(user.toMap());
   }
 
-  // R: Ambil detail pengguna yang sedang login berdasarkan UID Auth
+  // ==========================================================
+  // R: Ambil detail pengguna yang sedang login
+  // ==========================================================
   Future<UserModel?> getLoggedInUserDetail() async {
-    final uid = FirebaseAuth.instance.currentUser?.uid;
-    if (uid == null) return null;
-    final docSnapshot = await _userCollection.doc(uid).get();
-    if (docSnapshot.exists) {
-      final data = docSnapshot.data() as Map<String, dynamic>;
-      // Catatan: Anda mungkin perlu mendapatkan UID dari docSnapshot.id jika diperlukan
-      return UserModel.fromMap(data);
+    final userAuth = FirebaseAuth.instance.currentUser;
+    
+    // Jika belum login, return null
+    if (userAuth == null || userAuth.email == null) return null;
+    
+    try {
+      // PERBAIKAN PENTING:
+      // Karena Doc ID adalah NIK (kita tidak tahu NIK saat login),
+      // kita cari user berdasarkan EMAIL yang sama dengan akun login.
+      final querySnapshot = await _userCollection
+          .where('email', isEqualTo: userAuth.email)
+          .limit(1)
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        final doc = querySnapshot.docs.first;
+        final data = doc.data() as Map<String, dynamic>;
+        
+        // Pastikan docId diisi dari ID dokumen (yaitu NIK)
+        data['docId'] = doc.id; 
+        
+        return UserModel.fromMap(data);
+      }
+      return null;
+    } catch (e) {
+      // Handle error jika perlu
+      return null;
     }
-    return null;
   }
 
   // R: Stream semua Users (untuk halaman Admin)

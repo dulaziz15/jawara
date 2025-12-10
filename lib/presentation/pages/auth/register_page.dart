@@ -1,9 +1,9 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
-import 'package:jawara/core/repositories/auth_repository.dart';
-import 'package:jawara/core/models/auth_models.dart';
-import 'package:jawara/presentation/pages/auth/component/image_picker.dart'; // Pastikan path ini benar/uncomment jika ada
+// Import Auth Repository
+import '../../../core/repositories/auth_repository.dart';
+import 'component/image_picker.dart'; // Pastikan path ini benar jika file ada
 
 @RoutePage()
 class RegisterPage extends StatefulWidget {
@@ -24,19 +24,40 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _addressController = TextEditingController();
 
   // --- State Variables ---
+  String? _selectedGender;
+  String? _selectedHouse;
+  String? _selectedOwnership;
+  
   bool _isLoading = false;
-  final AuthRepository _authRepository = AuthRepository(); // Panggil Repository
+  final AuthRepository _authRepository = AuthRepository();
 
-  // --- Fungsi Register Cepat ---
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _nikController.dispose();
+    _emailController.dispose();
+    _phoneController.dispose();
+    _passwordController.dispose();
+    _confirmPassController.dispose();
+    _addressController.dispose();
+    super.dispose();
+  }
+
+  // --- Fungsi Handle Register ---
   void _handleRegister() async {
-    // 1. Validasi Input Dasar
-    if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
+    // 1. Validasi Input Wajib
+    if (_nameController.text.isEmpty ||
+        _emailController.text.isEmpty ||
+        _passwordController.text.isEmpty ||
+        _nikController.text.isEmpty ||
+        _phoneController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Email dan Password wajib diisi!")),
+        const SnackBar(content: Text("Mohon lengkapi semua data wajib")),
       );
       return;
     }
 
+    // 2. Validasi Password
     if (_passwordController.text != _confirmPassController.text) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Password konfirmasi tidak cocok")),
@@ -44,15 +65,18 @@ class _RegisterPageState extends State<RegisterPage> {
       return;
     }
 
-    setState(() {
-      _isLoading = true;
-    });
+    setState(() => _isLoading = true);
 
     try {
-      // 2. Panggil Repository (Hanya kirim Email & Pass)
+      // 3. Panggil Repository
       await _authRepository.register(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
+        nama: _nameController.text.trim(),
+        nik: _nikController.text.trim(),
+        noHp: _phoneController.text.trim(),
+        jenisKelamin: _selectedGender ?? "Laki-laki",
+        // Alamat & Rumah diabaikan (tidak dikirim) sesuai permintaan
       );
 
       if (mounted) {
@@ -75,11 +99,7 @@ class _RegisterPageState extends State<RegisterPage> {
         );
       }
     } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -93,7 +113,7 @@ class _RegisterPageState extends State<RegisterPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const SizedBox(height: 50),
-              // Header
+              // --- Header ---
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -114,6 +134,8 @@ class _RegisterPageState extends State<RegisterPage> {
                 ],
               ),
               const SizedBox(height: 5),
+
+              // --- Card Form ---
               Container(
                 margin: const EdgeInsets.all(15),
                 padding: const EdgeInsets.all(15),
@@ -135,71 +157,86 @@ class _RegisterPageState extends State<RegisterPage> {
                     const Center(
                       child: Text(
                         "Daftar Akun",
-                        style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black),
+                        style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                       ),
                     ),
                     const SizedBox(height: 10),
-                    const Center(
-                      child: Text(
-                        "Buat akun baru untuk memulai",
-                        style: TextStyle(color: Colors.grey, fontSize: 14),
-                      ),
-                    ),
+                    const Center(child: Text("Buat akun baru untuk memulai", style: TextStyle(color: Colors.grey))),
                     const SizedBox(height: 20),
-                    
-                    // --- FORM FIELDS ---
-                    // Field lain tetap ada di UI agar tidak merusak tampilan,
-                    // tapi controller-nya tidak dipakai di logic register.
-                    
-                    const Text("Nama Lengkap"),
-                    const SizedBox(height: 5),
+
+                    // --- Form Inputs ---
+                    _buildLabel("Nama Lengkap"),
                     _buildTextField(_nameController, "Masukan Nama Lengkap"),
-                    
-                    const SizedBox(height: 15),
-                    const Text("NIK"),
-                    const SizedBox(height: 5),
-                    _buildTextField(_nikController, "Masukan NIK sesuai KTP"),
 
-                    const SizedBox(height: 15),
-                    const Text("Email"),
-                    const SizedBox(height: 5),
-                    _buildTextField(_emailController, "Masukan Email aktif"),
+                    _buildLabel("NIK"),
+                    _buildTextField(_nikController, "Masukan NIK sesuai KTP", type: TextInputType.number),
 
-                    const SizedBox(height: 15),
-                    const Text("No Telepon"),
-                    const SizedBox(height: 5),
-                    _buildTextField(_phoneController, "08XXXXXXXX"),
+                    _buildLabel("Email"),
+                    _buildTextField(_emailController, "Masukan Email aktif", type: TextInputType.emailAddress),
 
-                    const SizedBox(height: 15),
-                    const Text("Password"),
-                    const SizedBox(height: 5),
-                    _buildTextField(_passwordController, "Masukan Password", isPassword: true),
+                    _buildLabel("No Telepon"),
+                    _buildTextField(_phoneController, "08XXXXXXXX", type: TextInputType.phone),
 
-                    const SizedBox(height: 15),
-                    const Text("Konfirmasi Password"),
-                    const SizedBox(height: 5),
-                    _buildTextField(_confirmPassController, "Masukan Ulang Password", isPassword: true),
+                    _buildLabel("Password"),
+                    _buildTextField(_passwordController, "Masukan Password", isObscure: true),
 
-                    // ... Sisa UI (Dropdown dll) biarkan statis saja untuk mempercepat ...
-                     const SizedBox(height: 15),
-                    const Text("Jenis Kelamin"),
-                    const SizedBox(height: 5),
+                    _buildLabel("Konfirmasi Password"),
+                    _buildTextField(_confirmPassController, "Masukan Ulang Password", isObscure: true),
+
+                    _buildLabel("Jenis Kelamin"),
                     DropdownButtonFormField<String>(
                       isExpanded: true,
-                      decoration: _inputDecoration(""),
+                      value: _selectedGender,
+                      decoration: _inputDeco(),
                       hint: const Text("-- Pilih Jenis Kelamin --"),
                       items: const [
                         DropdownMenuItem(value: "Laki-laki", child: Text("Laki-Laki")),
                         DropdownMenuItem(value: "Perempuan", child: Text("Perempuan")),
                       ],
-                      onChanged: (val) {},
+                      onChanged: (val) => setState(() => _selectedGender = val),
                     ),
-                    // ... (lanjutan field lain sesuai kode awalmu) ...
-                    
+
+                    const SizedBox(height: 15),
+                    _buildLabel("Pilih Rumah Yang Sudah Ada"),
+                    DropdownButtonFormField<String>(
+                      isExpanded: true,
+                      value: _selectedHouse,
+                      decoration: _inputDeco(),
+                      hint: const Text("-- Pilih Rumah --"),
+                      items: const [
+                        DropdownMenuItem(value: "No 100A", child: Text("Jl. yang sama kamu")),
+                        DropdownMenuItem(value: "No 18", child: Text("Jl. besok bisa?")),
+                        DropdownMenuItem(value: "No 45B", child: Text("Jl. jalan yang dilewatin sama kamu")),
+                        DropdownMenuItem(value: "No 1", child: Text("Jl. mekar sari barat")),
+                      ],
+                      onChanged: (val) => setState(() => _selectedHouse = val),
+                    ),
+                    const SizedBox(height: 2),
+                    const Text("Kalau tidak ada di daftar, silakan isi alamat rumah di bawah ini", style: TextStyle(fontSize: 12, color: Colors.grey)),
+
+                    const SizedBox(height: 15),
+                    _buildLabel("Alamat Rumah (Jika Tidak ada di List)"),
+                    _buildTextField(_addressController, "Masukan Alamat Rumah"),
+
+                    _buildLabel("Status Kepemilikan rumah"),
+                    DropdownButtonFormField<String>(
+                      isExpanded: true,
+                      value: _selectedOwnership,
+                      decoration: _inputDeco(),
+                      hint: const Text("-- Pilih Status Kepemilikan --"),
+                      items: const [
+                        DropdownMenuItem(value: "Milik Sendiri", child: Text("Milik Sendiri")),
+                        DropdownMenuItem(value: "Sewa", child: Text("Sewa")),
+                        DropdownMenuItem(value: "Kontrak", child: Text("Kontrak")),
+                      ],
+                      onChanged: (val) => setState(() => _selectedOwnership = val),
+                    ),
+
+                    const SizedBox(height: 15),
+                    // ImagePickerPreview(), // Uncomment jika ada
                     const SizedBox(height: 20),
+
+                    // --- Tombol Daftar ---
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
@@ -207,20 +244,11 @@ class _RegisterPageState extends State<RegisterPage> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF6C63FF),
                           padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                         ),
                         child: _isLoading
-                            ? const SizedBox(
-                                height: 20,
-                                width: 20,
-                                child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
-                              )
-                            : const Text(
-                                "Daftar",
-                                style: TextStyle(fontSize: 16, color: Colors.white),
-                              ),
+                            ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                            : const Text("Daftar", style: TextStyle(fontSize: 16, color: Colors.white)),
                       ),
                     ),
                     const SizedBox(height: 10),
@@ -232,14 +260,8 @@ class _RegisterPageState extends State<RegisterPage> {
                           children: [
                             TextSpan(
                               text: "Masuk",
-                              style: const TextStyle(
-                                color: Color(0xFF6C63FF),
-                                fontWeight: FontWeight.bold,
-                              ),
-                              recognizer: TapGestureRecognizer()
-                                ..onTap = () {
-                                  context.router.replaceNamed('/login');
-                                },
+                              style: const TextStyle(color: Color(0xFF6C63FF), fontWeight: FontWeight.bold),
+                              recognizer: TapGestureRecognizer()..onTap = () => context.router.replaceNamed('/login'),
                             ),
                           ],
                         ),
@@ -256,31 +278,33 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-  // Helper Widget
-  Widget _buildTextField(TextEditingController controller, String hint, {bool isPassword = false}) {
-    return TextField(
-      controller: controller,
-      obscureText: isPassword,
-      decoration: _inputDecoration(hint),
+  // --- Helper Widgets ---
+  Widget _buildLabel(String text) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 5, top: 15),
+      child: Text(text),
     );
   }
 
-  InputDecoration _inputDecoration(String hint) {
+  Widget _buildTextField(TextEditingController controller, String hint, {bool isObscure = false, TextInputType type = TextInputType.text}) {
+    return TextField(
+      controller: controller,
+      obscureText: isObscure,
+      keyboardType: type,
+      decoration: _inputDeco(hint: hint),
+    );
+  }
+
+  InputDecoration _inputDeco({String? hint}) {
     return InputDecoration(
       hintText: hint,
       enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.all(Radius.circular(8)),
-        borderSide: BorderSide(
-          color: const Color.fromARGB(255, 216, 216, 216),
-          width: 0,
-        ),
+        borderRadius: BorderRadius.circular(8),
+        borderSide: const BorderSide(color: Color.fromARGB(255, 216, 216, 216), width: 0),
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.all(Radius.circular(8)),
-        borderSide: BorderSide(
-          color: const Color(0xFF6C63FF),
-          width: 1.5,
-        ),
+        borderRadius: BorderRadius.circular(8),
+        borderSide: const BorderSide(color: Color(0xFF6C63FF), width: 1.5),
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
     );
