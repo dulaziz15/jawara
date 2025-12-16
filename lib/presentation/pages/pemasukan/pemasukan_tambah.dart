@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:intl/intl.dart';
+import 'dart:io';
 import 'package:jawara/presentation/pages/pemasukan/widgets/image_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:jawara/core/models/pemasukan_model.dart';
@@ -24,6 +25,7 @@ class _PemasukanLainTambahPageState extends State<PemasukanLainTambahPage> {
   bool _isSaving = false;
   final PemasukanRepository _repo = PemasukanRepository();
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  File? _pickedImage;
 
   @override
   void dispose() {
@@ -60,12 +62,27 @@ class _PemasukanLainTambahPageState extends State<PemasukanLainTambahPage> {
 
       String currentUserId = _auth.currentUser?.displayName ?? 'unknown_user';
 
+      // Jika ada gambar dipilih, upload terlebih dahulu dan gunakan URL sebagai bukti
+      String buktiUrl = '';
+      if (_pickedImage != null) {
+        try {
+          buktiUrl = await _repo.uploadBukti(_pickedImage!);
+        } catch (e) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Gagal mengunggah bukti: $e')),
+            );
+          }
+          return;
+        }
+      }
+
       final pemasukan = PemasukanModel(
         docId: '',
         namaPemasukan: namaController.text,
         kategoriPemasukan: selectedKategori!,
         verifikatorId: currentUserId,
-        buktiPemasukan: '',
+        buktiPemasukan: buktiUrl,
         jumlahPemasukan: nominal,
         tanggalPemasukan: _selectedDate!,
         tanggalTerverifikasi: DateTime.now(),
@@ -290,7 +307,13 @@ class _PemasukanLainTambahPageState extends State<PemasukanLainTambahPage> {
                     const SizedBox(height: 15),
 
                     // Bukti Pemasukan
-                    ImagePickerPreview(),
+                    ImagePickerPreview(
+                      onChanged: (file) {
+                        setState(() {
+                          _pickedImage = file;
+                        });
+                      },
+                    ),
 
                     const SizedBox(height: 20),
 

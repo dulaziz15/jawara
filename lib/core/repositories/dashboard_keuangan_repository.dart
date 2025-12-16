@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:async/async.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 class DashboardKeuanganRepository {
@@ -91,5 +92,25 @@ class DashboardKeuanganRepository {
     return _pemasukanCollection.snapshots().map((snapshot) {
       return snapshot.docs.length;
     });
+  }
+
+  // JUMLAH TRANSAKSI DI BULAN TERPILIH (pemasukan + pengeluaran)
+  Stream<int> getJumlahTransaksiPerBulan(int bulan, int tahun) {
+    final bulanStr = bulan.toString().padLeft(2, '0');
+    final prefix = "$tahun-$bulanStr";
+
+    final pemasukan = _pemasukanCollection
+        .where('tanggal_pemasukan', isGreaterThanOrEqualTo: "$prefix-01")
+        .where('tanggal_pemasukan', isLessThan: "$prefix-32")
+        .snapshots()
+        .map((s) => s.docs.length);
+
+    final pengeluaran = _pengeluaranCollection
+        .where('tanggal_pengeluaran', isGreaterThanOrEqualTo: "$prefix-01")
+        .where('tanggal_pengeluaran', isLessThan: "$prefix-32")
+        .snapshots()
+        .map((s) => s.docs.length);
+
+    return StreamZip([pemasukan, pengeluaran]).map((values) => (values[0] as int) + (values[1] as int));
   }
 }

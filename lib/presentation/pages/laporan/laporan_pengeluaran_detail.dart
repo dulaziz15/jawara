@@ -4,6 +4,8 @@ import 'package:jawara/core/models/pengeluaran_model.dart';
 // Sesuaikan import ini dengan lokasi repository Anda
 import 'package:jawara/core/repositories/pengeluaran_repository.dart'; 
 import 'package:jawara/core/repositories/pengguna_repository.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:jawara/core/utils/formatter_util.dart';
 
 @RoutePage()
@@ -99,25 +101,61 @@ class _LaporanPengeluaranDetailPageState
                       fontStyle: FontStyle.italic,
                       color: Colors.grey),
                 )
-              : Row(
-                  children: [
-                    Icon(icon, color: const Color(0xFF6C63FF), size: 20),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        filename,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.black87,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+              : Builder(builder: (context) {
+                  if (filename.startsWith('http') &&
+                      (filename.toLowerCase().endsWith('.jpg') || filename.toLowerCase().endsWith('.png') || filename.toLowerCase().endsWith('.jpeg'))) {
+                    return ClipRRect(borderRadius: BorderRadius.circular(8), child: Image.network(filename, height: 220, width: double.infinity, fit: BoxFit.cover, errorBuilder: (_, __, ___) => const Text('Gagal memuat gambar', style: TextStyle(color: Colors.red))));
+                  }
+
+                  if (filename.startsWith('gs://') || filename.startsWith('/')) {
+                    return FutureBuilder<String?>(
+                      future: _resolveStorageUrl(filename),
+                      builder: (context, snap) {
+                        if (snap.connectionState == ConnectionState.waiting) return const SizedBox(height: 40, child: Center(child: CircularProgressIndicator()));
+                        final url = snap.data;
+                        if (url == null || url.isEmpty) return const Text('Lampiran tidak tersedia');
+                        if (url.toLowerCase().endsWith('.jpg') || url.toLowerCase().endsWith('.png') || url.toLowerCase().endsWith('.jpeg')) {
+                          return ClipRRect(borderRadius: BorderRadius.circular(8), child: Image.network(url, height: 220, width: double.infinity, fit: BoxFit.cover));
+                        }
+                        return InkWell(onTap: () => _openFile(url), child: Row(children: [Icon(icon, color: const Color(0xFF6C63FF), size: 20), const SizedBox(width: 8), Expanded(child: Text(url, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.black87), overflow: TextOverflow.ellipsis,)),]));
+                      },
+                    );
+                  }
+
+                  if (filename.startsWith('http')) {
+                    return InkWell(onTap: () => _openFile(filename), child: Row(children: [Icon(icon, color: const Color(0xFF6C63FF), size: 20), const SizedBox(width: 8), Expanded(child: Text(filename, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.black87), overflow: TextOverflow.ellipsis,)),]));
+                  }
+
+                  return Row(children: [Icon(icon, color: const Color(0xFF6C63FF), size: 20), const SizedBox(width: 8), Expanded(child: Text(filename, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.black87),)),]);
+                }),
         ],
       ),
     );
+  }
+
+  Future<void> _openFile(String url) async {
+    if (url.isEmpty) return;
+    try {
+      final uri = Uri.parse(url);
+      if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) throw 'Could not launch';
+    } catch (e) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Gagal membuka file: $e')));
+    }
+  }
+
+  Future<String?> _resolveStorageUrl(String refOrUrl) async {
+    try {
+      final FirebaseStorage fs = FirebaseStorage.instance;
+      if (refOrUrl.startsWith('http')) return refOrUrl;
+      if (refOrUrl.startsWith('gs://')) {
+        final ref = fs.refFromURL(refOrUrl);
+        return await ref.getDownloadURL();
+      }
+      final ref = fs.ref().child(refOrUrl.replaceFirst(RegExp(r'^/'), ''));
+      return await ref.getDownloadURL();
+    } catch (e) {
+      return null;
+    }
   }
 
   @override

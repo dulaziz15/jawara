@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ImagePickerPreview extends StatefulWidget {
-  const ImagePickerPreview({super.key});
+  // Optional callback to notify parent when an image is picked (File or null)
+  final ValueChanged<File?>? onChanged;
+
+  const ImagePickerPreview({super.key, this.onChanged});
 
   @override
   State<ImagePickerPreview> createState() => _ImagePickerPreviewState();
@@ -19,6 +22,8 @@ class _ImagePickerPreviewState extends State<ImagePickerPreview> {
       setState(() {
         _image = File(picked.path);
       });
+      // notify parent
+      widget.onChanged?.call(_image);
     }
   }
 
@@ -28,7 +33,7 @@ class _ImagePickerPreviewState extends State<ImagePickerPreview> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          'Foto Bukti Pengeluaran',
+          'Foto Bukti',
           style: TextStyle(fontWeight: FontWeight.w500),
         ),
         const SizedBox(height: 8),
@@ -58,7 +63,7 @@ class _ImagePickerPreviewState extends State<ImagePickerPreview> {
             onPressed: _pickImage,
             icon: const Icon(Icons.image, color: Color(0xFF6C63FF)),
             label: const Text(
-              "Pilih Foto Bukti Pengeluaran",
+              "Pilih Foto Bukti ",
               style: TextStyle(color: Color(0xFF6C63FF)),
             ),
             style: OutlinedButton.styleFrom(

@@ -10,10 +10,16 @@ import 'package:jawara/presentation/widgets/sidebar/sidebar.dart';
 import 'package:async/async.dart';
 
 @RoutePage()
-class DashboardKegiatanPage extends StatelessWidget {
+class DashboardKegiatanPage extends StatefulWidget {
   DashboardKegiatanPage({super.key});
 
+  @override
+  State<DashboardKegiatanPage> createState() => _DashboardKegiatanPageState();
+}
+
+class _DashboardKegiatanPageState extends State<DashboardKegiatanPage> {
   final DashboardKegiatanRepository repo = DashboardKegiatanRepository();
+  int selectedMonth = 0; // 0 = semua
 
   final List<String> bulanLabels = [
     'Jan',
@@ -56,13 +62,26 @@ class DashboardKegiatanPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // month filter
+            Row(children: [
+              Expanded(child: DropdownButtonFormField<int>(
+                value: selectedMonth,
+                items: List.generate(13, (i) => DropdownMenuItem(value: i, child: Text(i == 0 ? 'Semua Bulan' : bulanLabels[i - 1]))),
+                onChanged: (v) => setState(() => selectedMonth = v ?? 0),
+                decoration: const InputDecoration(labelText: 'Filter Bulan'),
+              )),
+            ]),
+
+            const SizedBox(height: 16),
+
             // === Total Kegiatan Card ===
             StreamBuilder<int>(
-              stream: repo.getTotalActivities(),
+              stream: selectedMonth == 0 ? repo.getTotalActivities() : repo.getActivitiesPerMonth(selectedMonth, currentYear),
               builder: (ctx, snap) {
                 final total = snap.data ?? 0;
+                final title = selectedMonth == 0 ? 'Total Kegiatan' : 'Kegiatan (${bulanLabels[selectedMonth - 1]})';
                 return StatCard(
-                  title: 'Total Kegiatan',
+                  title: title,
                   value: total.toDouble(),
                   valueColor: Colors.blue,
                   icon: Icons.event,

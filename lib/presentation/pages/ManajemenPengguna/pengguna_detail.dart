@@ -127,11 +127,19 @@ class _PenggunaDetailPageState extends State<PenggunaDetailPage> {
                   CircleAvatar(
                     radius: 55,
                     backgroundColor: const Color(0xFF6C63FF),
-                    child: const Icon(
-                      Icons.person,
-                      size: 65,
-                      color: Colors.white,
-                    ),
+                    // Tampilkan foto jika ada
+                    backgroundImage: user.buktiIdentitas.isNotEmpty
+                        ? (user.buktiIdentitas.startsWith('http')
+                            ? NetworkImage(user.buktiIdentitas)
+                            : AssetImage(user.buktiIdentitas) as ImageProvider)
+                        : null,
+                    child: user.buktiIdentitas.isEmpty
+                        ? const Icon(
+                            Icons.person,
+                            size: 65,
+                            color: Colors.white,
+                          )
+                        : null,
                   ),
 
                   const SizedBox(height: 16),

@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'package:path/path.dart' as path;
+import 'package:firebase_storage/firebase_storage.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -14,13 +16,13 @@ class PengeluaranRepository {
   // ==========================================================
   Future<String> uploadBukti(File file) async {
     try {
-      // String fileName = 'bukti_${DateTime.now().millisecondsSinceEpoch}_${path.basename(file.path)}';
-      // Reference ref = _storage.ref().child('bukti_pengeluaran/$fileName');
+      final FirebaseStorage _storage = FirebaseStorage.instance;
+      String fileName = 'bukti_${DateTime.now().millisecondsSinceEpoch}_${path.basename(file.path)}';
+      Reference ref = _storage.ref().child('bukti_pengeluaran/$fileName');
 
-      // UploadTask uploadTask = ref.putFile(file);
-      // TaskSnapshot snapshot = await uploadTask;
-      // return await snapshot.ref.getDownloadURL();
-      return "testing";
+      UploadTask uploadTask = ref.putFile(file);
+      TaskSnapshot snapshot = await uploadTask;
+      return await snapshot.ref.getDownloadURL();
     } catch (e) {
       throw Exception('Gagal upload bukti: $e');
     }

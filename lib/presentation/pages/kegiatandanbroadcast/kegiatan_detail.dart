@@ -229,12 +229,25 @@ class _KegiatanDetailPageState extends State<KegiatanDetailPage> {
                               label: "Dibuat Oleh",
                               value: kegiatan.dibuatOlehId,
                             ),
-                             _buildDetailItem(
-                              icon: Icons.folder_open_outlined,
-                              label: "Dokumentasi",
-                              value: kegiatan.dokumentasi.isEmpty
-                                  ? "-"
-                                  : kegiatan.dokumentasi,
+                            // Dokumentasi: jika URL gambar → tampilkan preview, jika file teks → tampilkan nama
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 16.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Dokumentasi',
+                                    style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  if (kegiatan.dokumentasi.isEmpty)
+                                    const Text('-', style: TextStyle(color: Colors.grey)),
+                                  if (kegiatan.dokumentasi.isNotEmpty && kegiatan.dokumentasi.startsWith('http') && (kegiatan.dokumentasi.endsWith('.jpg') || kegiatan.dokumentasi.endsWith('.png') || kegiatan.dokumentasi.endsWith('.jpeg')))
+                                    ClipRRect(borderRadius: BorderRadius.circular(8), child: Image.network(kegiatan.dokumentasi, height: 220, width: double.infinity, fit: BoxFit.cover)),
+                                  if (kegiatan.dokumentasi.isNotEmpty && !kegiatan.dokumentasi.startsWith('http'))
+                                    Text(kegiatan.dokumentasi),
+                                ],
+                              ),
                             ),
                           ],
                         ),

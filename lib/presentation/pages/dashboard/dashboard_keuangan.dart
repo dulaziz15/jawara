@@ -8,10 +8,22 @@ import 'package:jawara/presentation/pages/dashboard/widgets/stat_card.dart';
 import 'package:jawara/presentation/widgets/sidebar/sidebar.dart';
 
 @RoutePage()
-class DashboardKeuanganPage extends StatelessWidget {
+class DashboardKeuanganPage extends StatefulWidget {
   DashboardKeuanganPage({super.key});
 
+  @override
+  State<DashboardKeuanganPage> createState() => _DashboardKeuanganPageState();
+}
+
+class _DashboardKeuanganPageState extends State<DashboardKeuanganPage> {
   final DashboardKeuanganService service = DashboardKeuanganService();
+  int selectedMonth = 0; // 0 = semua bulan, 1..12 valid
+  final int selectedYear = DateTime.now().year;
+
+  List<DropdownMenuItem<int>> _monthItems() {
+    final months = ['Semua Bulan','Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+    return List.generate(months.length, (i) => DropdownMenuItem(value: i, child: Text(months[i])));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +45,7 @@ class DashboardKeuanganPage extends StatelessWidget {
       ),
       backgroundColor: Colors.grey[50],
       body: StreamBuilder<FinanceData>(
-        stream: service.getDashboardData(DateTime.now().year),
+        stream: service.getDashboardData(selectedYear, bulan: selectedMonth == 0 ? null : selectedMonth),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return const Center(
@@ -47,6 +59,19 @@ class DashboardKeuanganPage extends StatelessWidget {
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
+                Row(
+                  children: [
+                    Expanded(child: DropdownButtonFormField<int>(
+                      value: selectedMonth,
+                      items: _monthItems(),
+                      onChanged: (v) => setState(() => selectedMonth = v ?? 0),
+                      decoration: const InputDecoration(labelText: 'Filter Bulan'),
+                    )),
+                  ],
+                ),
+
+                const SizedBox(height: 16),
+
                 // =====================================
                 // Statistik Cards
                 // =====================================
@@ -59,13 +84,13 @@ class DashboardKeuanganPage extends StatelessWidget {
                   childAspectRatio: 1.2,
                   children: [
                     StatCard(
-                      title: 'Total Pendapatan',
+                      title: selectedMonth == 0 ? 'Total Pendapatan' : 'Pendapatan (${selectedMonth == 0 ? '' : selectedMonth})',
                       value: financeData.totalIncome,
                       valueColor: Colors.green,
                       icon: Icons.attach_money,
                     ),
                     StatCard(
-                      title: 'Total Pengeluaran',
+                      title: selectedMonth == 0 ? 'Total Pengeluaran' : 'Pengeluaran (${selectedMonth == 0 ? '' : selectedMonth})',
                       value: financeData.totalExpense,
                       valueColor: Colors.red,
                       icon: Icons.money_off,
