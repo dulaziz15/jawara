@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:jawara/core/models/pemasukan_model.dart';
 import 'package:jawara/core/utils/formatter_util.dart';
+import 'package:jawara/core/repositories/pemasukan_repository.dart';
 
 @RoutePage()
 class LaporanPemasukanLainDetailPage extends StatelessWidget {
@@ -96,23 +97,7 @@ class LaporanPemasukanLainDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Ambil data pemasukan yang sesuai berdasarkan ID
-    final pemasukan = dummyPemasukan.firstWhere((item) => item.docId == laporanPemasukanId);
-
-    // Format tanggal pemasukan
-    final String tanggalPemasukanFormatted =
-        '${pemasukan.tanggalPemasukan.day} '
-        '${_getBulan(pemasukan.tanggalPemasukan.month)} '
-        '${pemasukan.tanggalPemasukan.year}';
-
-    // Format tanggal terverifikasi
-    final String tanggalTerverifikasiFormatted =
-        '${pemasukan.tanggalTerverifikasi.day} '
-        '${_getBulan(pemasukan.tanggalTerverifikasi.month)} '
-        '${pemasukan.tanggalTerverifikasi.year}';
-
-    // Format jumlah pemasukan
-    final String jumlahFormatted = FormatterUtil.formatCurrency(pemasukan.jumlahPemasukan);
+    final repo = PemasukanRepository();
 
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
@@ -124,37 +109,68 @@ class LaporanPemasukanLainDetailPage extends StatelessWidget {
           onPressed: () => context.router.pop(),
         ),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Card Detail Laporan Pemasukan
-            Card(
-              color: Colors.white,
-              elevation: 2,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16.0),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildDetailRow("Nama Pemasukan:", pemasukan.namaPemasukan),
-                    _buildDetailRow("Kategori Pemasukan:", pemasukan.kategoriPemasukan),
-                    _buildDetailRow("Jumlah Pemasukan:", 'Rp $jumlahFormatted'),
-                    _buildDetailRow("Tanggal Pemasukan:", tanggalPemasukanFormatted),
-                    _buildDetailRow("Verifikator:", pemasukan.verifikatorId.toString()),
-                    _buildDetailRow("Tanggal Terverifikasi:", tanggalTerverifikasiFormatted),
-                    const Divider(height: 24),
-                    _buildAttachmentRow("Bukti:", pemasukan.buktiPemasukan),
-                  ],
+      body: FutureBuilder<PemasukanModel?>(
+        future: repo.getPemasukanByDocId(laporanPemasukanId),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasError) {
+            return Center(child: Text('Gagal ambil data: ${snapshot.error}'));
+          }
+          final pemasukan = snapshot.data;
+          if (pemasukan == null) {
+            return Center(child: Text('Data dengan id $laporanPemasukanId tidak ditemukan'));
+          }
+
+          final String tanggalPemasukanFormatted =
+              '${pemasukan.tanggalPemasukan.day} ${_getBulan(pemasukan.tanggalPemasukan.month)} ${pemasukan.tanggalPemasukan.year}';
+          final String tanggalTerverifikasiFormatted =
+              '${pemasukan.tanggalTerverifikasi.day} ${_getBulan(pemasukan.tanggalTerverifikasi.month)} ${pemasukan.tanggalTerverifikasi.year}';
+          final String jumlahFormatted = FormatterUtil.formatCurrency(pemasukan.jumlahPemasukan);
+
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Card Detail Laporan Pemasukan
+                Card(
+                  color: Colors.white,
+                  elevation: 2,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16.0),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(24.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildDetailRow("Nama Pemasukan:", pemasukan.namaPemasukan),
+                        _buildDetailRow("Kategori Pemasukan:", pemasukan.kategoriPemasukan),
+                        _buildDetailRow("Jumlah Pemasukan:", 'Rp $jumlahFormatted'),
+                        _buildDetailRow("Tanggal Pemasukan:", tanggalPemasukanFormatted),
+                        // Tampilkan nama verifikator yang sudah di-resolve di repository
+                        // () {
+                        //   String verifikatorLabel = pemasukan.verifikatorNama ?? '';
+                        //  return _buildDetailRow("Verifikator:", pemasukan.verifikatorId.isEmpty
+                        //       ? 'Belum diverifikasi'
+                        //       : verifikatorLabel.isNotEmpty
+                        //           ? verifikatorLabel
+                        //           : pemasukan.verifikatorId);
+        
+                        // }(),
+                        _buildDetailRow("Tanggal Terverifikasi:", tanggalTerverifikasiFormatted),
+                        const Divider(height: 24),
+                        _buildAttachmentRow("Bukti:", pemasukan.buktiPemasukan),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

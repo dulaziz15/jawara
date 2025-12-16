@@ -195,6 +195,10 @@ class _KegiatanDaftarPageState extends State<KegiatanDaftarPage> {
                   const SizedBox(height: 4),
                   Text('Penanggung Jawab: ${item.penanggungJawabId}', style: const TextStyle(color: Colors.grey, fontSize: 14)),
                   const SizedBox(height: 4),
+                  if (item.budget != null) ...[
+                    Text('Anggaran: Rp ${item.budget!.toStringAsFixed(0)}', style: const TextStyle(color: Colors.grey, fontSize: 14)),
+                    const SizedBox(height: 4),
+                  ],
                   Text(
                     'Tanggal: ${item.tanggalPelaksanaan.day.toString().padLeft(2, '0')} '
                     '${_getBulan(item.tanggalPelaksanaan.month)} '

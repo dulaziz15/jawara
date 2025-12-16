@@ -18,6 +18,7 @@ class _KegiatanTambahPageState extends State<KegiatanTambahPage> {
   final TextEditingController namaController = TextEditingController();
   final TextEditingController tanggalController = TextEditingController();
   final TextEditingController lokasiController = TextEditingController();
+  final TextEditingController budgetController = TextEditingController();
   final TextEditingController penanggungJawabController = TextEditingController();
   final TextEditingController deskripsiController = TextEditingController();
   String? selectedKategori;
@@ -30,6 +31,7 @@ class _KegiatanTambahPageState extends State<KegiatanTambahPage> {
     namaController.dispose();
     tanggalController.dispose();
     lokasiController.dispose();
+    budgetController.dispose();
     penanggungJawabController.dispose();
     deskripsiController.dispose();
     ImagePickerPreview.clearAll(); // Bersihkan file saat keluar
@@ -71,6 +73,7 @@ class _KegiatanTambahPageState extends State<KegiatanTambahPage> {
         deskripsi: deskripsiController.text,
         tanggalPelaksanaan: tanggalParsed,
         lokasi: lokasiController.text,
+        budget: budgetController.text.isNotEmpty ? double.tryParse(budgetController.text.replaceAll(',', '')) ?? 0.0 : null,
         dibuatOlehId: "ADMIN_001",
         dokumentasi: urlDokumentasi, // Simpan URL hasil upload
       );
@@ -191,6 +194,16 @@ class _KegiatanTambahPageState extends State<KegiatanTambahPage> {
                 controller: lokasiController,
                 decoration: InputDecoration(
                   labelText: "Lokasi",
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: budgetController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  labelText: "Anggaran (Rp)",
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                   contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
                 ),

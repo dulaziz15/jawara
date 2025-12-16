@@ -46,6 +46,8 @@ class WargaDetailDialog extends StatelessWidget {
             const SizedBox(height: 12),
             _buildDetailRow('Keluarga', item.keluarga),
             const SizedBox(height: 12),
+            _buildDetailRow('Tanggal Lahir', item.tanggalLahir != null ? '${item.tanggalLahir!.day.toString().padLeft(2, '0')}/${item.tanggalLahir!.month.toString().padLeft(2, '0')}/${item.tanggalLahir!.year}' : '-'),
+            const SizedBox(height: 12),
             _buildDetailRow('Jenis Kelamin', item.jenisKelamin),
             const SizedBox(height: 12),
             _buildDetailRow('Status Domisili', item.statusDomisili),

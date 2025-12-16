@@ -211,6 +211,12 @@ abstract class _$AppRouter extends RootStackRouter {
         child: const KeluargaPage(),
       );
     },
+    KeluargaTambahRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const KeluargaTambahPage(),
+      );
+    },
     LaporanCetakRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
@@ -1090,6 +1096,19 @@ class KeluargaRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'KeluargaRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// [KeluargaTambahPage]
+class KeluargaTambahRoute extends PageRouteInfo<void> {
+  const KeluargaTambahRoute({List<PageRouteInfo>? children})
+      : super(
+          KeluargaTambahRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'KeluargaTambahRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }

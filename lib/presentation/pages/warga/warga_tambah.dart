@@ -26,6 +26,7 @@ class _WargaTambahPageState extends State<WargaTambahPage> {
   // 2. Controllers (Disesuaikan dengan WargaModel)
   final _namaController = TextEditingController();
   final _nikController = TextEditingController();
+  final _tanggalLahirController = TextEditingController();
   
   // 3. Value Notifiers
   final _keluargaValue = ValueNotifier<String?>(null); // Menyimpan NoKK
@@ -41,7 +42,20 @@ class _WargaTambahPageState extends State<WargaTambahPage> {
     _jenisKelaminValue.dispose();
     _statusDomisiliValue.dispose();
     _statusHidupValue.dispose();
+    _tanggalLahirController.dispose();
     super.dispose();
+  }
+
+  DateTime? _parseDate(String input) {
+    try {
+      final parts = input.split('/');
+      final d = int.parse(parts[0]);
+      final m = int.parse(parts[1]);
+      final y = int.parse(parts[2]);
+      return DateTime(y, m, d);
+    } catch (e) {
+      return null;
+    }
   }
 
   void _resetForm() {
@@ -66,6 +80,7 @@ class _WargaTambahPageState extends State<WargaTambahPage> {
           nik: _nikController.text,
           nama: _namaController.text,
           keluarga: _keluargaValue.value ?? '', // Mengambil ID/NoKK dari Dropdown
+          tanggalLahir: _tanggalLahirController.text.isNotEmpty ? _parseDate(_tanggalLahirController.text) : null,
           jenisKelamin: _jenisKelaminValue.value ?? 'Laki-laki',
           statusDomisili: _statusDomisiliValue.value ?? 'Aktif',
           statusHidup: _statusHidupValue.value ?? 'Hidup',
@@ -189,6 +204,32 @@ class _WargaTambahPageState extends State<WargaTambahPage> {
                       controller: _nikController,
                       keyboardType: TextInputType.number,
                       validator: (value) => value!.length != 16 ? 'NIK harus 16 digit' : null,
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Tanggal Lahir
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text('Tanggal Lahir', style: TextStyle(fontSize: 14)),
+                        const SizedBox(height: 5),
+                        TextFormField(
+                          controller: _tanggalLahirController,
+                          readOnly: true,
+                          decoration: const InputDecoration(border: OutlineInputBorder(), hintText: 'Pilih tanggal lahir'),
+                          onTap: () async {
+                            DateTime? picked = await showDatePicker(
+                              context: context,
+                              initialDate: DateTime(1990),
+                              firstDate: DateTime(1900),
+                              lastDate: DateTime.now(),
+                            );
+                            if (picked != null) {
+                              _tanggalLahirController.text = '${picked.day.toString().padLeft(2, '0')}/${picked.month.toString().padLeft(2, '0')}/${picked.year}';
+                            }
+                          },
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 16),
 

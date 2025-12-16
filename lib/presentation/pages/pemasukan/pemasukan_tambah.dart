@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:intl/intl.dart';
 import 'package:jawara/presentation/pages/pemasukan/widgets/image_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:jawara/core/models/pemasukan_model.dart';
+import 'package:jawara/core/repositories/pemasukan_repository.dart';
 
 @RoutePage()
 class PemasukanLainTambahPage extends StatefulWidget {
@@ -17,6 +20,10 @@ class _PemasukanLainTambahPageState extends State<PemasukanLainTambahPage> {
   final TextEditingController tanggalController = TextEditingController();
   final TextEditingController nominalController = TextEditingController();
   String? selectedKategori;
+  DateTime? _selectedDate;
+  bool _isSaving = false;
+  final PemasukanRepository _repo = PemasukanRepository();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   void dispose() {
@@ -24,6 +31,69 @@ class _PemasukanLainTambahPageState extends State<PemasukanLainTambahPage> {
     tanggalController.dispose();
     nominalController.dispose();
     super.dispose();
+  }
+
+  void _resetForm() {
+    namaController.clear();
+    tanggalController.clear();
+    nominalController.clear();
+    setState(() {
+      selectedKategori = null;
+      _selectedDate = null;
+    });
+  }
+
+  Future<void> _submitData() async {
+    if (namaController.text.isEmpty || _selectedDate == null || nominalController.text.isEmpty || selectedKategori == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Semua field harus diisi!')),
+      );
+      return;
+    }
+
+    setState(() => _isSaving = true);
+
+    try {
+      // Bersihkan nomor dan konversi ke double
+      String cleanNominal = nominalController.text.replaceAll(RegExp(r'[^0-9]'), '');
+      double nominal = double.tryParse(cleanNominal) ?? 0.0;
+
+      String currentUserId = _auth.currentUser?.displayName ?? 'unknown_user';
+
+      final pemasukan = PemasukanModel(
+        docId: '',
+        namaPemasukan: namaController.text,
+        kategoriPemasukan: selectedKategori!,
+        verifikatorId: currentUserId,
+        buktiPemasukan: '',
+        jumlahPemasukan: nominal,
+        tanggalPemasukan: _selectedDate!,
+        tanggalTerverifikasi: DateTime.now(),
+      );
+
+      final createdId = await _repo.addPemasukan(pemasukan);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('✅ Pemasukan berhasil disimpan!'), backgroundColor: Colors.green),
+        );
+        _resetForm();
+        // Navigate to detail page for the created pemasukan
+        try {
+          context.router.pushNamed('/pemasukan/pemasukan_detail/$createdId');
+        } catch (_) {
+          // Fallback: do nothing if routing fails
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('❌ Gagal menyimpan: $e'), backgroundColor: Colors.red),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isSaving = false);
+    }
   }
 
   @override
@@ -135,6 +205,7 @@ class _PemasukanLainTambahPageState extends State<PemasukanLainTambahPage> {
                         );
                         if (pickedDate != null) {
                           setState(() {
+                            _selectedDate = pickedDate;
                             tanggalController.text = DateFormat('dd/MM/yyyy').format(pickedDate);
                           });
                         }
@@ -223,13 +294,16 @@ class _PemasukanLainTambahPageState extends State<PemasukanLainTambahPage> {
 
                     const SizedBox(height: 20),
 
+                      // Helper functions
+                    
+
                     // Tombol Submit dan Reset
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Expanded(
                           child: OutlinedButton(
-                            onPressed: () {},
+                            onPressed: _resetForm,
                             style: OutlinedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 14),
                               shape: RoundedRectangleBorder(
@@ -248,7 +322,7 @@ class _PemasukanLainTambahPageState extends State<PemasukanLainTambahPage> {
                         const SizedBox(width: 10),
                         Expanded(
                           child: ElevatedButton(
-                            onPressed: () {},
+                            onPressed: _isSaving ? null : _submitData,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFF6C63FF),
                               padding: const EdgeInsets.symmetric(vertical: 14),
@@ -256,13 +330,15 @@ class _PemasukanLainTambahPageState extends State<PemasukanLainTambahPage> {
                                 borderRadius: BorderRadius.circular(8.0),
                               ),
                             ),
-                            child: const Text(
-                              "Submit",
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.white,
-                              ),
-                            ),
+                            child: _isSaving
+                                ? const SizedBox(height: 18, width: 18, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                                : const Text(
+                                    "Simpan",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.white,
+                                    ),
+                                  ),
                           ),
                         ),
                       ],

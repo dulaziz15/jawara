@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:jawara/core/models/pengeluaran_model.dart';
 import 'package:jawara/core/repositories/pengeluaran_repository.dart'; // Pastikan import ini ada
+import 'package:jawara/core/repositories/pengguna_repository.dart';
 import 'package:jawara/core/utils/formatter_util.dart';
 
 @RoutePage()
@@ -186,8 +187,24 @@ class _PengeluaranDetailPageState extends State<PengeluaranDetailPage> {
                             "Jumlah Pengeluaran:", 'Rp $jumlahFormatted'),
                         _buildDetailRow("Tanggal Pengeluaran:",
                             tanggalPengeluaranFormatted),
-                        _buildDetailRow(
-                            "Verifikator:", pengeluaran.verifikatorId.toString()),
+                        // Tampilkan nama verifikator (jika ada) berdasarkan docId
+                        FutureBuilder(
+                          future: PenggunaRepository()
+                              .getUserByDocId(pengeluaran.verifikatorId),
+                          builder: (context, snap) {
+                            String verifikatorLabel = pengeluaran.verifikatorId.toString();
+                            if (pengeluaran.verifikatorId.isEmpty) {
+                              verifikatorLabel = 'Belum diverifikasi';
+                            } else if (snap.connectionState == ConnectionState.waiting) {
+                              verifikatorLabel = 'Memuat...';
+                            } else if (snap.hasError) {
+                              verifikatorLabel = pengeluaran.verifikatorId.toString();
+                            } else if (snap.hasData && snap.data != null) {
+                              verifikatorLabel = (snap.data!).nama;
+                            }
+                            return _buildDetailRow("Verifikator:", verifikatorLabel);
+                          },
+                        ),
                         _buildDetailRow("Tanggal Terverifikasi:",
                             tanggalTerverifikasiFormatted),
                         const Divider(height: 24),

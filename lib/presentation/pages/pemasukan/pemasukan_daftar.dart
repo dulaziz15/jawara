@@ -1,6 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'dart:async';
 import 'package:jawara/core/models/pemasukan_model.dart'; // pastikan path sesuai struktur project-mu
+import 'package:jawara/core/repositories/pemasukan_repository.dart';
 
 @RoutePage()
 class PemasukanDaftarPage extends StatefulWidget {
@@ -11,14 +13,22 @@ class PemasukanDaftarPage extends StatefulWidget {
 }
 
 class _PemasukanDaftarPageState extends State<PemasukanDaftarPage> {
-  List<PemasukanModel> _filteredData = dummyPemasukan;
+  final PemasukanRepository _repo = PemasukanRepository();
+  StreamSubscription<List<PemasukanModel>>? _subscription;
+  List<PemasukanModel> _allData = [];
+  List<PemasukanModel> _filteredData = [];
   final TextEditingController _searchController = TextEditingController();
   String _selectedFilter = 'Semua';
 
   @override
   void initState() {
     super.initState();
-    _filteredData = dummyPemasukan;
+    _subscription = _repo.getPemasukan().listen((list) {
+      setState(() {
+        _allData = list;
+        _applyFilter(_selectedFilter);
+      });
+    });
   }
 
   void _applyFilter(String kategori) {
@@ -26,9 +36,9 @@ class _PemasukanDaftarPageState extends State<PemasukanDaftarPage> {
       _selectedFilter = kategori;
       List<PemasukanModel> kategoriFilteredData;
       if (kategori == 'Semua') {
-        kategoriFilteredData = dummyPemasukan;
+        kategoriFilteredData = _allData;
       } else {
-        kategoriFilteredData = dummyPemasukan
+        kategoriFilteredData = _allData
             .where((data) => data.kategoriPemasukan == kategori)
             .toList();
       }
@@ -54,9 +64,9 @@ class _PemasukanDaftarPageState extends State<PemasukanDaftarPage> {
     setState(() {
       List<PemasukanModel> searchFilteredData;
       if (value.isEmpty) {
-        searchFilteredData = dummyPemasukan;
+        searchFilteredData = _allData;
       } else {
-        searchFilteredData = dummyPemasukan
+        searchFilteredData = _allData
             .where(
               (data) =>
                   data.namaPemasukan.toLowerCase().contains(
@@ -79,7 +89,7 @@ class _PemasukanDaftarPageState extends State<PemasukanDaftarPage> {
   }
 
   void _showFilterDialog() {
-    final List<String> kategoriList = dummyPemasukan
+    final List<String> kategoriList = _allData
         .map((e) => e.kategoriPemasukan)
         .toSet()
         .toList();
@@ -91,6 +101,13 @@ class _PemasukanDaftarPageState extends State<PemasukanDaftarPage> {
         onApplyFilter: _applyFilter,
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _subscription?.cancel();
+    _searchController.dispose();
+    super.dispose();
   }
 
   // --- Widget untuk menampilkan badge status verifikasi ---
@@ -178,6 +195,10 @@ class _PemasukanDaftarPageState extends State<PemasukanDaftarPage> {
                     ),
                   ),
                 ),
+                    IconButton(
+                      onPressed: _showFilterDialog,
+                      icon: const Icon(Icons.filter_list, color: Color(0xFF6C63FF)),
+                    ),
               ],
             ),
           ),
@@ -213,9 +234,9 @@ class _PemasukanDaftarPageState extends State<PemasukanDaftarPage> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _showFilterDialog,
+        onPressed: () => context.router.pushNamed('/pemasukan/tambah'),
         backgroundColor: const Color(0xFF6C63FF),
-        child: const Icon(Icons.filter_list, color: Colors.white),
+        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }

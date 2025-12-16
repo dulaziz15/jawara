@@ -1,11 +1,13 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:async/async.dart';
+import 'package:jawara/core/models/dashboard_kegiatan_model.dart';
 import 'package:jawara/core/models/finance_models.dart';
 import 'package:jawara/core/repositories/dashboard_kegiatan_reposiotry.dart';
-import 'package:jawara/presentation/pages/dashboard/widgets/bar_chart.dart';
 import 'package:jawara/presentation/pages/dashboard/widgets/stat_card.dart';
+import 'package:jawara/presentation/pages/dashboard/widgets/pie_chart.dart';
+import 'package:jawara/presentation/pages/dashboard/widgets/bar_chart.dart';
 import 'package:jawara/presentation/widgets/sidebar/sidebar.dart';
+import 'package:async/async.dart';
 
 @RoutePage()
 class DashboardKegiatanPage extends StatelessWidget {
@@ -13,9 +15,19 @@ class DashboardKegiatanPage extends StatelessWidget {
 
   final DashboardKegiatanRepository repo = DashboardKegiatanRepository();
 
-  final List<String> bulanLabels = const [
-    'Jan','Feb','Mar','Apr','Mei','Jun',
-    'Jul','Agu','Sep','Okt','Nov','Des',
+  final List<String> bulanLabels = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'Mei',
+    'Jun',
+    'Jul',
+    'Agu',
+    'Sep',
+    'Okt',
+    'Nov',
+    'Des',
   ];
 
   @override
@@ -23,26 +35,31 @@ class DashboardKegiatanPage extends StatelessWidget {
     final currentYear = DateTime.now().year;
 
     return Scaffold(
-      drawer: const Sidebar(),
+      drawer: Sidebar(),
       appBar: AppBar(
         title: const Text(
           'Dashboard Kegiatan',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+            color: Colors.white,
+          ),
         ),
         backgroundColor: const Color(0xFF6C63FF),
         foregroundColor: Colors.white,
+        centerTitle: false,
+        elevation: 0,
       ),
       backgroundColor: Colors.grey[50],
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            
-            /// TOTAL KEGIATAN
+            // === Total Kegiatan Card ===
             StreamBuilder<int>(
               stream: repo.getTotalActivities(),
-              builder: (_, snap) {
+              builder: (ctx, snap) {
                 final total = snap.data ?? 0;
                 return StatCard(
                   title: 'Total Kegiatan',
@@ -56,27 +73,23 @@ class DashboardKegiatanPage extends StatelessWidget {
 
             const SizedBox(height: 24),
 
-            /// WAKTU KEGIATAN
+            // === Kegiatan berdasarkan Waktu ===
             StreamBuilder<List<int>>(
               stream: StreamZip([
                 repo.getActivityLewat(),
                 repo.getActivityHariIni(),
                 repo.getActivityAkanDatang(),
               ]),
-              builder: (_, snap) {
-                if (!snap.hasData) return const SizedBox();
-
+              builder: (context, snap) {
+                if (!snap.hasData) return SizedBox();
                 final data = snap.data!;
-                return _buildWaktuSection(
-                  context,
-                  data[0], data[1], data[2],
-                );
+                return _buildWaktuSection(context, data[0], data[1], data[2]);
               },
             ),
 
             const SizedBox(height: 24),
 
-            /// CHART PER BULAN
+            // === Bar Chart Agenda per Bulan ===
             _buildBarChartPerBulan(currentYear),
           ],
         ),
@@ -85,21 +98,22 @@ class DashboardKegiatanPage extends StatelessWidget {
   }
 
   Widget _buildBarChartPerBulan(int year) {
+    // StreamZip untuk 12 bulan agar bisa digabung
     final streams = List.generate(
       12,
-      (i) => repo.getActivitiesPerMonth(i + 1, year),
+      (index) => repo.getActivitiesPerMonth(index + 1, year),
     );
 
     return StreamBuilder<List<int>>(
       stream: StreamZip(streams),
-      builder: (_, snap) {
-        if (!snap.hasData) return const SizedBox();
+      builder: (context, snap) {
+        if (!snap.hasData) return SizedBox();
 
-        final monthly = snap.data!;
-        final data = List.generate(12, (i) {
+        final monthlyCounts = snap.data!;
+        final barData = List<MonthlyData>.generate(12, (index) {
           return MonthlyData(
-            month: bulanLabels[i],
-            amount: monthly[i].toDouble(),
+            month: bulanLabels[index],
+            amount: monthlyCounts[index].toDouble(),
           );
         });
 
@@ -107,18 +121,11 @@ class DashboardKegiatanPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Agenda Per Bulan ($year)",
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
+              'Agenda Per Bulan ($year)',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
-            BarChart(
-              title: '',
-              data: data,
-              color: Colors.blue,
-            ),
+            BarChart(title: '', data: barData, color: Colors.blue),
           ],
         );
       },
@@ -135,18 +142,17 @@ class DashboardKegiatanPage extends StatelessWidget {
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Kegiatan Berdasarkan Waktu',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+              'Kegiatan berdasarkan Waktu',
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
-
             Row(
               children: [
                 Expanded(
@@ -183,18 +189,13 @@ class DashboardKegiatanPage extends StatelessWidget {
     );
   }
 
-  Widget _buildWaktuCard(
-    String title,
-    int value,
-    Color color,
-    IconData icon,
-  ) {
+  Widget _buildWaktuCard(String title, int value, Color color, IconData icon) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: color.withOpacity(.1),
+        color: color.withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(.3)),
+        border: Border.all(color: color.withOpacity(0.3)),
       ),
       child: Column(
         children: [

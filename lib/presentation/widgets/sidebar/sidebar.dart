@@ -106,8 +106,12 @@ class _SidebarState extends State<Sidebar> {
                 onTap: () => context.router.pushNamed('/warga/tambah'),
               ),
               ListTile(
-                title: const Text("Keluarga"),
+                title: const Text("Keluarga - Daftar"),
                 onTap: () => context.router.pushNamed('/keluarga'),
+              ),
+              ListTile(
+                title: const Text("Keluarga - Tambah"),
+                onTap: () => context.router.pushNamed('/keluarga/tambah'),
               ),
               ListTile(
                 title: const Text("Rumah - Daftar"),
@@ -140,11 +144,11 @@ class _SidebarState extends State<Sidebar> {
                 onTap: () => context.router.pushNamed('/pemasukan/tagihan_daftar'),
               ),
               ListTile(
-                title: const Text("Pemasukan Lain - Daftar"),
+                title: const Text("Pemasukan - Daftar"),
                 onTap: () => context.router.pushNamed('/pemasukan/daftar'),
               ),
               ListTile(
-                title: const Text("Pemasukan Lain - Tambah"),
+                title: const Text("Pemasukan - Tambah"),
                 onTap: () => context.router.pushNamed('/pemasukan/tambah'),
               ),
             ],

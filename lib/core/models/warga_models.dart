@@ -3,6 +3,7 @@ class WargaModel {
   final String nik; // NIK sebagai unique key bisnis
   final String nama;
   final String keluarga; // Bisa referensi ID Keluarga atau Nama Keluarga
+  final DateTime? tanggalLahir; // Tanggal Lahir (opsional)
   final String jenisKelamin;
   final String statusDomisili;
   final String statusHidup;
@@ -12,6 +13,7 @@ class WargaModel {
     required this.nik,
     required this.nama,
     required this.keluarga,
+    this.tanggalLahir,
     required this.jenisKelamin,
     required this.statusDomisili,
     required this.statusHidup,
@@ -24,6 +26,8 @@ class WargaModel {
       nik: map['nik'] as String? ?? '',
       nama: map['nama'] as String? ?? 'tanpa nama',
       keluarga: map['keluarga'] as String? ?? '',
+      // Parse tanggal lahir jika ada
+      tanggalLahir: map['tanggalLahir'] != null ? DateTime.tryParse(map['tanggalLahir'] as String) : null,
       jenisKelamin: map['jenisKelamin'] as String? ?? 'Laki-laki',
       statusDomisili: map['statusDomisili'] as String? ?? 'Aktif',
       statusHidup: map['statusHidup'] as String? ?? 'Hidup',
@@ -36,6 +40,7 @@ class WargaModel {
       'nik': nik,
       'nama': nama,
       'keluarga': keluarga,
+      'tanggalLahir': tanggalLahir?.toIso8601String(),
       'jenisKelamin': jenisKelamin,
       'statusDomisili': statusDomisili,
       'statusHidup': statusHidup,

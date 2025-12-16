@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:jawara/core/models/pemasukan_model.dart';
 // Pastikan import repository sesuai path Anda
-import 'package:jawara/core/repositories/pemasukan_repository.dart'; 
+import 'package:jawara/core/repositories/pemasukan_repository.dart';
+import 'package:jawara/core/repositories/pengguna_repository.dart';
 import 'package:jawara/core/utils/formatter_util.dart';
 
 @RoutePage()
@@ -29,15 +30,24 @@ class _LaporanPemasukanDetailPageState
   void initState() {
     super.initState();
     // 2. Fetch data saat halaman dibuka
-    _detailFuture =
-        _repository.getPemasukanByDocId(widget.laporanPemasukanId);
+    _detailFuture = _repository.getPemasukanByDocId(widget.laporanPemasukanId);
   }
 
   // Helper format bulan (TETAP SAMA)
   String _getBulan(int bulan) {
     const namaBulan = [
-      'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli',
-      'Agustus', 'September', 'Oktober', 'November', 'Desember',
+      'Januari',
+      'Februari',
+      'Maret',
+      'April',
+      'Mei',
+      'Juni',
+      'Juli',
+      'Agustus',
+      'September',
+      'Oktober',
+      'November',
+      'Desember',
     ];
     return namaBulan[bulan - 1];
   }
@@ -92,9 +102,10 @@ class _LaporanPemasukanDetailPageState
               ? const Text(
                   "Tidak ada bukti",
                   style: TextStyle(
-                      fontSize: 16,
-                      fontStyle: FontStyle.italic,
-                      color: Colors.grey),
+                    fontSize: 16,
+                    fontStyle: FontStyle.italic,
+                    color: Colors.grey,
+                  ),
                 )
               : Row(
                   children: [
@@ -164,8 +175,9 @@ class _LaporanPemasukanDetailPageState
               '${pemasukan.tanggalTerverifikasi.year}';
 
           // Format jumlah pemasukan
-          final String jumlahFormatted =
-              FormatterUtil.formatCurrency(pemasukan.jumlahPemasukan);
+          final String jumlahFormatted = FormatterUtil.formatCurrency(
+            pemasukan.jumlahPemasukan,
+          );
 
           return SingleChildScrollView(
             padding: const EdgeInsets.all(16.0),
@@ -185,20 +197,36 @@ class _LaporanPemasukanDetailPageState
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         _buildDetailRow(
-                            "Nama Pemasukan:", pemasukan.namaPemasukan),
+                          "Nama Pemasukan:",
+                          pemasukan.namaPemasukan,
+                        ),
                         _buildDetailRow(
-                            "Kategori Pemasukan:", pemasukan.kategoriPemasukan),
+                          "Kategori Pemasukan:",
+                          pemasukan.kategoriPemasukan,
+                        ),
                         _buildDetailRow(
-                            "Jumlah Pemasukan:", 'Rp $jumlahFormatted'),
+                          "Jumlah Pemasukan:",
+                          'Rp $jumlahFormatted',
+                        ),
                         _buildDetailRow(
-                            "Tanggal Pemasukan:", tanggalPemasukanFormatted),
+                          "Tanggal Pemasukan:",
+                          tanggalPemasukanFormatted,
+                        ),
+                        // Tampilkan nama verifikator yang sudah di-resolve di repository
+                        () {
+                          String verifikatorLabel =
+                              pemasukan.verifikatorNama ?? '';
+                          return _buildDetailRow(
+                            "Verifikator:",
+                            verifikatorLabel,
+                          );
+                        }(),
                         _buildDetailRow(
-                            "Verifikator:", pemasukan.verifikatorId.toString()),
-                        _buildDetailRow("Tanggal Terverifikasi:",
-                            tanggalTerverifikasiFormatted),
+                          "Tanggal Terverifikasi:",
+                          tanggalTerverifikasiFormatted,
+                        ),
                         const Divider(height: 24),
-                        _buildAttachmentRow(
-                            "Bukti:", pemasukan.buktiPemasukan),
+                        _buildAttachmentRow("Bukti:", pemasukan.buktiPemasukan),
                       ],
                     ),
                   ),

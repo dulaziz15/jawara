@@ -1,8 +1,11 @@
 // model untuk pemasukan
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class PemasukanModel {
   String docId;
   String namaPemasukan, kategoriPemasukan, buktiPemasukan; 
   String verifikatorId;
+  String? verifikatorNama; // Nama verifikator yang di-resolve dari users collection
   double jumlahPemasukan;
   DateTime tanggalPemasukan, tanggalTerverifikasi;
 
@@ -11,6 +14,7 @@ class PemasukanModel {
     required this.namaPemasukan,
     required this.kategoriPemasukan,
     required this.verifikatorId, 
+    this.verifikatorNama,
     required this.buktiPemasukan,
     required this.jumlahPemasukan,
     required this.tanggalPemasukan,
@@ -20,14 +24,16 @@ class PemasukanModel {
   // konversi dari map ke object
   factory PemasukanModel.fromMap(Map<String, dynamic> map, String docId) {
     return PemasukanModel(
-      docId: map['docId'],
+      // Use the document id passed by the caller (from snapshot.id)
+      docId: docId,
       namaPemasukan: map['nama_pemasukan'],
       jumlahPemasukan: map['jumlah_pemasukan'] is int ? (map['jumlah_pemasukan'] as int).toDouble() : map['jumlah_pemasukan'],
       tanggalPemasukan: DateTime.parse(map['tanggal_pemasukan']),
       kategoriPemasukan: map['kategori_pemasukan'],
       verifikatorId: map['verifikator_id'], // Menggunakan verifikator_id
       buktiPemasukan: map['buktiPemasukan'],
-      tanggalTerverifikasi: DateTime.parse(map['tanggal_terverifikasi']),
+      // tanggal_terverifikasi may be missing for older docs; fall back to now
+      tanggalTerverifikasi: map['tanggal_terverifikasi'] != null ? DateTime.parse(map['tanggal_terverifikasi']) : DateTime.now(),
     );
   }
 
@@ -44,6 +50,8 @@ class PemasukanModel {
       'tanggal_terverifikasi': tanggalTerverifikasi.toIso8601String(),
     };
   }
+
+  static fromFirestore(DocumentSnapshot<Object?> documentSnapshot) {}
 }
 
 List<PemasukanModel> dummyPemasukan = [

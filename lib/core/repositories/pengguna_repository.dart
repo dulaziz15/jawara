@@ -92,4 +92,54 @@ class PenggunaRepository {
       return null;
     }
   }
+
+  // R: Ambil User berdasarkan document id (docId)
+  Future<UserModel?> getUserByDocId(String docId) async {
+    try {
+      final docSnapshot = await _userCollection.doc(docId).get();
+      if (docSnapshot.exists) {
+        final data = docSnapshot.data() as Map<String, dynamic>;
+        return UserModel.fromMap({'docId': docSnapshot.id, ...data});
+      }
+      return null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // R: Ambil User dengan cara yang fleksibel: coba docId, lalu NIK, lalu email
+  Future<UserModel?> getUserByAnyId(String idOrNikOrEmail) async {
+    final q = idOrNikOrEmail.trim();
+    if (q.isEmpty) return null;
+
+    // 1) coba sebagai docId
+    try {
+      final byDoc = await getUserByDocId(q);
+      if (byDoc != null) return byDoc;
+    } catch (_) {}
+
+    // 2) coba sebagai NIK
+    try {
+      final byNik = await getUserByNik(q);
+      if (byNik != null) return byNik;
+    } catch (_) {}
+
+    // 3) jika mengandung '@', coba cari berdasarkan email
+    if (q.contains('@')) {
+      try {
+        final querySnapshot = await _userCollection
+            .where('email', isEqualTo: q)
+            .limit(1)
+            .get();
+        if (querySnapshot.docs.isNotEmpty) {
+          final doc = querySnapshot.docs.first;
+          final data = doc.data() as Map<String, dynamic>;
+          return UserModel.fromMap({'docId': doc.id, ...data});
+        }
+      } catch (_) {}
+    }
+
+    // Tidak ditemukan
+    return null;
+  }
 }

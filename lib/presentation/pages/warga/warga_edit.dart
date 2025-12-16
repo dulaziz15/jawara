@@ -19,6 +19,7 @@ class _WargaEditDialogState extends State<WargaEditDialog> {
   late TextEditingController _nameController;
   late TextEditingController _nikController;
   late TextEditingController _keluargaController;
+  late TextEditingController _tanggalLahirController;
   
   String? _selectedGender;
   String? _selectedDomisili;
@@ -30,6 +31,7 @@ class _WargaEditDialogState extends State<WargaEditDialog> {
     _nameController = TextEditingController(text: widget.item.nama);
     _nikController = TextEditingController(text: widget.item.nik);
     _keluargaController = TextEditingController(text: widget.item.keluarga);
+    _tanggalLahirController = TextEditingController(text: widget.item.tanggalLahir != null ? '${widget.item.tanggalLahir!.day.toString().padLeft(2, '0')}/${widget.item.tanggalLahir!.month.toString().padLeft(2, '0')}/${widget.item.tanggalLahir!.year}' : '');
     
     _selectedGender = widget.item.jenisKelamin;
     _selectedDomisili = widget.item.statusDomisili;
@@ -41,6 +43,7 @@ class _WargaEditDialogState extends State<WargaEditDialog> {
     _nameController.dispose();
     _nikController.dispose();
     _keluargaController.dispose();
+    _tanggalLahirController.dispose();
     super.dispose();
   }
 
@@ -74,6 +77,26 @@ class _WargaEditDialogState extends State<WargaEditDialog> {
               const SizedBox(height: 12),
               _buildTextField('Keluarga', _keluargaController),
               const SizedBox(height: 12),
+              // Tanggal Lahir
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Tanggal Lahir', style: TextStyle(fontWeight: FontWeight.w600)),
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: _tanggalLahirController,
+                    readOnly: true,
+                    decoration: InputDecoration(border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)), contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8)),
+                    onTap: () async {
+                      DateTime? picked = await showDatePicker(context: context, initialDate: widget.item.tanggalLahir ?? DateTime(1990), firstDate: DateTime(1900), lastDate: DateTime.now());
+                      if (picked != null) {
+                        _tanggalLahirController.text = '${picked.day.toString().padLeft(2, '0')}/${picked.month.toString().padLeft(2, '0')}/${picked.year}';
+                      }
+                    },
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
               
               _buildDropdown('Jenis Kelamin', _selectedGender, ['Laki-laki', 'Perempuan'], (val) => setState(() => _selectedGender = val)),
               const SizedBox(height: 12),
@@ -96,6 +119,7 @@ class _WargaEditDialogState extends State<WargaEditDialog> {
                         nik: _nikController.text,
                         nama: _nameController.text,
                         keluarga: _keluargaController.text,
+                        tanggalLahir: _tanggalLahirController.text.isNotEmpty ? _parseDate(_tanggalLahirController.text) : null,
                         jenisKelamin: _selectedGender ?? 'Laki-laki',
                         statusDomisili: _selectedDomisili ?? 'Aktif',
                         statusHidup: _selectedHidup ?? 'Hidup',
@@ -149,5 +173,17 @@ class _WargaEditDialogState extends State<WargaEditDialog> {
         ),
       ],
     );
+  }
+
+  DateTime? _parseDate(String input) {
+    try {
+      final parts = input.split('/');
+      final d = int.parse(parts[0]);
+      final m = int.parse(parts[1]);
+      final y = int.parse(parts[2]);
+      return DateTime(y, m, d);
+    } catch (e) {
+      return null;
+    }
   }
 }

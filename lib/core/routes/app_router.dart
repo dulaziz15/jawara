@@ -23,6 +23,7 @@ import 'package:jawara/presentation/pages/warga/warga.dart';
 import 'package:jawara/presentation/pages/warga/warga_daftar.dart';
 import 'package:jawara/presentation/pages/warga/warga_tambah.dart';
 import 'package:jawara/presentation/pages/warga/keluarga.dart';
+import 'package:jawara/presentation/pages/warga/keluarga_tambah.dart';
 import 'package:jawara/presentation/pages/warga/rumah.dart';
 import 'package:jawara/presentation/pages/warga/daftar_rumah.dart';
 import 'package:jawara/presentation/pages/warga/tambah_rumah.dart';
@@ -132,6 +133,9 @@ class AppRouter extends _$AppRouter {
       ],
     ),
     AutoRoute(page: KeluargaRoute.page, path: '/keluarga'),
+    // Use the page widget directly here to avoid referencing a generated
+    // route class that may not exist until code generation runs.
+    AutoRoute(page: KeluargaTambahRoute.page, path: '/keluarga/tambah'),
 
     // === RUMAH ===
     AutoRoute(
@@ -153,7 +157,6 @@ class AppRouter extends _$AppRouter {
         AutoRoute(page: TagihIuranRoute.page, path: 'tagih_iuran'),
         AutoRoute(page: KategoriIuranRoute.page, path: 'kategori_iuran'),
         AutoRoute(page: PemasukanDaftarRoute.page, path: 'daftar'),
-        // Perhatikan: LaporanPemasukanLainDetailRoute biasanya dipakai di sini
         AutoRoute(page: LaporanPemasukanLainDetailRoute.page, path: 'pemasukan_detail/:id'),
         AutoRoute(page: PemasukanLainTambahRoute.page, path: 'tambah'),
       ],

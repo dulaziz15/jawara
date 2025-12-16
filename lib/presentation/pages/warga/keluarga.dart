@@ -248,6 +248,9 @@ class _KeluargaPageState extends State<KeluargaPage> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text('Data Keluarga', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white)),
+        actions: [
+          IconButton(onPressed: () => context.router.pushNamed('/keluarga/tambah'), icon: const Icon(Icons.add))
+        ],
         backgroundColor: const Color(0xFF6C63FF),
         foregroundColor: Colors.white,
         centerTitle: false,

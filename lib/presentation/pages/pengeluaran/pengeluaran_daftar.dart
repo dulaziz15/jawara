@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:jawara/core/models/pengeluaran_model.dart';
 import 'package:jawara/core/repositories/pengeluaran_repository.dart'; 
+import 'package:jawara/core/repositories/pengguna_repository.dart';
 
 @RoutePage()
 class PengeluaranDaftarPage extends StatefulWidget {
@@ -250,11 +251,19 @@ class _PengeluaranDaftarPageState extends State<PengeluaranDaftarPage> {
                             color: Colors.grey, fontSize: 14),
                       ),
                       const SizedBox(height: 4),
-                      Text(
-                        // Menggunakan Verifikator ID
-                        'Verifikator ID: ${item.verifikatorId}', 
-                        style: const TextStyle(
-                            color: Colors.grey, fontSize: 14),
+                      FutureBuilder(
+                        future: PenggunaRepository().getUserByDocId(item.verifikatorId),
+                        builder: (context, snap) {
+                          String verifikatorLabel = item.verifikatorId;
+                          if (item.verifikatorId.isEmpty) verifikatorLabel = 'Belum diverifikasi';
+                          else if (snap.connectionState == ConnectionState.waiting) verifikatorLabel = 'Memuat...';
+                          else if (snap.hasError) verifikatorLabel = item.verifikatorId;
+                          else if (snap.hasData && snap.data != null) verifikatorLabel = (snap.data!).nama;
+                          return Text(
+                            'Verifikator: $verifikatorLabel',
+                            style: const TextStyle(color: Colors.grey, fontSize: 14),
+                          );
+                        },
                       ),
                       const SizedBox(height: 4),
                       Text(

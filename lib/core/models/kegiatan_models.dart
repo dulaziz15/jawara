@@ -4,6 +4,7 @@
     String penanggungJawabId; 
     String dibuatOlehId; 
     DateTime tanggalPelaksanaan;
+    double? budget; // Anggaran kegiatan (opsional)
 
     KegiatanModel({
       required this.docId,
@@ -14,6 +15,7 @@
       required this.tanggalPelaksanaan,
       required this.lokasi,
       required this.dibuatOlehId, 
+      this.budget,
       required this.dokumentasi,
     });
 
@@ -26,6 +28,7 @@
         kategoriKegiatan: map['kategori_kegiatan'], // Diperbaiki
         penanggungJawabId: map['penanggung_jawab_id'], // Menggunakan ID
         deskripsi: map['deskripsi'],
+        budget: map['budget'] != null ? (map['budget'] is int ? (map['budget'] as int).toDouble() : map['budget']) : null,
         lokasi: map['lokasi'],
         dibuatOlehId: map['dibuat_oleh_id'], // Menggunakan ID
         dokumentasi: map['dokumentasi'],
@@ -38,6 +41,7 @@
         'docId': docId,
         'nama_kegiatan': namaKegiatan, // Diperbaiki
         'kategori_kegiatan': kategoriKegiatan, // Diperbaiki
+        'budget': budget,
         'penanggung_jawab_id': penanggungJawabId, // Menggunakan ID
         'deskripsi': deskripsi,
         'tanggal_pelaksanaan': tanggalPelaksanaan.toIso8601String(), // Diperbaiki

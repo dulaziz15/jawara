@@ -1,62 +1,79 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:jawara/core/models/pemasukan_model.dart';
+import 'package:jawara/core/repositories/pengguna_repository.dart';
 
 class PemasukanRepository {
-  // Langsung gunakan FirebaseFirestore.instance
-  final CollectionReference _pemasukanCollection = FirebaseFirestore.instance
-      .collection('pemasukan');
+  final CollectionReference _pemasukanCollection =
+      FirebaseFirestore.instance.collection('pemasukan');
 
   // ==========================================================
   // PEMASUKAN (CRUD Penuh)
   // ==========================================================
-  
-  // C: Create
-  Future<void> addPemasukan(PemasukanModel pemasukan) async =>
-      await _pemasukanCollection.add(pemasukan.toMap());
 
-  // R: Get Pemasukan (Stream - Realtime List)
+  Future<String> addPemasukan(PemasukanModel pemasukan) async {
+    final DocumentReference docRef = _pemasukanCollection.doc();
+    final data = pemasukan.toMap();
+    data['docId'] = docRef.id;
+    await docRef.set(data);
+    return docRef.id;
+  }
+
   Stream<List<PemasukanModel>> getPemasukan() {
     return _pemasukanCollection
         .orderBy('tanggal_pemasukan', descending: true)
         .snapshots()
         .map((snapshot) {
-          return snapshot.docs.map((doc) {
-            final data = doc.data() as Map<String, dynamic>;
-            // Perbaikan: Gunakan parameter kedua untuk docId
-            return PemasukanModel.fromMap(data, doc.id); 
-          }).toList();
-        });
+      return snapshot.docs.map((doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        return PemasukanModel.fromMap(data, doc.id);
+      }).toList();
+    });
   }
 
-  // U: Update Pemasukan
   Future<void> updatePemasukan(PemasukanModel pemasukan) async {
-    // Pastikan docId tidak null sebelum update
     if (pemasukan.docId == null) return;
-    
+
     await _pemasukanCollection
-        .doc(pemasukan.docId) // docId sudah String, tidak perlu to String
+        .doc(pemasukan.docId)
         .update(pemasukan.toMap());
   }
 
-  // D: Delete Pemasukan
   Future<void> deletePemasukan(String docId) async =>
       await _pemasukanCollection.doc(docId).delete();
 
-  // R: Get Pemasukan by doc id (Future - Single Data)
+  // ==========================================================
+  // GET BY DOC ID (DETAIL)
+  // ==========================================================
   Future<PemasukanModel?> getPemasukanByDocId(String docId) async {
     try {
-      // PERBAIKAN 1: Gunakan _pemasukanCollection (variable yang benar)
       final docSnapshot = await _pemasukanCollection.doc(docId).get();
+      final data = docSnapshot.data() as Map<String, dynamic>;
+      final pemasukan = PemasukanModel.fromMap(data, docSnapshot.id);
 
-      if (docSnapshot.exists) {
-        final data = docSnapshot.data() as Map<String, dynamic>;
-        
-        // PERBAIKAN 2: Return PemasukanModel (Bukan PengeluaranModel)
-        // PERBAIKAN 3: Masukkan data dan docSnapshot.id terpisah
-        return PemasukanModel.fromMap(data, docSnapshot.id);
+      // ================= DEBUG VERIFIKATOR =================
+      if (pemasukan.verifikatorId != null &&
+          pemasukan.verifikatorId!.isNotEmpty) {
+        try {
+          final pengguna = await PenggunaRepository().getUserByDocId(
+            pemasukan.verifikatorId,
+          );
+
+          if (pengguna == null) {
+          } else {
+            pemasukan.verifikatorNama = pengguna.nama;
+          }
+        } catch (e, s) {
+          debugPrintStack(stackTrace: s);
+        }
+      } else {
       }
-      return null;
-    } catch (e) {
+      // ======================================================
+
+      return pemasukan;
+    } catch (e, s) {
+      debugPrint('🔥 Gagal ambil data pemasukan: $e');
+      debugPrintStack(stackTrace: s);
       throw Exception('Gagal ambil data: $e');
     }
   }
