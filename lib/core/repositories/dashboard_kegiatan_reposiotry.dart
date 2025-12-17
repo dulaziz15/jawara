@@ -14,42 +14,85 @@ class DashboardKegiatanRepository {
   // ACTIVITY TERBARU
   Stream<List<DashboardKegiatanModel>> getRecentActivities() {
     return _col
-        .orderBy('date', descending: true)
+        .orderBy('tanggal_pelaksanaan', descending: true)
         .limit(10)
         .snapshots()
         .map((snap) =>
             snap.docs.map((d) => DashboardKegiatanModel.fromFirestore(d)).toList());
   }
 
-  // KEGIATAN LEWAT
+  // KEGIATAN LEWAT (COUNT)
   Stream<int> getActivityLewat() {
-    return _col
-        .where('date', isLessThan: Timestamp.fromDate(DateTime.now()))
-        .snapshots()
-        .map((s) => s.docs.length);
-  }
-
-  // KEGIATAN HARI INI
-  Stream<int> getActivityHariIni() {
+    // Events with date strictly before the start of today
     final today = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
 
     return _col
-        .where('date',
-            isGreaterThanOrEqualTo: Timestamp.fromDate(today))
-        .where('date',
-            isLessThan: Timestamp.fromDate(today.add(Duration(days: 1))))
+        .where('tanggal_pelaksanaan', isLessThan: Timestamp.fromDate(today))
         .snapshots()
         .map((s) => s.docs.length);
   }
 
-  // AKAN DATANG
-  Stream<int> getActivityAkanDatang() {
+  // KEGIATAN HARI INI (COUNT)
+  Stream<int> getActivityHariIni() {
+    // Events that fall within today's date (00:00:00 - 23:59:59)
+    final today = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+    final tomorrow = today.add(Duration(days: 1));
+
     return _col
-        .where('date', isGreaterThan: Timestamp.fromDate(DateTime.now()))
+        .where('tanggal_pelaksanaan', isGreaterThanOrEqualTo: Timestamp.fromDate(today))
+        .where('tanggal_pelaksanaan', isLessThan: Timestamp.fromDate(tomorrow))
         .snapshots()
         .map((s) => s.docs.length);
   }
 
+  // AKAN DATANG (COUNT)
+  Stream<int> getActivityAkanDatang() {
+    // Events from the start of tomorrow onward
+    final tomorrow = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day).add(Duration(days: 1));
+
+    return _col
+        .where('tanggal_pelaksanaan', isGreaterThanOrEqualTo: Timestamp.fromDate(tomorrow))
+        .snapshots()
+        .map((s) => s.docs.length);
+  }
+
+  // KEGIATAN LEWAT (LIST)
+  Stream<List<DashboardKegiatanModel>> getKegiatanLewatList({int limit = 5}) {
+    final today = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+
+    return _col
+        .where('tanggal_pelaksanaan', isLessThan: Timestamp.fromDate(today))
+        .orderBy('tanggal_pelaksanaan', descending: true)
+        .limit(limit)
+        .snapshots()
+        .map((snap) => snap.docs.map((d) => DashboardKegiatanModel.fromFirestore(d)).toList());
+  }
+
+  // KEGIATAN HARI INI (LIST)
+  Stream<List<DashboardKegiatanModel>> getKegiatanHariIniList({int limit = 10}) {
+    final today = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+    final tomorrow = today.add(Duration(days: 1));
+
+    return _col
+        .where('tanggal_pelaksanaan', isGreaterThanOrEqualTo: Timestamp.fromDate(today))
+        .where('tanggal_pelaksanaan', isLessThan: Timestamp.fromDate(tomorrow))
+        .orderBy('tanggal_pelaksanaan')
+        .limit(limit)
+        .snapshots()
+        .map((snap) => snap.docs.map((d) => DashboardKegiatanModel.fromFirestore(d)).toList());
+  }
+
+  // AKAN DATANG (LIST)
+  Stream<List<DashboardKegiatanModel>> getKegiatanAkanDatangList({int limit = 5}) {
+    final tomorrow = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day).add(Duration(days: 1));
+
+    return _col
+        .where('tanggal_pelaksanaan', isGreaterThanOrEqualTo: Timestamp.fromDate(tomorrow))
+        .orderBy('tanggal_pelaksanaan')
+        .limit(limit)
+        .snapshots()
+        .map((snap) => snap.docs.map((d) => DashboardKegiatanModel.fromFirestore(d)).toList());
+  }
   // PER-ACTOR (Penanggung Jawab)
   Stream<Map<String, int>> getActorTerbanyak() {
     return _col.snapshots().map((snapshot) {
@@ -72,8 +115,8 @@ class DashboardKegiatanRepository {
     final end = DateTime(year, month + 1, 1);
 
     return _col
-        .where('date', isGreaterThanOrEqualTo: Timestamp.fromDate(start))
-        .where('date', isLessThan: Timestamp.fromDate(end))
+        .where('tanggal_pelaksanaan', isGreaterThanOrEqualTo: Timestamp.fromDate(start))
+        .where('tanggal_pelaksanaan', isLessThan: Timestamp.fromDate(end))
         .snapshots() 
         .map((snap) => snap.docs.length);
   }
