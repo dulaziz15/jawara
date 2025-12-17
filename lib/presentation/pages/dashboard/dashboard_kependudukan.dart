@@ -66,7 +66,7 @@ class DashboardKependudukanPage extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 24),
-                PieChart(title: 'Status Penduduk', data: data.statusData),
+                PieChart(title: 'Status Keluarga', data: data.statusData),
                 const SizedBox(height: 24),
                 PieChart(title: 'Jenis Kelamin', data: data.genderData),
                 const SizedBox(height: 24),

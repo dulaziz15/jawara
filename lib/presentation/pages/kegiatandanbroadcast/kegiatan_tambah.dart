@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:intl/intl.dart';
 import 'package:jawara/core/models/kegiatan_models.dart';
+import 'package:jawara/core/models/pengeluaran_model.dart';
 import 'package:jawara/core/repositories/kegiatan_repository.dart';
+import 'package:jawara/core/repositories/pengeluaran_repository.dart';
 import 'package:jawara/presentation/pages/kegiatandanbroadcast/widgets/image_picker.dart'; 
 
 @RoutePage()
@@ -26,6 +28,7 @@ class _KegiatanTambahPageState extends State<KegiatanTambahPage> {
   bool _isLoading = false; // Tambahan loading state
 
   final repo = KegiatanRepository();
+  final pengeluaranRepo = PengeluaranRepository();
 
   @override
   void dispose() {
@@ -82,6 +85,21 @@ class _KegiatanTambahPageState extends State<KegiatanTambahPage> {
       // 3. Simpan ke Firestore
       await repo.addKegiatan(kegiatan);
 
+      // 4. Jika ada budget, otomatis tambahkan ke pengeluaran
+      if (kegiatan.budget != null && kegiatan.budget! > 0) {
+        final pengeluaran = PengeluaranModel(
+          docId: '',
+          namaPengeluaran: kegiatan.namaKegiatan,
+          kategoriPengeluaran: kegiatan.kategoriKegiatan,
+          verifikatorId: kegiatan.dibuatOlehId,
+          buktiPengeluaran: kegiatan.dokumentasi,
+          jumlahPengeluaran: kegiatan.budget!,
+          tanggalPengeluaran: kegiatan.tanggalPelaksanaan.toDate(),
+          tanggalTerverifikasi: DateTime.now(),
+        );
+        await pengeluaranRepo.addPengeluaran(pengeluaran);
+      }
+
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Kegiatan berhasil ditambahkan')),
@@ -114,7 +132,6 @@ class _KegiatanTambahPageState extends State<KegiatanTambahPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey.shade200,
-      appBar: AppBar(title: const Text("Tambah Kegiatan")),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Container(

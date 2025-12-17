@@ -86,12 +86,18 @@ class DashboardKeuanganRepository {
   }
 
   // ==============================
-  // JUMLAH TRANSAKSI
+  // JUMLAH TRANSAKSI (TOTAL: Pemasukan + Pengeluaran)
   // ==============================
   Stream<int> getJumlahTransaksi() {
-    return _pemasukanCollection.snapshots().map((snapshot) {
-      return snapshot.docs.length;
-    });
+    // 1. Ambil jumlah dokumen pemasukan
+    final pemasukanStream = _pemasukanCollection.snapshots().map((s) => s.docs.length);
+    
+    // 2. Ambil jumlah dokumen pengeluaran
+    final pengeluaranStream = _pengeluaranCollection.snapshots().map((s) => s.docs.length);
+
+    // 3. Gabungkan keduanya
+    return StreamZip([pemasukanStream, pengeluaranStream])
+        .map((values) => (values[0] as int) + (values[1] as int));
   }
 
   // JUMLAH TRANSAKSI DI BULAN TERPILIH (pemasukan + pengeluaran)
