@@ -71,6 +71,7 @@ import 'package:jawara/presentation/pages/penerimaanWarga/penerimaan.dart';
 import 'package:jawara/presentation/pages/mutasiKeluarga/mutasiKeluarga.dart';
 import 'package:jawara/presentation/pages/mutasiKeluarga/daftarMutasi.dart';
 import 'package:jawara/presentation/pages/mutasiKeluarga/tambahMutasi.dart';
+import 'package:jawara/presentation/pages/mutasiKeluarga/tambahMutasiMasuk.dart';
 
 // Log & Settings & Manajemen User
 import 'package:jawara/presentation/pages/LogAktivitas/log_aktivitas.dart';
@@ -223,7 +224,8 @@ class AppRouter extends _$AppRouter {
       path: '/mutasiKeluarga',
       children: [
         AutoRoute(page: DaftarMutasiRoute.page, path: 'daftarMutasi'),
-        AutoRoute(page: TambahMutasiRoute.page, path: 'tambahMutasi')
+        AutoRoute(page: TambahMutasiRoute.page, path: 'tambahMutasi'),
+        AutoRoute(page: TambahMutasiMasukRoute.page, path: 'tambahMutasiMasuk')
       ],
     ),
 

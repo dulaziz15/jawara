@@ -482,6 +482,12 @@ abstract class _$AppRouter extends RootStackRouter {
         child: const TambahMutasiPage(),
       );
     },
+    TambahMutasiMasukRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const TambahMutasiMasukPage(),
+      );
+    },
     WargaRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
@@ -1803,6 +1809,19 @@ class TambahMutasiRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'TambahMutasiRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// [TambahMutasiMasukPage]
+class TambahMutasiMasukRoute extends PageRouteInfo<void> {
+  const TambahMutasiMasukRoute({List<PageRouteInfo>? children})
+      : super(
+          TambahMutasiMasukRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'TambahMutasiMasukRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }

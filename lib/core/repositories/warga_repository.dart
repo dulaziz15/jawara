@@ -28,4 +28,23 @@ class CitizenRepository {
   Future<void> addCitizen(WargaModel citizen) async {
     await _collection.add(citizen.toMap());
   }
+
+  // Ambil warga berdasarkan field keluarga (synchronous query)
+  Future<List<WargaModel>> getCitizensByKeluarga(String keluarga) async {
+    final q = await _collection.where('keluarga', isEqualTo: keluarga).get();
+    return q.docs.map((doc) => WargaModel.fromMap(doc.data() as Map<String, dynamic>, doc.id)).toList();
+  }
+
+  // Set statusDomisili untuk semua warga pada keluarga tertentu
+  Future<void> setStatusDomisiliByKeluarga(String keluarga, String status) async {
+    final docs = await _collection.where('keluarga', isEqualTo: keluarga).get();
+    for (var doc in docs.docs) {
+      await _collection.doc(doc.id).update({'statusDomisili': status});
+    }
+  }
+
+  // Set statusDomisili untuk satu warga berdasarkan docId
+  Future<void> setStatusDomisili(String docId, String status) async {
+    await _collection.doc(docId).update({'statusDomisili': status});
+  }
 }

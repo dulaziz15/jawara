@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import '../../../core/models/mutasi_model.dart'; // Import model baru
 import '../../../core/repositories/mutasi_repository.dart'; // Repository Firebase
+import '../../../core/repositories/family_repository.dart';
+import '../../../core/models/family_models.dart';
 
 @RoutePage()
 class TambahMutasiPage extends StatefulWidget {
@@ -23,18 +25,12 @@ class _TambahMutasiPageState extends State<TambahMutasiPage> {
     'Pindah Negara',
   ];
 
-  // Ambil daftar keluarga dari data dummy (provider menggunakan dummyDataMutasi)
-  List<String> get _keluargaOptions {
-    final keluargaSet = <String>{};
-    for (var data in MutasiDataProvider.dummyDataMutasi) {
-      keluargaSet.add(data.keluarga);
-    }
-    return keluargaSet.toList();
-  }
+  // Repository untuk mengambil data keluarga dari Firestore
+  final FamilyRepository _familyRepo = FamilyRepository();
 
   // Controller untuk form fields
   String? _selectedJenisMutasi;
-  String? _selectedKeluarga;
+  String? _selectedKeluargaNoKk; // menyimpan noKK keluarga yang dipilih
   final TextEditingController _alasanController = TextEditingController();
   final TextEditingController _tanggalController = TextEditingController();
   final TextEditingController _alamatLamaController = TextEditingController();
@@ -60,7 +56,7 @@ class _TambahMutasiPageState extends State<TambahMutasiPage> {
   void _resetForm() {
     setState(() {
       _selectedJenisMutasi = null;
-      _selectedKeluarga = null;
+      _selectedKeluargaNoKk = null;
       _alasanController.clear();
       _tanggalController.clear();
       _alamatLamaController.clear();
@@ -72,7 +68,7 @@ class _TambahMutasiPageState extends State<TambahMutasiPage> {
   Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
       // Validasi tambahan
-      if (_selectedKeluarga == null || _selectedJenisMutasi == null) {
+      if (_selectedKeluargaNoKk == null || _selectedJenisMutasi == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Harap pilih keluarga dan jenis mutasi'),
@@ -82,20 +78,25 @@ class _TambahMutasiPageState extends State<TambahMutasiPage> {
         return;
       }
 
-      // Cari data keluarga yang dipilih untuk mendapatkan alamat lama
-      final keluargaData = MutasiDataProvider.dummyDataMutasi.firstWhere(
-        (data) => data.keluarga == _selectedKeluarga,
-        orElse: () => MutasiDataProvider.dummyDataMutasi.first,
-      );
+      // Ambil data keluarga dari Firestore untuk alamat lama dan nama keluarga
+      String keluargaDisplay = _selectedKeluargaNoKk ?? '';
+      String defaultAlamatLama = '';
+      if (_selectedKeluargaNoKk != null) {
+        final family = await _familyRepo.getFamilyByNoKk(_selectedKeluargaNoKk!);
+        if (family != null) {
+          keluargaDisplay = family.namaKeluarga;
+          defaultAlamatLama = family.alamatRumah;
+        }
+      }
 
       // Buat objek MutasiData baru
       // docId dikosongkan karena Firestore akan buatkan ID saat add
       final newMutasi = MutasiData(
         docId: '', // Firestore akan assign ID
-        keluarga: _selectedKeluarga!,
+        keluarga: keluargaDisplay,
         alamatLama: _alamatLamaController.text.isNotEmpty
             ? _alamatLamaController.text
-            : keluargaData.alamatLama,
+            : defaultAlamatLama,
         alamatBaru: _alamatBaruController.text,
         tanggalMutasi: _tanggalController.text,
         jenisMutasi: _selectedJenisMutasi!,
@@ -136,23 +137,27 @@ class _TambahMutasiPageState extends State<TambahMutasiPage> {
     }
   }
 
-  // Fungsi untuk mendapatkan alamat lama berdasarkan keluarga yang dipilih
-  void _onKeluargaChanged(String? selectedKeluarga) {
+  // Fungsi untuk mendapatkan alamat lama berdasarkan keluarga yang dipilih (dari Firestore)
+  Future<void> _onKeluargaChanged(String? selectedKeluargaNoKk) async {
     setState(() {
-      _selectedKeluarga = selectedKeluarga;
+      _selectedKeluargaNoKk = selectedKeluargaNoKk;
     });
 
-    if (selectedKeluarga != null) {
-      // Cari data keluarga yang dipilih
-      final keluargaData = MutasiDataProvider.dummyDataMutasi.firstWhere(
-        (data) => data.keluarga == selectedKeluarga,
-        orElse: () => MutasiDataProvider.dummyDataMutasi.first,
-      );
-
-      // Isi otomatis alamat lama
-      _alamatLamaController.text = keluargaData.alamatLama;
+    if (selectedKeluargaNoKk != null) {
+      final family = await _familyRepo.getFamilyByNoKk(selectedKeluargaNoKk);
+      if (family != null) {
+        setState(() {
+          _alamatLamaController.text = family.alamatRumah;
+        });
+      } else {
+        setState(() {
+          _alamatLamaController.clear();
+        });
+      }
     } else {
-      _alamatLamaController.clear();
+      setState(() {
+        _alamatLamaController.clear();
+      });
     }
   }
 
@@ -215,41 +220,47 @@ class _TambahMutasiPageState extends State<TambahMutasiPage> {
                         ),
                       ),
                       const SizedBox(height: 8),
-                      DropdownButtonFormField<String>(
-                        decoration: InputDecoration(
-                          hintText: "Pilih Keluarga",
-                          enabledBorder: const OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(8)),
-                            borderSide: BorderSide(
-                              color: Color.fromARGB(255, 216, 216, 216),
-                              width: 1,
+                      StreamBuilder<List<FamilyModel>>(
+                        stream: _familyRepo.getAllFamilies(),
+                        builder: (context, snapshot) {
+                          final families = snapshot.data ?? [];
+                          return DropdownButtonFormField<String>(
+                            decoration: InputDecoration(
+                              hintText: "Pilih Keluarga",
+                              enabledBorder: const OutlineInputBorder(
+                                borderRadius: BorderRadius.all(Radius.circular(8)),
+                                borderSide: BorderSide(
+                                  color: Color.fromARGB(255, 216, 216, 216),
+                                  width: 1,
+                                ),
+                              ),
+                              focusedBorder: const OutlineInputBorder(
+                                borderRadius: BorderRadius.all(Radius.circular(8)),
+                                borderSide: BorderSide(
+                                  color: Color(0xFF6C63FF),
+                                  width: 1.5,
+                                ),
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 15,
+                                vertical: 12,
+                              ),
                             ),
-                          ),
-                          focusedBorder: const OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(8)),
-                            borderSide: BorderSide(
-                              color: Color(0xFF6C63FF),
-                              width: 1.5,
-                            ),
-                          ),
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 15,
-                            vertical: 12,
-                          ),
-                        ),
-                        value: _selectedKeluarga,
-                        items: _keluargaOptions.map((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
+                            value: _selectedKeluargaNoKk,
+                            items: families.map((FamilyModel f) {
+                              return DropdownMenuItem<String>(
+                                value: f.noKk,
+                                child: Text('${f.noKk} - ${f.namaKeluarga}'),
+                              );
+                            }).toList(),
+                            onChanged: (val) => _onKeluargaChanged(val),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Pilih keluarga';
+                              }
+                              return null;
+                            },
                           );
-                        }).toList(),
-                        onChanged: _onKeluargaChanged,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Pilih keluarga';
-                          }
-                          return null;
                         },
                       ),
                       const SizedBox(height: 20),
