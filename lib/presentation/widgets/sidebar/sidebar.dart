@@ -263,6 +263,10 @@ class _SidebarState extends State<Sidebar> {
                 title: const Text("Tambah"),
                 onTap: () => context.router.pushNamed('/mutasiKeluarga/tambahMutasi'),
               ),
+              ListTile(
+                title: const Text("Mutasi Masuk"),
+                onTap: () => context.router.pushNamed('/mutasiKeluarga/tambahMutasiMasuk'),
+              ),
             ],
           ),
 

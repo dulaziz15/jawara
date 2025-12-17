@@ -44,4 +44,12 @@ class FamilyRepository {
   Future<void> deleteFamily(String noKk) async {
     await _familyCollection.doc(noKk).delete();
   }
+
+  // Cari Family berdasarkan nama (opsional)
+  Future<FamilyModel?> getFamilyByName(String name) async {
+    final q = await _familyCollection.where('namaKeluarga', isEqualTo: name).limit(1).get();
+    if (q.docs.isEmpty) return null;
+    final data = q.docs.first.data() as Map<String, dynamic>;
+    return FamilyModel.fromMap(data);
+  }
 }
