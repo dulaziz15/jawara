@@ -276,7 +276,7 @@ class _PengeluaranDaftarPageState extends State<PengeluaranDaftarPage> {
                 ),
                 Column(
                   children: [
-                    _buildVerifikasiBadge(item.tanggalTerverifikasi),
+                    // _buildVerifikasiBadge(item.tanggalTerverifikasi),
                     const SizedBox(height: 8),
                     PopupMenuButton<String>(
                       onSelected: (value) {
