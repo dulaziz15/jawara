@@ -1,4 +1,5 @@
 import 'dart:io'; // Import File
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:intl/intl.dart';
@@ -71,7 +72,7 @@ class _KegiatanTambahPageState extends State<KegiatanTambahPage> {
         kategoriKegiatan: selectedKategori!,
         penanggungJawabId: penanggungJawabController.text,
         deskripsi: deskripsiController.text,
-        tanggalPelaksanaan: tanggalParsed,
+        tanggalPelaksanaan: Timestamp.fromDate(tanggalParsed),
         lokasi: lokasiController.text,
         budget: budgetController.text.isNotEmpty ? double.tryParse(budgetController.text.replaceAll(',', '')) ?? 0.0 : null,
         dibuatOlehId: "ADMIN_001",

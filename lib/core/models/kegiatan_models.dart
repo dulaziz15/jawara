@@ -1,10 +1,12 @@
-  class KegiatanModel {
-    String docId;
-    String namaKegiatan, kategoriKegiatan, deskripsi, lokasi, dokumentasi;
-    String penanggungJawabId; 
-    String dibuatOlehId; 
-    DateTime tanggalPelaksanaan;
-    double? budget; // Anggaran kegiatan (opsional)
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+class KegiatanModel {
+  String docId;
+  String namaKegiatan, kategoriKegiatan, deskripsi, lokasi, dokumentasi;
+  String penanggungJawabId; 
+  String dibuatOlehId; 
+  Timestamp tanggalPelaksanaan;
+  double? budget; // Anggaran kegiatan (opsional)
 
     KegiatanModel({
       required this.docId,
@@ -24,7 +26,7 @@
       return KegiatanModel(
         docId: map['docId'],
         namaKegiatan: map['nama_kegiatan'], // Diperbaiki
-        tanggalPelaksanaan: DateTime.parse(map['tanggal_pelaksanaan']), // Diperbaiki
+        tanggalPelaksanaan: map['tanggal_pelaksanaan'] as Timestamp, // Diperbaiki
         kategoriKegiatan: map['kategori_kegiatan'], // Diperbaiki
         penanggungJawabId: map['penanggung_jawab_id'], // Menggunakan ID
         deskripsi: map['deskripsi'],
@@ -44,7 +46,7 @@
         'budget': budget,
         'penanggung_jawab_id': penanggungJawabId, // Menggunakan ID
         'deskripsi': deskripsi,
-        'tanggal_pelaksanaan': tanggalPelaksanaan.toIso8601String(), // Diperbaiki
+        'tanggal_pelaksanaan': tanggalPelaksanaan, // Diperbaiki
         'lokasi': lokasi,
         'dibuat_oleh_id': dibuatOlehId, // Menggunakan ID
         'dokumentasi': dokumentasi,
@@ -59,7 +61,7 @@
       kategoriKegiatan: 'Pelatihan',
       penanggungJawabId: '301', // ID John Doe
       deskripsi: 'Pelatihan pengembangan aplikasi menggunakan Flutter.',
-      tanggalPelaksanaan: DateTime(2025, 10, 20),
+      tanggalPelaksanaan: Timestamp.fromDate(DateTime(2025, 10, 20)),
       lokasi: 'Jakarta',
       dibuatOlehId: '101', // ID Admin Jawara
       dokumentasi: 'workshop_flutter.jpg',
@@ -70,7 +72,7 @@
       kategoriKegiatan: 'Seminar',
       penanggungJawabId: '302', // ID Jane Smith
       deskripsi: 'Seminar tentang perkembangan Artificial Intelligence.',
-      tanggalPelaksanaan: DateTime(2025, 10, 22),
+      tanggalPelaksanaan: Timestamp.fromDate(DateTime(2025, 10, 22)),
       lokasi: 'Bandung',
       dibuatOlehId: '101', // ID Admin Jawara
       dokumentasi: 'seminar_ai.jpg',
@@ -81,7 +83,7 @@
       kategoriKegiatan: 'Kompetisi',
       penanggungJawabId: '303', // ID Alice Johnson
       deskripsi: 'Kompetisi pengembangan aplikasi dalam waktu 24 jam.',
-      tanggalPelaksanaan: DateTime(2025, 10, 25),
+      tanggalPelaksanaan: Timestamp.fromDate(DateTime(2025, 10, 25)),
       lokasi: 'Surabaya',
       dibuatOlehId: '101', // ID Admin Jawara
       dokumentasi: 'hackathon_2025.jpg',
@@ -92,7 +94,7 @@
       kategoriKegiatan: 'Pelatihan',
       penanggungJawabId: '304', // ID Bob Brown
       deskripsi: 'Pelatihan desain antarmuka pengguna dan pengalaman pengguna.',
-      tanggalPelaksanaan: DateTime(2025, 10, 28),
+      tanggalPelaksanaan: Timestamp.fromDate(DateTime(2025, 10, 28)),
       lokasi: 'Yogyakarta',
       dibuatOlehId: '101', // ID Admin Jawara
       dokumentasi: 'pelatihan_uiux.jpg',

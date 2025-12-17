@@ -33,14 +33,24 @@ class _KegiatanDetailPageState extends State<KegiatanDetailPage> {
   // ==================== UTILITY (TIDAK DIUBAH) ====================
   String _getBulan(int bulan) {
     const namaBulan = [
-      'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-      'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+      'Januari',
+      'Februari',
+      'Maret',
+      'April',
+      'Mei',
+      'Juni',
+      'Juli',
+      'Agustus',
+      'September',
+      'Oktober',
+      'November',
+      'Desember',
     ];
     return namaBulan[bulan - 1];
   }
 
   // ==================== UI WIDGETS HELPER ====================
-  
+
   Widget _buildDetailItem({
     required IconData icon,
     required String label,
@@ -115,7 +125,11 @@ class _KegiatanDetailPageState extends State<KegiatanDetailPage> {
         backgroundColor: const Color(0xFFF5F6FA),
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, size: 20, color: Colors.black87),
+          icon: const Icon(
+            Icons.arrow_back_ios_new,
+            size: 20,
+            color: Colors.black87,
+          ),
           onPressed: () => context.router.pop(),
         ),
       ),
@@ -131,19 +145,25 @@ class _KegiatanDetailPageState extends State<KegiatanDetailPage> {
           }
 
           final kegiatan = snapshot.data!;
+
           final String tanggalFormatted =
-              '${kegiatan.tanggalPelaksanaan.day} '
-              '${_getBulan(kegiatan.tanggalPelaksanaan.month)} '
-              '${kegiatan.tanggalPelaksanaan.year}';
+              '${kegiatan.tanggalPelaksanaan.toDate().day} '
+              '${_getBulan(kegiatan.tanggalPelaksanaan.toDate().month)} '
+              '${kegiatan.tanggalPelaksanaan.toDate().year}';
 
           // --- UI UTAMA ---
           // PERUBAHAN: Menggunakan Align topCenter bukan Center agar di atas
           return Align(
-            alignment: Alignment.topCenter, 
+            alignment: Alignment.topCenter,
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 600),
               child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(20, 10, 20, 20), // Padding atas disesuaikan
+                padding: const EdgeInsets.fromLTRB(
+                  20,
+                  10,
+                  20,
+                  20,
+                ), // Padding atas disesuaikan
                 child: Container(
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -192,15 +212,22 @@ class _KegiatanDetailPageState extends State<KegiatanDetailPage> {
                             const SizedBox(height: 8),
                             // Optional: Menampilkan ID kecil
                             Text(
-                              "Ref ID: ${kegiatan.docId}", 
-                              style: TextStyle(fontSize: 10, color: Colors.grey.shade300),
+                              "Ref ID: ${kegiatan.docId}",
+                              style: TextStyle(
+                                fontSize: 10,
+                                color: Colors.grey.shade300,
+                              ),
                             ),
                           ],
                         ),
                       ),
-                      
+
                       const SizedBox(height: 24),
-                      Divider(height: 1, thickness: 1, color: Colors.grey.shade100),
+                      Divider(
+                        height: 1,
+                        thickness: 1,
+                        color: Colors.grey.shade100,
+                      ),
                       const SizedBox(height: 24),
 
                       // === BAGIAN TENGAH (ISI DATA) ===
@@ -229,6 +256,14 @@ class _KegiatanDetailPageState extends State<KegiatanDetailPage> {
                               label: "Dibuat Oleh",
                               value: kegiatan.dibuatOlehId,
                             ),
+                            _buildDetailItem(
+                              icon: Icons.monetization_on_outlined,
+                              label: "Budget",
+                              // Tambahkan (kegiatan.budget ?? 0) agar jika null dianggap 0
+                              value: (kegiatan.budget ?? 0) == 0
+                                  ? "Tidak ada budget"
+                                  : "Rp ${(kegiatan.budget ?? 0).toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')}",
+                            ),
                             // Dokumentasi: jika URL gambar → tampilkan preview, jika file teks → tampilkan nama
                             Padding(
                               padding: const EdgeInsets.only(bottom: 16.0),
@@ -237,14 +272,75 @@ class _KegiatanDetailPageState extends State<KegiatanDetailPage> {
                                 children: [
                                   Text(
                                     'Dokumentasi',
-                                    style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey.shade600,
+                                    ),
                                   ),
                                   const SizedBox(height: 8),
+
+                                  // 1. Cek jika kosong
                                   if (kegiatan.dokumentasi.isEmpty)
-                                    const Text('-', style: TextStyle(color: Colors.grey)),
-                                  if (kegiatan.dokumentasi.isNotEmpty && kegiatan.dokumentasi.startsWith('http') && (kegiatan.dokumentasi.endsWith('.jpg') || kegiatan.dokumentasi.endsWith('.png') || kegiatan.dokumentasi.endsWith('.jpeg')))
-                                    ClipRRect(borderRadius: BorderRadius.circular(8), child: Image.network(kegiatan.dokumentasi, height: 220, width: double.infinity, fit: BoxFit.cover)),
-                                  if (kegiatan.dokumentasi.isNotEmpty && !kegiatan.dokumentasi.startsWith('http'))
+                                    const Text(
+                                      '-',
+                                      style: TextStyle(color: Colors.grey),
+                                    ),
+
+                                  // 2. Cek jika URL (HAPUS logic endsWith .jpg/.png)
+                                  if (kegiatan.dokumentasi.isNotEmpty &&
+                                      kegiatan.dokumentasi.startsWith('http'))
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(8),
+                                      child: Image.network(
+                                        kegiatan.dokumentasi,
+                                        height: 220,
+                                        width: double.infinity,
+                                        fit: BoxFit.cover,
+                                        // Tambahkan error builder biar kalau link rusak ketahuan
+                                        errorBuilder:
+                                            (context, error, stackTrace) {
+                                              return Container(
+                                                height: 220,
+                                                color: Colors.grey.shade200,
+                                                alignment: Alignment.center,
+                                                child: const Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    Icon(
+                                                      Icons.broken_image,
+                                                      color: Colors.grey,
+                                                    ),
+                                                    Text(
+                                                      "Gagal memuat gambar",
+                                                      style: TextStyle(
+                                                        fontSize: 10,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            },
+                                        // Tambahkan loading builder biar enak dilihat pas loading
+                                        loadingBuilder:
+                                            (context, child, loadingProgress) {
+                                              if (loadingProgress == null)
+                                                return child;
+                                              return Container(
+                                                height: 220,
+                                                color: Colors.grey.shade100,
+                                                child: const Center(
+                                                  child:
+                                                      CircularProgressIndicator(),
+                                                ),
+                                              );
+                                            },
+                                      ),
+                                    ),
+
+                                  // 3. Cek jika bukan URL (hanya teks nama file)
+                                  if (kegiatan.dokumentasi.isNotEmpty &&
+                                      !kegiatan.dokumentasi.startsWith('http'))
                                     Text(kegiatan.dokumentasi),
                                 ],
                               ),
@@ -252,7 +348,7 @@ class _KegiatanDetailPageState extends State<KegiatanDetailPage> {
                           ],
                         ),
                       ),
-                      
+
                       const SizedBox(height: 24),
                     ],
                   ),

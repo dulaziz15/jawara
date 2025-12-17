@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:jawara/core/models/kegiatan_models.dart';
@@ -49,7 +50,7 @@ class _KegiatanEditPageState extends State<KegiatanEditPage> {
     _deskripsiController = TextEditingController(text: _kegiatan!.deskripsi);
     _lokasiController = TextEditingController(text: _kegiatan!.lokasi);
     _dibuatOlehController = TextEditingController(text: _kegiatan!.dibuatOlehId);
-    _selectedDate = _kegiatan!.tanggalPelaksanaan;
+    _selectedDate = _kegiatan!.tanggalPelaksanaan.toDate();
     _currentDokumentasi = _kegiatan!.dokumentasi;
 
     setState(() => _isLoading = false);
@@ -176,7 +177,7 @@ class _KegiatanEditPageState extends State<KegiatanEditPage> {
       penanggungJawabId: _penanggungJawabController.text,
       deskripsi: _deskripsiController.text,
       lokasi: _lokasiController.text,
-      tanggalPelaksanaan: _selectedDate,
+      tanggalPelaksanaan: Timestamp.fromDate(_selectedDate),
       dibuatOlehId: _dibuatOlehController.text,
       dokumentasi: _currentDokumentasi,
     );

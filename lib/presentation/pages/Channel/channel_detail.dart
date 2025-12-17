@@ -129,10 +129,6 @@ class _ChannelDetailPageState extends State<ChannelDetailPage> {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FE), // Background lebih soft
       appBar: AppBar(
-        // title: const Text(
-        //   "Detail Channel",
-        //   style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
-        // ),
         centerTitle: true,
         backgroundColor: const Color(0xFFF8F9FE),
         elevation: 0,

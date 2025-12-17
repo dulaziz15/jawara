@@ -200,9 +200,9 @@ class _KegiatanDaftarPageState extends State<KegiatanDaftarPage> {
                     const SizedBox(height: 4),
                   ],
                   Text(
-                    'Tanggal: ${item.tanggalPelaksanaan.day.toString().padLeft(2, '0')} '
-                    '${_getBulan(item.tanggalPelaksanaan.month)} '
-                    '${item.tanggalPelaksanaan.year}',
+                    'Tanggal: ${item.tanggalPelaksanaan.toDate().day.toString().padLeft(2, '0')} '
+                    '${_getBulan(item.tanggalPelaksanaan.toDate().month)} '
+                    '${item.tanggalPelaksanaan.toDate().year}',
                     style: const TextStyle(color: Colors.grey, fontSize: 14),
                   ),
                 ],
